@@ -7,7 +7,7 @@ USE trivia_game;
 -- create normalised tables:
 CREATE TABLE users (
 	id INT AUTO_INCREMENT PRIMARY KEY,
-	name VARCHAR(40) NOT NULL
+	user_name VARCHAR(40) NOT NULL
 );
 
 CREATE TABLE games (
