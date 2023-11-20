@@ -10,13 +10,6 @@ CREATE TABLE players (
     username VARCHAR(40) NOT NULL
 );
 
-CREATE TABLE games (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    player_id INT,
-    total_score INT,
-    FOREIGN KEY (player_id) REFERENCES players(id)
-);
-
 CREATE TABLE questions (
     id INT AUTO_INCREMENT PRIMARY KEY,
     difficulty_level VARCHAR(10) NOT NULL,
@@ -27,16 +20,15 @@ CREATE TABLE questions (
     incorrect_answer_3 VARCHAR(100) NOT NULL
 );
 
-CREATE TABLE game_questions (
+-- for the games table, there will be 15 rows of data per game:
+CREATE TABLE games (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    game_id INT,
     player_id INT,
     question_id INT,
     player_answer VARCHAR(100), -- store the user's answer
     is_correct BOOLEAN, -- check if answer is correct
-    FOREIGN KEY (game_id) REFERENCES games(id),
-    FOREIGN KEY (question_id) REFERENCES questions(id),
-    FOREIGN KEY (player_id) REFERENCES players(id)
+    FOREIGN KEY (player_id) REFERENCES players(id),
+    FOREIGN KEY (question_id) REFERENCES questions(id)
 );
 
 CREATE TABLE scoreboard (
@@ -52,8 +44,8 @@ CREATE TABLE scoreboard (
 UPDATE scoreboard sb
 SET total_score = (
     SELECT COUNT(*) 
-    FROM game_questions 
-    WHERE game_id = sb.game_id AND is_correct = TRUE
+    FROM games 
+    WHERE id = sb.game_id AND is_correct = TRUE
 );
 
 -- example of using SELECT query to get top 10 scores to display on the Leaderboard
