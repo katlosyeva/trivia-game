@@ -7,7 +7,8 @@ USE trivia_game;
 -- create normalized tables:
 CREATE TABLE players (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(40) NOT NULL
+    username VARCHAR(40) NOT NULL,
+    password VARCHAR(40) NOT NULL
 );
 
 -- every time API is called, 15 new questions are added, and they will have ID number from 1 - infinity (NOT 1 - 15 every time)
