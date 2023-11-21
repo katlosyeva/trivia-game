@@ -33,7 +33,7 @@ USE trivia_game;
 -- create normalized tables:
 CREATE TABLE players (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(40) NOT NULL
+    username VARCHAR(40) NOT NULL UNIQUE
 );
 
 CREATE TABLE games (

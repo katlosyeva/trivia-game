@@ -18,6 +18,51 @@ def _connect_to_db(db_name):
     return connection
 
 
+def check_player_exists(username):
+    try:
+        # Establish a connection to the MySQL database
+        db_name = "trivia_game"
+        db_connection = _connect_to_db(db_name)
+        cur = db_connection.cursor()  # Create a cursor object to interact with the database
+        print(f"Connected to database {db_name}")
+
+        # SQL query to check if player username exists
+        query = "SELECT username FROM players where username = %s"
+
+        # values to be checked
+        values = (username,)
+
+        # Execute the query with the provided values
+        cur.execute(query, values)
+
+        # Fetch the result (customer ID) from the query
+        result = cur.fetchone()
+
+        if result:
+            # Player exists
+            print(f"Username {username} already exists in the database.")
+            return True
+        else:
+            # Player does not exist
+            print(f"Username {username} does not exist in the database.")
+            return False
+
+    except mysql.connector.Error as err:
+        print(f"MySQL Error: {err}")
+    except Exception as e:
+        raise DbConnectionError("Failed to check if the player exists in the database")
+    except Exception as exc:
+        print(f"An unexpected error occurred: {exc}")
+
+    finally:
+        if cur:
+            # Close the cursor
+            cur.close()
+        if db_connection:
+            # close the connection
+            db_connection.close()
+
+
 def add_new_player(username):
     try:
         # Establish a connection to the MySQL database
@@ -426,6 +471,10 @@ def check_and_add_player(username, password):
 
 def main():
     # Run relevant functions below to ensure connecting to DB is successful:
+
+    # Check player username exists:
+    check_player_exists("helenvu") # exists
+    check_player_exists("hsfhsvsd") # doesn't exist
 
     # Add a new player to players table:
     add_new_player("marshmallow-squisher")
