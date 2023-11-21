@@ -439,36 +439,6 @@ def update_scoreboard_total_score(game_id, player_id):
             db_connection.close()
 
 
-def set_question(difficulty_level, question_text, correct_answer, incorrect_answer_1, incorrect_answer_2,
-                 incorrect_answer_3):
-    try:
-        db_name = "trivia_game"
-        db_connection = _connect_to_db(db_name)
-        cur = db_connection.cursor()
-        print(f"Connected to database {db_name}")
-
-        query = f"""
-                    INSERT INTO `trivia_game`.`questions` (`difficulty_level`, `question_text`, `correct_answer`,
-                        `incorrect_answer_1`, `incorrect_answer_2`, `incorrect_answer_3`)
-                    VALUES ('{difficulty_level}', '{question_text}', '{correct_answer}',
-                        '{incorrect_answer_1}', '{incorrect_answer_2}', '{incorrect_answer_3}')
-                """
-
-        cur.execute(query)
-        db_connection.commit()
-        cur.close()
-
-    except mysql.connector.Error as err:
-        print(f"MySQL Error: {err}")
-
-    except Exception as exc:
-        print(f"An unexpected error occurred: {exc}")
-
-    finally:
-        if db_connection:
-            db_connection.close()
-
-
 # Define a function to a dd a new player and check if it exists to the players table
 def check_and_add_player(username, password):
     try:
@@ -506,12 +476,42 @@ def check_and_add_player(username, password):
             print("DB connection is closed")
 
 
+# def set_question(difficulty_level, question_text, correct_answer, incorrect_answer_1, incorrect_answer_2,
+#                  incorrect_answer_3):
+#     try:
+#         db_name = "trivia_game"
+#         db_connection = _connect_to_db(db_name)
+#         cur = db_connection.cursor()
+#         print(f"Connected to database {db_name}")
+#
+#         query = f"""
+#                     INSERT INTO `trivia_game`.`questions` (`difficulty_level`, `question_text`, `correct_answer`,
+#                         `incorrect_answer_1`, `incorrect_answer_2`, `incorrect_answer_3`)
+#                     VALUES ('{difficulty_level}', '{question_text}', '{correct_answer}',
+#                         '{incorrect_answer_1}', '{incorrect_answer_2}', '{incorrect_answer_3}')
+#                 """
+#
+#         cur.execute(query)
+#         db_connection.commit()
+#         cur.close()
+#
+#     except mysql.connector.Error as err:
+#         print(f"MySQL Error: {err}")
+#
+#     except Exception as exc:
+#         print(f"An unexpected error occurred: {exc}")
+#
+#     finally:
+#         if db_connection:
+#             db_connection.close()
+
+
 def main():
     # Run relevant functions below to ensure connecting to DB is successful:
 
     # Check player username exists:
-    check_player_exists("helenvu") # exists
-    check_player_exists("hsfhsvsd") # doesn't exist
+    check_player_exists("helenvu")  # exists
+    check_player_exists("hsfhsvsd")  # doesn't exist
 
     # Add a new player to players table:
     add_new_player("marshmallow-squisher")
@@ -539,10 +539,9 @@ def main():
     update_player_answer_is_correct(game_id, player_id, question_id, player_answer)
 
     # Update total_score in scoreboard after each question is answered:
-    update_scoreboard_total_score(2,2)
+    update_scoreboard_total_score(2, 2)
 
 
-#     # add new player
 #     player_info = check_and_add_player('JohnDoe', 'password123')
 #     print(player_info)
 
