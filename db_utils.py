@@ -66,7 +66,7 @@ def add_new_game(player_id):
         cur = db_connection.cursor()  # Create a cursor object to interact with the database
         print(f"Connected to database {db_name}")
 
-        # SQL query for inserting a new row into the 'players' table
+        # SQL query for inserting a new row into the 'games' table
         query = """
                 INSERT INTO games (
                     player_id
