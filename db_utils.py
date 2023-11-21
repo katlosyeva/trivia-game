@@ -18,7 +18,6 @@ def _connect_to_db(db_name):
     return connection
 
 
-
 def set_question(difficulty_level, question_text, correct_answer, incorrect_answer_1, incorrect_answer_2,
                  incorrect_answer_3):
     try:
@@ -43,12 +42,12 @@ def set_question(difficulty_level, question_text, correct_answer, incorrect_answ
 
     except Exception as exc:
         print(f"An unexpected error occurred: {exc}")
-        
+
     finally:
         if db_connection:
             db_connection.close()
 
-        
+
 # Define a function to a dd a new player and check if it exists to the players table
 def check_and_add_player(username, password):
     try:
@@ -95,7 +94,6 @@ def add_new_game(player_id, question_id, player_answer, correct_answer, is_corre
         cursor = db_connection.cursor()
         print(f"Connected to database: {db_name}")
 
-
         query = "INSERT INTO games (player_id, question_id, player_answer, correct_answer, is_correct) VALUES (%s, %s, %s, %s, %s)"
         data = (player_id, question_id, player_answer, correct_answer, is_correct)
         cursor.execute(query, data)
@@ -121,34 +119,6 @@ def add_new_game(player_id, question_id, player_answer, correct_answer, is_corre
 
 
 # Define a function to a dd a new question to the questions table
-def add_question(difficulty_level, question_text, answer, is_correct):
-    try:
-        # Establish a connection to the 'trivia_game' database
-        db_name = "trivia_game"
-        db_connection = _connect_to_db(db_name)
-        cursor = db_connection.cursor()
-        print(f"Connected to database: {db_name}")
-
-        query = "INSERT INTO questions (difficulty_level, question_text, answer, is_correct) VALUES (%s, %s, %s, %s)"
-        data = (difficulty_level, question_text, answer, is_correct)
-        cursor.execute(query, data)
-        db_connection.commit()
-
-        # Get the last inserted ID
-        question_id = cursor.lastrowid
-
-        cursor.close()
-
-    except Exception:
-        raise DbConnectionError("Failed to insert data to DB")
-
-    finally:
-        if db_connection:
-            db_connection.close()
-            print("DB connection is closed")
-
-    return {"question_id": question_id}
-
 
 # def main():
 #     # add new player
@@ -156,7 +126,5 @@ def add_question(difficulty_level, question_text, answer, is_correct):
 #     print(player_info)
 
 
-
-
 # if __name__ == '__main__':
-    # main()
+# main()
