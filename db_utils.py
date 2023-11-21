@@ -298,52 +298,6 @@ def start_game_scoreboard(game_id, player_id, total_score):
             db_connection.close()
 
 
-# def update_player_answer_is_correct(game_id, player_id, question_id, player_answer, correct_answer, is_correct):
-#     try:
-#         # Establish a connection to the MySQL database
-#         db_name = "trivia_game"
-#         db_connection = _connect_to_db(db_name)
-#         cur = db_connection.cursor()  # Create a cursor object to interact with the database
-#         print(f"Connected to database {db_name}")
-#
-#         # SQL query for updating a row in the 'game_questions' table
-#         update_query = """
-#             UPDATE game_questions
-#             SET
-#                 player_answer = %s,
-#                 is_correct = %s
-#             WHERE
-#                 game_id = %s
-#                 AND player_id = %s
-#                 AND question_id = %s
-#         """
-#
-#         # Calculate is_correct based on player_answer and correct_answer
-#         print(f"Player Answer: {player_answer}, Correct Answer: {correct_answer}")
-#         is_correct = (player_answer == correct_answer)
-#
-#         # Tuple containing the values to be updated
-#         values = (player_answer, is_correct, game_id, player_id, question_id)
-#
-#         # Execute the update query with the provided values
-#         cur.execute(update_query, values)
-#
-#         # Commit the changes to the database
-#         db_connection.commit()
-#         print("Game question updated successfully!")
-#
-#     except mysql.connector.Error as err:
-#         print(f"MySQL Error: {err}")
-#
-#     except Exception as exc:
-#         print(f"An unexpected error occurred: {exc}")
-#
-#     finally:
-#         if db_connection:
-#             # close the connection
-#             db_connection.close()
-
-
 def update_player_answer_is_correct(game_id, player_id, question_id, player_answer):
     try:
         # Establish a connection to the MySQL database
