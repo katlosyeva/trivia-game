@@ -98,8 +98,8 @@ def add_new_game(player_id):
             db_connection.close()
 
 
-def insert_into_questions(game_id, player_id, difficulty_level, question_text, correct_answer, incorrect_answer_1,
-                          incorrect_answer_2, incorrect_answer_3):
+def add_new_questions(game_id, player_id, difficulty_level, question_text, correct_answer, incorrect_answer_1,
+                      incorrect_answer_2, incorrect_answer_3):
     try:
         # Establish a connection to the MySQL database
         db_name = "trivia_game"
@@ -138,7 +138,7 @@ def insert_into_questions(game_id, player_id, difficulty_level, question_text, c
 
         # Commit the changes to the database
         db_connection.commit()
-        print(f"Question successfully added to DB!") # MAYBE ADD PLACEHOLDER TO DISPLAY QUESTION_ID?
+        print(f"Question successfully added to DB!")  # MAYBE ADD PLACEHOLDER TO DISPLAY QUESTION_ID?
 
         # Close the cursor
         cur.close()
@@ -153,6 +153,22 @@ def insert_into_questions(game_id, player_id, difficulty_level, question_text, c
         if db_connection:
             # close the connection
             db_connection.close()
+
+
+def start_game_questions():
+    pass
+
+
+def start_game_scoreboard():
+    pass
+
+
+def update_game_question():
+    pass
+
+
+def update_scoreboard():
+    pass
 
 
 def set_question(difficulty_level, question_text, correct_answer, incorrect_answer_1, incorrect_answer_2,
@@ -232,9 +248,9 @@ def main():
     add_new_game(2)
 
     # Add a new question to questions table including game_id and player_id as well:
-    insert_into_questions(1, 1, "easy", "What is the capital of France?",
-                          "Paris", "Berlin", "London",
-                          "Madrid")
+    add_new_questions(1, 1, "easy", "What is the capital of France?",
+                      "Paris", "Berlin", "London",
+                      "Madrid")
 
 
 #     # add new player
