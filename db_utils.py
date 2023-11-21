@@ -18,6 +18,46 @@ def _connect_to_db(db_name):
     return connection
 
 
+def add_new_player(username):
+    try:
+        # Establish a connection to the MySQL database
+        db_name = "trivia_game"
+        db_connection = _connect_to_db(db_name)
+        cur = db_connection.cursor()  # Create a cursor object to interact with the database
+        print(f"Connected to database {db_name}")
+
+        # SQL query for inserting a new row into the 'players' table
+        query = """
+                INSERT INTO players (
+                    username
+                ) VALUES (%s)
+                """
+
+        # values to be inserted
+        values = (username,)
+
+        # Execute the query with the provided values
+        cur.execute(query, values)
+
+        # Commit the changes to the database
+        db_connection.commit()
+        print("Player successfully added to DB!")
+
+        # Close the cursor
+        cur.close()
+
+    except mysql.connector.Error as err:
+        print(f"MySQL Error: {err}")
+
+    except Exception as exc:
+        print(f"An unexpected error occurred: {exc}")
+
+    finally:
+        if db_connection:
+            # close the connection
+            db_connection.close()
+
+
 def insert_into_questions(game_id, player_id, difficulty_level, question_text, correct_answer, incorrect_answer_1,
                           incorrect_answer_2, incorrect_answer_3):
     try:
@@ -179,6 +219,9 @@ def add_new_game(player_id, question_id, player_answer, correct_answer, is_corre
 
 def main():
     # Run relevant functions below to ensure connecting to DB is successful:
+
+    # Add a new player to players table:
+    add_new_player("marshmallow-squisher")
 
     # Add a new question to questions table including game_id and player_id as well:
     insert_into_questions(1, 1, "easy", "What is the capital of France?",
