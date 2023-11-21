@@ -163,7 +163,7 @@ def start_game_scoreboard():
     pass
 
 
-def update_game_question():
+def update_player_answer_is_correct():
     pass
 
 
