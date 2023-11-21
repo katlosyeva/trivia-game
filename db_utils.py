@@ -207,8 +207,51 @@ def start_game_questions(game_id, player_id, question_id, player_answer, correct
             db_connection.close()
 
 
-def start_game_scoreboard():
-    pass
+def start_game_scoreboard(game_id, player_id, total_score):
+    try:
+        # Establish a connection to the MySQL database
+        db_name = "trivia_game"
+        db_connection = _connect_to_db(db_name)
+        cur = db_connection.cursor()  # Create a cursor object to interact with the database
+        print(f"Connected to database {db_name}")
+
+        # SQL query for inserting a new row into the 'scoreboard' table
+        query = """
+                INSERT INTO scoreboard (
+                    game_id,
+                    player_id,
+                    total_score
+                ) VALUES (%s, %s, %s)
+                """
+
+        # Tuple containing the values to be inserted
+        values = (
+            game_id,
+            player_id,
+            total_score
+        )
+
+        # Execute the query with the provided values
+        cur.execute(query, values)
+
+        # Commit the changes to the database
+        db_connection.commit()
+        print(f"Initial start score of zero successfully added to DB!")
+
+        # Close the cursor
+        cur.close()
+
+    except mysql.connector.Error as err:
+        print(f"MySQL Error: {err}")
+
+    except Exception as exc:
+        print(f"An unexpected error occurred: {exc}")
+
+    finally:
+        if db_connection:
+            # close the connection
+            db_connection.close()
+
 
 
 def update_player_answer_is_correct():
@@ -303,6 +346,8 @@ def main():
     # Load questions into game_questions table at start of game, with player answer anf is_correct set to None
     # p.s. None in Python is equal to NULL in mySQL
     start_game_questions(2, 2, 4, None, "Paris", None)
+
+    start_game_scoreboard(2, 2, 0)
 
 
 #     # add new player
