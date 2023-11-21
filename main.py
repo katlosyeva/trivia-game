@@ -12,7 +12,7 @@ class ConnectionError(Exception):
 api_url = 'https://opentdb.com/api.php?amount={}&difficulty={}&type=multiple'
 
 
-class User:
+class Player:
 
     def __init__(self, name):
         self.name = name
