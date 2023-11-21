@@ -19,7 +19,7 @@ FLOW OF GAME:
 
    - AFTER EACH QUESTION ITERATION IN GAME where player_answer is retrieved:
        - update exisitng game_question row to SET player_answer from NULL to answer, and calculate if correct or not for is_correct column
-        - AT SAME TIME: update existing SCOREBOARD row of data to SET TOTAL_SCORE from current accumulated total_score to value of SUM of TRUE = 1's and False = 0's (see UPDATE query below),
+        - AT SAME TIME: update existing SCOREBOARD row of data (after each question) to SET TOTAL_SCORE from current accumulated total_score to value of SUM of TRUE = 1's and False = 0's (see UPDATE query below),
           e.g. 0 + 0 + 1 + 1 + 1 by the time player answers 5th question
 */
 
