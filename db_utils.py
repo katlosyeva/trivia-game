@@ -398,8 +398,45 @@ def update_player_answer_is_correct(game_id, player_id, question_id, player_answ
 # Example usage
 
 
-def update_scoreboard():
-    pass
+def update_scoreboard_total_score(game_id, player_id):
+    try:
+        # Establish a connection to the MySQL database
+        db_name = "trivia_game"
+        db_connection = _connect_to_db(db_name)
+        cur = db_connection.cursor()  # Create a cursor object to interact with the database
+        print(f"Connected to database {db_name}")
+
+        # SQL query to update total_score in the scoreboard table
+        update_query = """
+                UPDATE scoreboard sb
+                SET total_score = (
+                    SELECT SUM(CAST(gq.is_correct AS SIGNED))
+                    FROM game_questions gq
+                    WHERE gq.game_id = sb.game_id AND gq.player_id = sb.player_id
+                )
+                WHERE sb.game_id = %s AND sb.player_id = %s
+            """
+
+        # Tuple containing the values for the WHERE clause
+        values = (game_id, player_id)
+
+        # Execute the update query with the provided values
+        cur.execute(update_query, values)
+
+        # Commit the changes to the database
+        db_connection.commit()
+        print("Total score updated successfully!")
+
+    except mysql.connector.Error as err:
+        print(f"MySQL Error: {err}")
+
+    except Exception as exc:
+        print(f"An unexpected error occurred: {exc}")
+
+    finally:
+        if db_connection:
+            # Close the connection
+            db_connection.close()
 
 
 def set_question(difficulty_level, question_text, correct_answer, incorrect_answer_1, incorrect_answer_2,
@@ -494,13 +531,15 @@ def main():
     # Load scoreboard at start of game and set player's score to zero
     start_game_scoreboard(2, 2, 0)
 
-    # update game_questions with player answer and evaluate is_correct at the same time
+    # update game_questions with player_answer and evaluate whether is_correct at the same time
     game_id = 2  # Replace with the actual game_id
     player_id = 2  # Replace with the actual player_id
     question_id = 4  # Replace with the actual question_id
     player_answer = "Paris"  # Replace with the actual player's answer
-
     update_player_answer_is_correct(game_id, player_id, question_id, player_answer)
+
+    # Update total_score in scoreboard after each question is answered:
+    update_scoreboard_total_score(2,2)
 
 
 #     # add new player
