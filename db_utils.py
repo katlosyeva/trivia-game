@@ -496,9 +496,5 @@ def main():
     update_scoreboard_total_score(2, 2)
 
 
-#     player_info = check_and_add_player('JohnDoe', 'password123')
-#     print(player_info)
-
-
 if __name__ == '__main__':
     main()
