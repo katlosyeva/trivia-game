@@ -18,10 +18,67 @@ def _connect_to_db(db_name):
     return connection
 
 
+def insert_into_questions(game_id, player_id, difficulty_level, question_text, correct_answer, incorrect_answer_1,
+                          incorrect_answer_2, incorrect_answer_3):
+    try:
+        # Establish a connection to the MySQL database
+        db_name = "trivia_game"
+        db_connection = _connect_to_db(db_name)
+        cur = db_connection.cursor()  # Create a cursor object to interact with the database
+        print(f"Connected to database {db_name}")
+
+        # SQL query for inserting a new row into the 'questions' table
+        query = """
+                INSERT INTO questions (
+                    game_id,
+                    player_id,
+                    difficulty_level,
+                    question_text,
+                    correct_answer,
+                    incorrect_answer_1,
+                    incorrect_answer_2,
+                    incorrect_answer_3
+                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+                """
+
+        # Tuple containing the values to be inserted
+        values = (
+            game_id,
+            player_id,
+            difficulty_level,
+            question_text,
+            correct_answer,
+            incorrect_answer_1,
+            incorrect_answer_2,
+            incorrect_answer_3
+        )
+
+        # Execute the query with the provided values
+        cur.execute(query, values)
+
+        # Commit the changes to the database
+        db_connection.commit()
+        print("Questions row inserted successfully!")
+
+        # Close the cursor
+        cur.close()
+
+    except mysql.connector.Error as err:
+        print(f"MySQL Error: {err}")
+
+    except Exception as exc:
+        print(f"An unexpected error occurred: {exc}")
+
+    finally:
+        if db_connection:
+            # close the connection
+            db_connection.close()
+
+
 def set_question(difficulty_level, question_text, correct_answer, incorrect_answer_1, incorrect_answer_2,
                  incorrect_answer_3):
     try:
-        db_name = 'trivia_game'
+        db_name = "trivia_game"
         db_connection = _connect_to_db(db_name)
         cur = db_connection.cursor()
         print(f"Connected to database {db_name}")
@@ -120,11 +177,19 @@ def add_new_game(player_id, question_id, player_answer, correct_answer, is_corre
 
 # Define a function to a dd a new question to the questions table
 
-# def main():
+def main():
+    # Run relevant functions below to ensure connecting to DB is successful:
+
+    # Add a new question to questions table including game_id and player_id as well:
+    insert_into_questions(1, 1, "easy", "What is the capital of France?",
+                          "Paris", "Berlin", "London",
+                          "Madrid")
+
+
 #     # add new player
 #     player_info = check_and_add_player('JohnDoe', 'password123')
 #     print(player_info)
 
 
-# if __name__ == '__main__':
-# main()
+if __name__ == '__main__':
+    main()

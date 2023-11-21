@@ -78,6 +78,20 @@ CREATE TABLE scoreboard (
     FOREIGN KEY (player_id) REFERENCES players(id)
 );
 
+-- WHEN USER REGISTERS:
+INSERT INTO players (username)
+VALUES
+	('helenvu');
+    
+
+-- RUN GAME TO START:
+INSERT INTO games (player_id)
+VALUES
+	(1);
+
+
+
+
 -- AT START OF GAME(1):
 -- example of inserting new questions data to questions table when APU is called, and also inserting game_id and player_id as 
 -- we will know game_id and player_id from already registering player and starting game:
@@ -137,6 +151,14 @@ SET total_score = (
     FROM game_questions
     WHERE game_id = sb.game_id AND player_id = sb.player_id -- MAKE SURE game_id and player_id is correct for the current game being played.
 );
+
+
+-- See all data from tables:
+SELECT * FROM players;
+SELECT * FROM games;
+SELECT * FROM questions;
+SELECT * FROM game_questions;
+SELECT * FROM scoreboard;
 
 
 -- LEADERBOARD TO DISPLAY: (we don't need to create a new table for leaderboard - just select top 10 scores):
