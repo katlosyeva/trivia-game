@@ -463,7 +463,8 @@ def total_score_dict(scores):
             {
                 "game_id": i[0],
                 "player_id": i[1],
-                "total_score": i[2]
+                "username": i[2],  # Assuming the username is the third column
+                "total_score": i[3]  # Assuming the total_score is the fourth column
             }
         )
     return score
@@ -477,11 +478,12 @@ def display_total_score(game_id, player_id):
         cur = db_connection.cursor()  # Create a cursor object to interact with the database
         print(f"Connected to database {db_name}")
 
-        # SQL query to fetch the total score for the specified game and player
+        # SQL query to fetch the total score and username for the specified game and player
         query = """
-                SELECT game_id, player_id, total_score
-                FROM scoreboard
-                WHERE game_id = %s AND player_id = %s
+                SELECT s.game_id, s.player_id, p.username, s.total_score
+                FROM scoreboard s
+                JOIN players p ON s.player_id = p.id
+                WHERE s.game_id = %s AND s.player_id = %s
             """
         cur.execute(query, (game_id, player_id))
         results = cur.fetchall()
@@ -490,7 +492,7 @@ def display_total_score(game_id, player_id):
         if results:
             total_score_displayed = total_score_dict(results)[0]
             print(f"For Game ID {game_id}, Player ID {player_id}:")
-            print(f"Your total score is {total_score_displayed['total_score']}!\n")
+            print(f"{total_score_displayed['username']} | TOTAL SCORE = {total_score_displayed['total_score']}\n")
         else:
             print(f"No total score found for Game ID {game_id}, Player ID {player_id}.\n")
 
