@@ -90,7 +90,7 @@ def add_new_player(username):
         db_connection.commit()
         print("Player successfully added to DB!")
 
-        # Get the ID of the last inserted row
+        # Get the ID of the last inserted row (player_id)
         player_id = cur.lastrowid
         print(f"add_new_player function returns player_id: {player_id}\n")
 
@@ -110,8 +110,7 @@ def add_new_player(username):
             # close the connection
             db_connection.close()
 
-    return player_id
-
+    return {"player_id:": player_id}, player_id
 
 
 # DB function to add new game to DB
@@ -138,21 +137,29 @@ def add_new_game(player_id):
 
         # Commit the changes to the database
         db_connection.commit()
-        print("Game successfully added to DB!\n")
+        print("Game successfully added to DB!")
+
+        # Get the ID of the last inserted row (game_id)
+        game_id = cur.lastrowid
+        print(f"add_new_game function returns game_id: {game_id}\n")
 
         # Close the cursor
         cur.close()
 
     except mysql.connector.Error as err:
         print(f"MySQL Error: {err}\n")
+        game_id = None  # Set game_id to None in case of an error
 
     except Exception as exc:
         print(f"An unexpected error occurred: {exc}\n")
+        game_id = None  # Set game_id to None in case of an error
 
     finally:
         if db_connection:
             # close the connection
             db_connection.close()
+
+    return {"game_id:": game_id}, game_id
 
 
 # DB function to add questions data to questions table in DB - will be used for API call
@@ -196,7 +203,11 @@ def add_new_questions(game_id, player_id, difficulty_level, question_text, corre
 
         # Commit the changes to the database
         db_connection.commit()
-        print(f"Question successfully added to DB!\n")  # MAYBE ADD PLACEHOLDER TO DISPLAY QUESTION_ID?
+        print(f"Question successfully added to DB!")
+
+        # Get the last inserted ID (question_id)
+        question_id = cur.lastrowid
+        print(f"add_new_questions function returns question_id: {question_id}\n")
 
         # Close the cursor
         cur.close()
@@ -211,6 +222,8 @@ def add_new_questions(game_id, player_id, difficulty_level, question_text, corre
         if db_connection:
             # close the connection
             db_connection.close()
+
+    return {"question_id:": question_id}, question_id
 
 
 # DB function to populate game_questions table with data at START of game:
@@ -251,7 +264,11 @@ def start_game_questions(game_id, player_id, question_id, player_answer, correct
 
         # Commit the changes to the database
         db_connection.commit()
-        print(f"Game question successfully added to DB!\n")
+        print(f"Game question successfully added to DB!")
+
+        # Get the last inserted ID (game_question_id)
+        game_question_id = cur.lastrowid
+        print(f"start_game_questions function returns game_question_id: {game_question_id}\n")
 
         # Close the cursor
         cur.close()
@@ -266,6 +283,8 @@ def start_game_questions(game_id, player_id, question_id, player_answer, correct
         if db_connection:
             # close the connection
             db_connection.close()
+
+    return game_question_id
 
 
 def start_game_scoreboard(game_id, player_id, total_score):
@@ -299,6 +318,10 @@ def start_game_scoreboard(game_id, player_id, total_score):
         db_connection.commit()
         print(f"Initial start score of zero successfully added to DB!\n")
 
+        # Get the last inserted ID (scoreboard_id)
+        scoreboard_id = cur.lastrowid
+        print(f"start_game_scoreboard function returns scoreboard_id: {scoreboard_id}\n")
+
         # Close the cursor
         cur.close()
 
@@ -312,6 +335,8 @@ def start_game_scoreboard(game_id, player_id, total_score):
         if db_connection:
             # close the connection
             db_connection.close()
+
+    return scoreboard_id
 
 
 # Define function to convert question data into dictionary for easier handling in main.py:
@@ -330,7 +355,7 @@ def question_dict(questions):
     return question
 
 
-def display_question_to_player(game_id, player_id, id):  # id = id in 'questions' table
+def display_question_to_player(game_id, player_id, question_id):
     try:
         # Establish a connection to the MySQL database
         db_name = "trivia_game"
@@ -338,21 +363,21 @@ def display_question_to_player(game_id, player_id, id):  # id = id in 'questions
         cur = db_connection.cursor()  # Create a cursor object to interact with the database
         print(f"Connected to database {db_name}")
 
-        # SQL query for inserting a new row into the 'scoreboard' table
-        query = (f"""
+        # SQL query to fetch the question details
+        query = f"""
                 SELECT question_text, correct_answer, incorrect_answer_1, incorrect_answer_2, incorrect_answer_3
                 FROM questions
                 WHERE game_id = {game_id}
                 AND player_id = {player_id}
-                AND id = {id}
-                """)
+                AND id = {question_id}
+            """
         cur.execute(query)
         results = cur.fetchall()
         cur.close()
 
         if results:
             question_displayed = question_dict(results)[0]
-            print(f"question_id: {id}")
+            print(f"question_id: {question_id}")
             print(question_displayed)
             print("Question fetched from DB!\n")
         else:
@@ -366,7 +391,24 @@ def display_question_to_player(game_id, player_id, id):  # id = id in 'questions
         if db_connection:
             db_connection.close()
 
-    return question_displayed
+    # Return the individual variables
+    if question_displayed:
+        question_text = question_displayed["question_text"]
+        correct_answer = question_displayed["correct_answer"]
+        incorrect_answer_1 = question_displayed["incorrect_answer_1"]
+        incorrect_answer_2 = question_displayed["incorrect_answer_2"]
+        incorrect_answer_3 = question_displayed["incorrect_answer_3"]
+
+        print("Question Details:")
+        print(f"question_text: {question_text}")
+        print(f"correct_answer: {correct_answer}")
+        print(f"incorrect_answer_1: {incorrect_answer_1}")
+        print(f"incorrect_answer_2: {incorrect_answer_2}")
+        print(f"incorrect_answer_3: {incorrect_answer_3}\n")
+
+        return question_text, correct_answer, incorrect_answer_1, incorrect_answer_2, incorrect_answer_3
+    else:
+        return None
 
 
 # Update game_questions with player_answer and evaluate whether is_correct is True (1) or False (0).
