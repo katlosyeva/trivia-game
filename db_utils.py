@@ -88,21 +88,30 @@ def add_new_player(username):
 
         # Commit the changes to the database
         db_connection.commit()
-        print("Player successfully added to DB!\n")
+        print("Player successfully added to DB!")
+
+        # Get the ID of the last inserted row
+        player_id = cur.lastrowid
+        print(f"add_new_player function returns player_id: {player_id}\n")
 
         # Close the cursor
         cur.close()
 
     except mysql.connector.Error as err:
         print(f"MySQL Error: {err}")
+        player_id = None  # Set player_id to None in case of an error
 
     except Exception as exc:
         print(f"An unexpected error occurred: {exc}\n")
+        player_id = None  # Set player_id to None in case of an error
 
     finally:
         if db_connection:
             # close the connection
             db_connection.close()
+
+    return player_id
+
 
 
 # DB function to add new game to DB
