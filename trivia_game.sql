@@ -3,9 +3,9 @@ NOTES FOR GROUP 5 team members:
 
 FLOW OF GAME: 
 
-1. ASKED IF NEW PLAYER OR EXISITNG:
+1. ASKED IF NEW PLAYER OR EXISTING:
 	- IF NEW: ask player to create a username and ADD TO Players table, and player id = id WHERE username = "new username"
-    - IF EXISITNG: player id = id WHERE username = "given username'
+    - IF EXISTING: player id = id WHERE username = "given username'
 2. ASKED TO START GAME? 
     - IF NO: exit
     - IF YES: START GAME: INSERT player_id to games table
@@ -18,7 +18,7 @@ FLOW OF GAME:
         - ALSO AT SAME TIME: populate scoreboard table (game_id, player_id, total_score(0))
 
    - AFTER EACH QUESTION ITERATION IN GAME where player_answer is retrieved:
-       - update exisitng game_question row to SET player_answer from NULL to answer, and calculate if correct or not for is_correct column
+       - update existing game_question row to SET player_answer from NULL to answer, and calculate if correct or not for is_correct column
         - AT SAME TIME: update existing SCOREBOARD row of data (after each question) to SET TOTAL_SCORE from current accumulated total_score to value of SUM of TRUE = 1's and False = 0's (see UPDATE query below),
           e.g. 0 + 0 + 1 + 1 + 1 by the time player answers 5th question
 */
@@ -131,7 +131,7 @@ VALUES (1, 1, 0); -- Replace with actual game_id and player_id, then:
 UPDATE game_questions
 SET 
     player_answer = 'Boston Bruins',  -- Replace with the actual player's answer
-    is_correct = TRUE  -- Replace with the actual boolean indicating correctness (need to write a python function to evaulate player_answer against correct_answer in game_questions table)
+    is_correct = TRUE  -- Replace with the actual boolean indicating correctness (need to write a python function to evaluate player_answer against correct_answer in game_questions table)
 WHERE
     game_id = 1  -- Replace with the actual game_id - THIS STAYS THE SAME IN THE WHOLE GAME
     AND player_id = 1  -- Replace with the actual player_id - THIS STAYS THE SAME IN THE WHOLE GAME
@@ -160,12 +160,19 @@ SELECT * FROM questions;
 SELECT * FROM game_questions;
 SELECT * FROM scoreboard;
 
+-- Show player their current total_score at end of game/at any point in the game:
+SELECT total_score
+FROM scoreboard
+WHERE game_id = 1
+AND player_id =1;
+
 
 -- LEADERBOARD TO DISPLAY: (we don't need to create a new table for leaderboard - just select top 10 scores):
 -- example of using SELECT query to get top 10 scores to display on the Leaderboard
-SELECT *
-FROM scoreboard
-ORDER BY total_score DESC
+SELECT s.game_id, s.player_id, p.username, s.total_score
+FROM scoreboard s
+JOIN players p ON s.player_id = p.id
+ORDER BY s.total_score DESC
 LIMIT 10;
 
 -- Display question to user query example query

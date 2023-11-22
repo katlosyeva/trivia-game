@@ -18,6 +18,7 @@ def _connect_to_db(db_name):
     return connection
 
 
+# DB function which check if player's username exists in DB
 def check_player_exists(username):
     try:
         # Establish a connection to the MySQL database
@@ -63,6 +64,7 @@ def check_player_exists(username):
             db_connection.close()
 
 
+# DB function which adds new player to DB
 def add_new_player(username):
     try:
         # Establish a connection to the MySQL database
@@ -103,6 +105,7 @@ def add_new_player(username):
             db_connection.close()
 
 
+# DB function to add new game to DB
 def add_new_game(player_id):
     try:
         # Establish a connection to the MySQL database
@@ -143,6 +146,7 @@ def add_new_game(player_id):
             db_connection.close()
 
 
+# DB function to add questions data to questions table in DB - will be used for API call
 def add_new_questions(game_id, player_id, difficulty_level, question_text, correct_answer, incorrect_answer_1,
                       incorrect_answer_2, incorrect_answer_3):
     try:
@@ -200,6 +204,9 @@ def add_new_questions(game_id, player_id, difficulty_level, question_text, corre
             db_connection.close()
 
 
+# DB function to populate game_questions table with data at START of game:
+# MAKE SURE TO: input player_answer = None, AND: input is_correct = None.
+# The player_answer and is_correct columns will be updated later once player starts playing
 def start_game_questions(game_id, player_id, question_id, player_answer, correct_answer, is_correct):
     try:
         # Establish a connection to the MySQL database
@@ -298,21 +305,7 @@ def start_game_scoreboard(game_id, player_id, total_score):
             db_connection.close()
 
 
-# convert question JSON into Python dictionary for easier handling in main.py
-# def question_dict(questions):
-#     question = []
-#     for i in questions:
-#         question.append(
-#             {
-#                 "question_text": i[0],
-#                 "correct_answer": i[1],
-#                 "incorrect_answer_1": i[2],
-#                 "incorrect_answer_2": i[3],
-#                 "incorrect_answer_3": i[4]
-#             }
-#         )
-#     return question
-
+# Define function to convert question data into dictionary for easier handling in main.py:
 def question_dict(questions):
     question = []
     for i in questions:
@@ -367,18 +360,8 @@ def display_question_to_player(game_id, player_id, id):  # id = id in 'questions
     return question_displayed
 
 
-def display_current_total_score():
-    pass
-
-
-def display_total_score_end():
-    pass
-
-
-def show_leaderboard():
-    pass
-
-
+# Update game_questions with player_answer and evaluate whether is_correct is True (1) or False (0).
+# The 1 and 0 also equals the points value which will be added in another function
 def update_player_answer_is_correct(game_id, player_id, question_id, player_answer):
     try:
         # Establish a connection to the MySQL database
@@ -430,9 +413,7 @@ def update_player_answer_is_correct(game_id, player_id, question_id, player_answ
             db_connection.close()
 
 
-# Example usage
-
-
+# DB function to update scoreboard after every question in the game, including after last question when game ends:
 def update_scoreboard_total_score(game_id, player_id):
     try:
         # Establish a connection to the MySQL database
@@ -474,41 +455,91 @@ def update_scoreboard_total_score(game_id, player_id):
             db_connection.close()
 
 
-# Define a function to a dd a new player and check if it exists to the players table
-def check_and_add_player(username, password):
+# Define function to convert scoreboard data into dictionary for easier handling in main.py:
+def total_score_dict(scores):
+    score = []
+    for i in scores:
+        score.append(
+            {
+                "game_id": i[0],
+                "player_id": i[1],
+                "total_score": i[2]
+            }
+        )
+    return score
+
+
+def display_total_score(game_id, player_id):
     try:
+        # Establish a connection to the MySQL database
         db_name = "trivia_game"
         db_connection = _connect_to_db(db_name)
-        cursor = db_connection.cursor()
+        cur = db_connection.cursor()  # Create a cursor object to interact with the database
+        print(f"Connected to database {db_name}")
 
-        # Check if the player exists
-        query = "SELECT id, username FROM players WHERE username = %s and password = %s"
-        cursor.execute(query, (username, password))
-        existing_player = cursor.fetchone()
+        # SQL query to fetch the total score for the specified game and player
+        query = """
+                SELECT game_id, player_id, total_score
+                FROM scoreboard
+                WHERE game_id = %s AND player_id = %s
+            """
+        cur.execute(query, (game_id, player_id))
+        results = cur.fetchall()
+        cur.close()
 
-        if existing_player:
-            # Player exists, return ID and username
-            player_id, existing_username = existing_player
-            print(f"Player {existing_username} with ID {player_id} already exists.\n")
-            return {"player_id": player_id, "username": existing_username}
+        if results:
+            total_score_displayed = total_score_dict(results)[0]
+            print(f"For Game ID {game_id}, Player ID {player_id}:")
+            print(f"Your total score is {total_score_displayed['total_score']}!\n")
         else:
-            # Player does not exist, add a new player
-            insert_query = "INSERT INTO players (username, password) VALUES (%s, %s)"
-            data = (username, password)
-            cursor.execute(insert_query, data)
-            db_connection.commit()
-
-            new_player_id = cursor.lastrowid
-            print(f"New player {username} added with ID {new_player_id}.\n")
-            return {"player_id": new_player_id, "username": username}
+            print(f"No total score found for Game ID {game_id}, Player ID {player_id}.\n")
 
     except Exception:
-        raise DbConnectionError("Failed to insert data to DB")
+        raise DbConnectionError("Failed to fetch total score from DB\n")
 
     finally:
         if db_connection:
             db_connection.close()
-            print("DB connection is closed")
+
+
+# DB function to show Top 10 scores from scoreboard table - THIS ACTS AS THE LEADERBOARD
+def get_leaderboard():
+    try:
+        # Establish a connection to the MySQL database
+        db_name = "trivia_game"
+        db_connection = _connect_to_db(db_name)
+        cur = db_connection.cursor(dictionary=True)  # Use dictionary cursor for easier result handling
+        print(f"Connected to database {db_name}")
+
+        # SQL query to fetch the top 10 scores from the scoreboard with corresponding usernames
+        query = """
+            SELECT s.game_id, s.player_id, p.username, s.total_score
+            FROM scoreboard s
+            JOIN players p ON s.player_id = p.id
+            ORDER BY s.total_score DESC
+            LIMIT 10;
+        """
+        cur.execute(query)
+        leaderboard_results = cur.fetchall()
+        cur.close()
+
+        leaderboard = []
+        for result in leaderboard_results:
+            leaderboard.append({
+                "game_id": result["game_id"],
+                "player_id": result["player_id"],
+                "username": result["username"],
+                "total_score": result["total_score"]
+            })
+
+        return leaderboard
+
+    except Exception:
+        raise DbConnectionError("Failed to fetch leaderboard from DB\n")
+
+    finally:
+        if db_connection:
+            db_connection.close()
 
 
 def main():
@@ -549,11 +580,20 @@ def main():
     # Update total_score in scoreboard after each question is answered:
     update_scoreboard_total_score(2, 2)
 
+    # Display player's total_score in their game to player:
+    display_total_score(2, 2)
+
+    # Show Leaderboard (Top 10 scores of all time):
+    leaderboard = get_leaderboard()
+    print("Leaderboard:")
+    for entry in leaderboard:
+        print(entry)
+
 
 if __name__ == '__main__':
     main()
 
-
+# COMMENTED OUT CODE WE MAY OR MAY NOT USE AGAIN:
 
 # def display_question_to_player(game_id, player_id, id):  # id = id in 'questions' table
 #     try:
@@ -589,9 +629,6 @@ if __name__ == '__main__':
 #     return question_displayed
 
 
-
-
-
 # def set_question(difficulty_level, question_text, correct_answer, incorrect_answer_1, incorrect_answer_2,
 #                  incorrect_answer_3):
 #     try:
@@ -620,3 +657,40 @@ if __name__ == '__main__':
 #     finally:
 #         if db_connection:
 #             db_connection.close()
+
+
+# # Define a function to a dd a new player and check if it exists to the players table
+# def check_and_add_player(username, password):
+#     try:
+#         db_name = "trivia_game"
+#         db_connection = _connect_to_db(db_name)
+#         cursor = db_connection.cursor()
+#
+#         # Check if the player exists
+#         query = "SELECT id, username FROM players WHERE username = %s and password = %s"
+#         cursor.execute(query, (username, password))
+#         existing_player = cursor.fetchone()
+#
+#         if existing_player:
+#             # Player exists, return ID and username
+#             player_id, existing_username = existing_player
+#             print(f"Player {existing_username} with ID {player_id} already exists.\n")
+#             return {"player_id": player_id, "username": existing_username}
+#         else:
+#             # Player does not exist, add a new player
+#             insert_query = "INSERT INTO players (username, password) VALUES (%s, %s)"
+#             data = (username, password)
+#             cursor.execute(insert_query, data)
+#             db_connection.commit()
+#
+#             new_player_id = cursor.lastrowid
+#             print(f"New player {username} added with ID {new_player_id}.\n")
+#             return {"player_id": new_player_id, "username": username}
+#
+#     except Exception:
+#         raise DbConnectionError("Failed to insert data to DB")
+#
+#     finally:
+#         if db_connection:
+#             db_connection.close()
+#             print("DB connection is closed")
