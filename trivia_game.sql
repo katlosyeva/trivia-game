@@ -167,3 +167,10 @@ SELECT *
 FROM scoreboard
 ORDER BY total_score DESC
 LIMIT 10;
+
+-- Display question to user query example query
+SELECT question_text, correct_answer, incorrect_answer_1, incorrect_answer_2, incorrect_answer_2
+FROM questions
+WHERE game_id = 1
+AND player_id = 1
+AND id = 1
