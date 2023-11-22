@@ -1,28 +1,38 @@
-// Congratulations.js
 import React from "react";
-import { Typography, Button } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { Typography, Button, Box } from "@mui/material";
+import { useLocation, useNavigate } from "react-router-dom";
 
-const Congratulations = ({ points }) => {
+const Congratulations = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const score = location.state.score;
 
   const handlePlayAgain = () => {
-    // Navigate to the home page or the starting point of your game
     navigate("/");
   };
 
   return (
-    <div>
+    <Box
+      sx={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        flexDirection: "column",
+        minHeight: "100vh",
+        m: "0 auto",
+        gap: 3,
+      }}
+    >
       <Typography variant="h4" gutterBottom>
         Congratulations!
       </Typography>
       <Typography variant="h6" paragraph>
-        You scored {points} points.
+        You scored {score} points.
       </Typography>
       <Button variant="contained" color="primary" onClick={handlePlayAgain}>
         Play Again
       </Button>
-    </div>
+    </Box>
   );
 };
 

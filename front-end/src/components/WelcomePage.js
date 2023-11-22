@@ -1,11 +1,19 @@
-// WelcomePage.js
 import React from "react";
 import { Link } from "react-router-dom";
-import { Button, Typography } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 
 const WelcomePage = () => {
   return (
-    <div>
+    <Box
+      sx={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        flexDirection: "column",
+        minHeight: "100vh",
+        m: "0 auto",
+      }}
+    >
       <Typography variant="h4" gutterBottom>
         Welcome to Trivia Game
       </Typography>
@@ -21,7 +29,7 @@ const WelcomePage = () => {
       >
         Login
       </Button>
-    </div>
+    </Box>
   );
 };
 

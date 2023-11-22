@@ -1,38 +1,46 @@
-// RegisterLogin.js
 import React, { useState } from "react";
-import { TextField, Button, Box } from "@mui/material";
+import { TextField, Button, Box, Typography } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
-const RegisterLogin = ({ onLogin }) => {
+const RegisterLogin = () => {
   const [username, setUsername] = useState("");
-  console.log(
-    "🚀 ~ file: RegisterLogin.js:7 ~ RegisterLogin ~ username:",
-    username
-  );
   const [password, setPassword] = useState("");
-
+  const navigate = useNavigate();
   const handleLogin = () => {
-    // Send login data to the backend
-    fetch("/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ username, password }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        // Save user_id and game_id to localStorage
-        localStorage.setItem("user_id", data.user_id);
-        localStorage.setItem("game_id", data.game_id);
+    //TODO change when BE login is ready
+    // fetch("/login", {
+    //   method: "POST",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //   },
+    //   body: JSON.stringify({ username, password }),
+    // })
+    //   .then((response) => response.json())
+    //   .then((data) => {
 
-        // Trigger the onLogin callback
-        onLogin();
-      })
-      .catch((error) => console.error("Error logging in:", error));
+    // })
+    // .catch((error) => console.error("Error logging in:", error));
+    localStorage.setItem("user_id", 22);
+    localStorage.setItem("game_id", 22);
+
+    navigate("/game");
   };
 
   return (
-    <Box sx={{ m: 4 }}>
+    <Box
+      sx={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        flexDirection: "column",
+        minHeight: "100vh",
+        m: "0 auto",
+        gap: 3,
+      }}
+    >
+      <Typography variant="h4" gutterBottom>
+        Please login to start your game
+      </Typography>
       <TextField
         label="Username"
         value={username}
