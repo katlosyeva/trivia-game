@@ -18,8 +18,11 @@ def _connect_to_db(db_name):
     return connection
 
 
-# DB function which check if player's username exists in DB
-def check_player_exists(username):
+# Function which checks whether username exists and returns player_id,
+# and if username does not exist, new username is added to players and returns new player_id:
+def get_or_add_player_id(username):
+    player_id = None
+
     try:
         # Establish a connection to the MySQL database
         db_name = "trivia_game"
@@ -28,86 +31,39 @@ def check_player_exists(username):
         print(f"Connected to database {db_name}")
 
         # SQL query to check if player username exists
-        query = "SELECT username FROM players where username = %s"
-
-        # values to be checked
+        check_query = "SELECT id FROM players WHERE username = %s"
         values = (username,)
+        cur.execute(check_query, values)
+        existing_player_id = cur.fetchone()
 
-        # Execute the query with the provided values
-        cur.execute(query, values)
-
-        # Fetch the result (customer ID) from the query
-        result = cur.fetchone()
-
-        if result:
+        if existing_player_id:
             # Player exists
-            print(f"Username {username} already exists in the database.\n")
-            return True
+            player_id = existing_player_id[0]
+            print(f"Username '{username}' already exists in the database.")
+            print(f"For existing username '{username}', player_id: {player_id}\n")
         else:
-            # Player does not exist
-            print(f"Username {username} does not exist in the database.\n")
-            return False
+            # Player does not exist, add the new player
+            add_query = "INSERT INTO players (username) VALUES (%s)"
+            cur.execute(add_query, values)
+            db_connection.commit()
+            print("Player successfully added to DB!")
+
+            # Get the ID of the last inserted row (player_id)
+            player_id = cur.lastrowid
+            print(f"For new username '{username}', new player_id: {player_id}\n")
 
     except mysql.connector.Error as err:
         print(f"MySQL Error: {err}")
-    except Exception as e:
-        raise DbConnectionError("Failed to check if the player exists in the database\n")
+
     except Exception as exc:
-        print(f"An unexpected error occurred: {exc}")
+        print(f"An unexpected error occurred: {exc}\n")
 
     finally:
         if cur:
             # Close the cursor
             cur.close()
         if db_connection:
-            # close the connection
-            db_connection.close()
-
-
-# DB function which adds new player to DB
-def add_new_player(username):
-    try:
-        # Establish a connection to the MySQL database
-        db_name = "trivia_game"
-        db_connection = _connect_to_db(db_name)
-        cur = db_connection.cursor()  # Create a cursor object to interact with the database
-        print(f"Connected to database {db_name}")
-
-        # SQL query for inserting a new row into the 'players' table
-        query = """
-                INSERT INTO players (
-                    username
-                ) VALUES (%s)
-                """
-
-        # values to be inserted
-        values = (username,)
-
-        # Execute the query with the provided values
-        cur.execute(query, values)
-
-        # Commit the changes to the database
-        db_connection.commit()
-        print("Player successfully added to DB!")
-
-        # Get the ID of the last inserted row (player_id)
-        player_id = cur.lastrowid
-        print(f"add_new_player function returns player_id: {player_id}\n")
-
-        # Close the cursor
-        cur.close()
-
-    except mysql.connector.Error as err:
-        print(f"MySQL Error: {err}")
-        player_id = None  # Set player_id to None in case of an error
-
-    except Exception as exc:
-        print(f"An unexpected error occurred: {exc}\n")
-        player_id = None  # Set player_id to None in case of an error
-
-    finally:
-        if db_connection:
-            # close the connection
+            # Close the connection
             db_connection.close()
 
     return {"player_id:": player_id}, player_id
@@ -598,12 +554,9 @@ def get_leaderboard():
 def main():
     # Run relevant functions below to ensure connecting to DB is successful:
 
-    # Check player username exists:
-    check_player_exists("helenvu")  # exists
-    check_player_exists("hsfhsvsd")  # doesn't exist
-
-    # Add a new player to players table:
-    add_new_player("marshmallow-squisher")
+    # Check if username exists, if exists, return player_id, if not, add new player and then return new player_id:
+    get_or_add_player_id("helenvu") # username exists
+    get_or_add_player_id("marshmallow_squisher") # username does not exist
 
     # Add a new game to DB when player starts game:
     add_new_game(2)

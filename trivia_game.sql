@@ -4,8 +4,8 @@ NOTES FOR GROUP 5 team members:
 FLOW OF GAME: 
 
 1. ASKED IF NEW PLAYER OR EXISTING:
-	- IF NEW: ask player to create a username and ADD TO Players table, and player id = id WHERE username = "new username"
-    - IF EXISTING: player id = id WHERE username = "given username'
+	- IF NEW: ask player to create a username and ADD TO Players table, and player_id is returned
+    - IF EXISTING: player id is returned
 2. ASKED TO START GAME? 
     - IF NO: exit
     - IF YES: START GAME: INSERT player_id to games table
