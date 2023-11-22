@@ -40,17 +40,17 @@ def check_player_exists(username):
 
         if result:
             # Player exists
-            print(f"Username {username} already exists in the database.")
+            print(f"Username {username} already exists in the database.\n")
             return True
         else:
             # Player does not exist
-            print(f"Username {username} does not exist in the database.")
+            print(f"Username {username} does not exist in the database.\n")
             return False
 
     except mysql.connector.Error as err:
         print(f"MySQL Error: {err}")
     except Exception as e:
-        raise DbConnectionError("Failed to check if the player exists in the database")
+        raise DbConnectionError("Failed to check if the player exists in the database\n")
     except Exception as exc:
         print(f"An unexpected error occurred: {exc}")
 
@@ -86,7 +86,7 @@ def add_new_player(username):
 
         # Commit the changes to the database
         db_connection.commit()
-        print("Player successfully added to DB!")
+        print("Player successfully added to DB!\n")
 
         # Close the cursor
         cur.close()
@@ -95,7 +95,7 @@ def add_new_player(username):
         print(f"MySQL Error: {err}")
 
     except Exception as exc:
-        print(f"An unexpected error occurred: {exc}")
+        print(f"An unexpected error occurred: {exc}\n")
 
     finally:
         if db_connection:
@@ -126,16 +126,16 @@ def add_new_game(player_id):
 
         # Commit the changes to the database
         db_connection.commit()
-        print("Game successfully added to DB!")
+        print("Game successfully added to DB!\n")
 
         # Close the cursor
         cur.close()
 
     except mysql.connector.Error as err:
-        print(f"MySQL Error: {err}")
+        print(f"MySQL Error: {err}\n")
 
     except Exception as exc:
-        print(f"An unexpected error occurred: {exc}")
+        print(f"An unexpected error occurred: {exc}\n")
 
     finally:
         if db_connection:
@@ -183,16 +183,16 @@ def add_new_questions(game_id, player_id, difficulty_level, question_text, corre
 
         # Commit the changes to the database
         db_connection.commit()
-        print(f"Question successfully added to DB!")  # MAYBE ADD PLACEHOLDER TO DISPLAY QUESTION_ID?
+        print(f"Question successfully added to DB!\n")  # MAYBE ADD PLACEHOLDER TO DISPLAY QUESTION_ID?
 
         # Close the cursor
         cur.close()
 
     except mysql.connector.Error as err:
-        print(f"MySQL Error: {err}")
+        print(f"MySQL Error: {err}\n")
 
     except Exception as exc:
-        print(f"An unexpected error occurred: {exc}")
+        print(f"An unexpected error occurred: {exc}\n")
 
     finally:
         if db_connection:
@@ -235,16 +235,16 @@ def start_game_questions(game_id, player_id, question_id, player_answer, correct
 
         # Commit the changes to the database
         db_connection.commit()
-        print(f"Game question successfully added to DB!")
+        print(f"Game question successfully added to DB!\n")
 
         # Close the cursor
         cur.close()
 
     except mysql.connector.Error as err:
-        print(f"MySQL Error: {err}")
+        print(f"MySQL Error: {err}\n")
 
     except Exception as exc:
-        print(f"An unexpected error occurred: {exc}")
+        print(f"An unexpected error occurred: {exc}\n")
 
     finally:
         if db_connection:
@@ -281,21 +281,102 @@ def start_game_scoreboard(game_id, player_id, total_score):
 
         # Commit the changes to the database
         db_connection.commit()
-        print(f"Initial start score of zero successfully added to DB!")
+        print(f"Initial start score of zero successfully added to DB!\n")
 
         # Close the cursor
         cur.close()
 
     except mysql.connector.Error as err:
-        print(f"MySQL Error: {err}")
+        print(f"MySQL Error: {err}\n")
 
     except Exception as exc:
-        print(f"An unexpected error occurred: {exc}")
+        print(f"An unexpected error occurred: {exc}\n")
 
     finally:
         if db_connection:
             # close the connection
             db_connection.close()
+
+
+# convert question JSON into Python dictionary for easier handling in main.py
+# def question_dict(questions):
+#     question = []
+#     for i in questions:
+#         question.append(
+#             {
+#                 "question_text": i[0],
+#                 "correct_answer": i[1],
+#                 "incorrect_answer_1": i[2],
+#                 "incorrect_answer_2": i[3],
+#                 "incorrect_answer_3": i[4]
+#             }
+#         )
+#     return question
+
+def question_dict(questions):
+    question = []
+    for i in questions:
+        question.append(
+            {
+                "question_text": i[0],
+                "correct_answer": i[1],
+                "incorrect_answer_1": i[2],
+                "incorrect_answer_2": i[3],
+                "incorrect_answer_3": i[4]
+            }
+        )
+    return question
+
+
+def display_question_to_player(game_id, player_id, id):  # id = id in 'questions' table
+    try:
+        # Establish a connection to the MySQL database
+        db_name = "trivia_game"
+        db_connection = _connect_to_db(db_name)
+        cur = db_connection.cursor()  # Create a cursor object to interact with the database
+        print(f"Connected to database {db_name}")
+
+        # SQL query for inserting a new row into the 'scoreboard' table
+        query = (f"""
+                SELECT question_text, correct_answer, incorrect_answer_1, incorrect_answer_2, incorrect_answer_3
+                FROM questions
+                WHERE game_id = {game_id}
+                AND player_id = {player_id}
+                AND id = {id}
+                """)
+        cur.execute(query)
+        results = cur.fetchall()
+        cur.close()
+
+        if results:
+            question_displayed = question_dict(results)[0]
+            print(f"question_id: {id}")
+            print(question_displayed)
+            print("Question fetched from DB!\n")
+        else:
+            print("Question not found in the database.\n")
+            question_displayed = None
+
+    except Exception:
+        raise DbConnectionError("Failed to fetch question from DB\n")
+
+    finally:
+        if db_connection:
+            db_connection.close()
+
+    return question_displayed
+
+
+def display_current_total_score():
+    pass
+
+
+def display_total_score_end():
+    pass
+
+
+def show_leaderboard():
+    pass
 
 
 def update_player_answer_is_correct(game_id, player_id, question_id, player_answer):
@@ -335,13 +416,13 @@ def update_player_answer_is_correct(game_id, player_id, question_id, player_answ
 
         # Commit the changes to the database
         db_connection.commit()
-        print("Game question updated successfully!")
+        print("Game question updated successfully!\n")
 
     except mysql.connector.Error as err:
-        print(f"MySQL Error: {err}")
+        print(f"MySQL Error: {err}\n")
 
     except Exception as exc:
-        print(f"An unexpected error occurred: {exc}")
+        print(f"An unexpected error occurred: {exc}\n")
 
     finally:
         if db_connection:
@@ -379,13 +460,13 @@ def update_scoreboard_total_score(game_id, player_id):
 
         # Commit the changes to the database
         db_connection.commit()
-        print("Total score updated successfully!")
+        print("Total score updated successfully!\n")
 
     except mysql.connector.Error as err:
         print(f"MySQL Error: {err}")
 
     except Exception as exc:
-        print(f"An unexpected error occurred: {exc}")
+        print(f"An unexpected error occurred: {exc}\n")
 
     finally:
         if db_connection:
@@ -408,7 +489,7 @@ def check_and_add_player(username, password):
         if existing_player:
             # Player exists, return ID and username
             player_id, existing_username = existing_player
-            print(f"Player {existing_username} with ID {player_id} already exists.")
+            print(f"Player {existing_username} with ID {player_id} already exists.\n")
             return {"player_id": player_id, "username": existing_username}
         else:
             # Player does not exist, add a new player
@@ -418,7 +499,7 @@ def check_and_add_player(username, password):
             db_connection.commit()
 
             new_player_id = cursor.lastrowid
-            print(f"New player {username} added with ID {new_player_id}.")
+            print(f"New player {username} added with ID {new_player_id}.\n")
             return {"player_id": new_player_id, "username": username}
 
     except Exception:
@@ -428,6 +509,87 @@ def check_and_add_player(username, password):
         if db_connection:
             db_connection.close()
             print("DB connection is closed")
+
+
+def main():
+    # Run relevant functions below to ensure connecting to DB is successful:
+
+    # Check player username exists:
+    check_player_exists("helenvu")  # exists
+    check_player_exists("hsfhsvsd")  # doesn't exist
+
+    # Add a new player to players table:
+    add_new_player("marshmallow-squisher")
+
+    # Add a new game to DB when player starts game:
+    add_new_game(2)
+
+    # Add a new question to questions table including game_id and player_id as well:
+    add_new_questions(2, 2, "easy", "What is the capital of France?",
+                      "Paris", "Berlin", "London",
+                      "Madrid")
+
+    # Load questions into game_questions table at start of game, with player answer and is_correct set to None
+    # p.s. None in Python is equal to NULL in mySQL
+    start_game_questions(2, 2, 4, None, "Paris", None)
+
+    # Load scoreboard at start of game and set player's score to zero
+    start_game_scoreboard(2, 2, 0)
+
+    # Display question to user along with all 4 possible answers:
+    display_question_to_player(2, 2, 4)
+
+    # update game_questions with player_answer and evaluate whether is_correct at the same time
+    game_id = 2  # Replace with the actual game_id
+    player_id = 2  # Replace with the actual player_id
+    question_id = 4  # Replace with the actual question_id
+    player_answer = "Paris"  # Replace with the actual player's answer
+    update_player_answer_is_correct(game_id, player_id, question_id, player_answer)
+
+    # Update total_score in scoreboard after each question is answered:
+    update_scoreboard_total_score(2, 2)
+
+
+if __name__ == '__main__':
+    main()
+
+
+
+# def display_question_to_player(game_id, player_id, id):  # id = id in 'questions' table
+#     try:
+#         # Establish a connection to the MySQL database
+#         db_name = "trivia_game"
+#         db_connection = _connect_to_db(db_name)
+#         cur = db_connection.cursor()  # Create a cursor object to interact with the database
+#         print(f"Connected to database {db_name}")
+#
+#         # SQL query for inserting a new row into the 'scoreboard' table
+#         query = (f"""
+#                 SELECT question_text, correct_answer, incorrect_answer_1, incorrect_answer_2, incorrect_answer_3
+#                 FROM questions
+#                 WHERE game_id = {game_id}
+#                 AND player_id = {player_id}
+#                 AND id = {id}
+#                 """)
+#         cur.execute(query)
+#         results = cur.fetchall()
+#         cur.close()
+#         question_displayed = question_dict(results)
+#         print(f"question_id: {id}")
+#         print(f"{question_displayed}")
+#         print("Question fetched from DB!\n")
+#
+#     except Exception:
+#         raise DbConnectionError("Failed to fetch question from DB\n")
+#
+#     finally:
+#         if db_connection:
+#             db_connection.close()
+#
+#     return question_displayed
+
+
+
 
 
 # def set_question(difficulty_level, question_text, correct_answer, incorrect_answer_1, incorrect_answer_2,
@@ -458,43 +620,3 @@ def check_and_add_player(username, password):
 #     finally:
 #         if db_connection:
 #             db_connection.close()
-
-
-def main():
-    # Run relevant functions below to ensure connecting to DB is successful:
-
-    # Check player username exists:
-    check_player_exists("helenvu")  # exists
-    check_player_exists("hsfhsvsd")  # doesn't exist
-
-    # Add a new player to players table:
-    add_new_player("marshmallow-squisher")
-
-    # Add a new game to DB when player starts game:
-    add_new_game(2)
-
-    # Add a new question to questions table including game_id and player_id as well:
-    add_new_questions(2, 2, "easy", "What is the capital of France?",
-                      "Paris", "Berlin", "London",
-                      "Madrid")
-
-    # Load questions into game_questions table at start of game, with player answer and is_correct set to None
-    # p.s. None in Python is equal to NULL in mySQL
-    start_game_questions(2, 2, 4, None, "Paris", None)
-
-    # Load scoreboard at start of game and set player's score to zero
-    start_game_scoreboard(2, 2, 0)
-
-    # update game_questions with player_answer and evaluate whether is_correct at the same time
-    game_id = 2  # Replace with the actual game_id
-    player_id = 2  # Replace with the actual player_id
-    question_id = 4  # Replace with the actual question_id
-    player_answer = "Paris"  # Replace with the actual player's answer
-    update_player_answer_is_correct(game_id, player_id, question_id, player_answer)
-
-    # Update total_score in scoreboard after each question is answered:
-    update_scoreboard_total_score(2, 2)
-
-
-if __name__ == '__main__':
-    main()
