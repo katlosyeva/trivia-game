@@ -21,6 +21,7 @@ def _connect_to_db(db_name):
 # Function which checks whether username exists and returns player_id,
 # and if username does not exist, new username is added to players and returns new player_id:
 def get_or_add_player_id(username):
+
     player_id = None
 
     try:
@@ -66,7 +67,7 @@ def get_or_add_player_id(username):
             # Close the connection
             db_connection.close()
 
-    return {"player_id:": player_id}, player_id
+        return {"player_id:": player_id}, player_id
 
 
 # DB function to add new game to DB
@@ -597,7 +598,8 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    # main()
+    get_or_add_player_id("Kate")
 
 # COMMENTED OUT CODE WE MAY OR MAY NOT USE AGAIN:
 

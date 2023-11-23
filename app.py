@@ -2,7 +2,7 @@ from flask import Flask, jsonify, request  # imports specific objects and functi
 
 from db_utils import add_new_questions  # set_question
 
-# from main import User, Game
+from main import Player
 
 # TODO: We will need CORS later when we connect front and back
 # from flask_cors import CORS
@@ -13,6 +13,15 @@ app = Flask(__name__)
 
 # CORS(app)
 
+@app.route("/add_new_player", methods=["POST"])
+def add_player():
+    # Accepts POST requests with JSON data containing user_name
+    user_data = request.get_json()
+    # creates new instance of user
+    user = Player(user_data["user_name"])
+    # calls method on this user to create a new game, returns user id
+    player_id = user.get_or_create()
+    return jsonify({"id": player_id})
 
 @app.route("/add_new_questions", methods=["POST"])
 def add_questions():
