@@ -4,6 +4,8 @@ import requests
 
 from api_utils import get_questions_from_api
 
+from db_utils import get_or_add_player_id
+
 
 class ConnectionError(Exception):
     pass
@@ -17,11 +19,10 @@ class Player:
     def __init__(self, name):
         self.name = name
 
+
     def get_or_create(self):
-        # With a user's name from response check in DB if user exists
-        # if true - return user_id,
-        # if false - write in DB a new user and return user_id
-        pass
+        user_id = get_or_add_player_id(self.name)
+        return user_id
 
 
 class Game:
