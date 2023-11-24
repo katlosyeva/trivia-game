@@ -26,8 +26,9 @@ class Player:
 
 class Game:
 
-    def __init__(self, user_id):
-        self.user_id = user_id
+    def __init__(self, game_id, player_id):
+        self.game_id = game_id
+        self.player_id = player_id
 
     def start_game(self):
         # to write a new game to a database
@@ -41,7 +42,8 @@ class Game:
         first_question = self.provide_question()
         return first_question
 
-    def set_questions(self):
+    # populate BW with questions from open API
+    def set_questions_to_db(self, game_id, player_id):
         number_of_questions_per_difficulty = 5  # Set the desired number of questions
         questions = []
         for difficulty_level in ["easy", "medium", "hard"]:
@@ -50,23 +52,18 @@ class Game:
                 received_questions = response.get('results', [])
                 questions.extend(received_questions)
                 print(f"Received {len(received_questions)} questions for difficulty level {difficulty_level}")
-                time.sleep(4)
+                time.sleep(5)
             except Exception as err:
                 raise ConnectionError(
                     f"Failed to get questions from API for difficulty {difficulty_level}. Error: {err}")
 
-        url = 'http://127.0.0.1:5000/add_new_questions'
+        url = f'http://127.0.0.1:5000/add_new_questions/{game_id}/{player_id}'
         headers = {'content-type': 'application/json'}
         data = {"results": questions}
 
         result = requests.post(url, headers=headers, json=data)
 
         return result.json()
-
-        # with function imported from db_utils we will push them to db(it does not exist yet)
-        # for question in questions:
-        # TODO: realise function set_questions_to_db
-        # set_questions_to_db(question.question, question.difficulty, question.correct_answer, question.incorrect_answers)
 
     # TODO: if we decide to realise the functionality when player wants to take money and go
     # def finish_game(self):
@@ -115,5 +112,5 @@ class Phone(Lifeline):
 
 
 if __name__ == '__main__':
-    game = Game(1)
-    game.set_questions()
+    game = Game(1, 1)
+    game.set_questions_to_db(game.game_id, game.player_id)

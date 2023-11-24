@@ -119,7 +119,7 @@ def add_new_game(player_id):
 
 
 # DB function to add questions data to questions table in DB - will be used for API call
-def add_new_questions(game_id, player_id, difficulty_level, question_text, correct_answer, incorrect_answer_1,
+def add_new_question(game_id, player_id, difficulty_level, question_text, correct_answer, incorrect_answer_1,
                       incorrect_answer_2, incorrect_answer_3):
     try:
         # Establish a connection to the MySQL database
@@ -163,7 +163,7 @@ def add_new_questions(game_id, player_id, difficulty_level, question_text, corre
 
         # Get the last inserted ID (question_id)
         question_id = cur.lastrowid
-        print(f"add_new_questions function returns question_id: {question_id}\n")
+        print(f"add_new_question function returns question_id: {question_id}\n")
 
         # Close the cursor
         cur.close()
@@ -562,7 +562,7 @@ def main():
     add_new_game(2)
 
     # Add a new question to questions table including game_id and player_id as well:
-    add_new_questions(2, 2, "easy", "What is the capital of France?",
+    add_new_question(2, 2, "easy", "What is the capital of France?",
                       "Paris", "Berlin", "London",
                       "Madrid")
 

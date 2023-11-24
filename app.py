@@ -1,6 +1,6 @@
 from flask import Flask, jsonify, request  # imports specific objects and functions from the Flask web framework
 
-from db_utils import add_new_questions  # set_question
+from db_utils import add_new_question  # set_question
 
 # from main import User, Game
 
@@ -14,8 +14,8 @@ app = Flask(__name__)
 # CORS(app)
 
 
-@app.route("/add_new_questions", methods=["POST"])
-def add_questions():
+@app.route("/add_new_questions/<game_id>/<player_id>", methods=["POST"])
+def add_questions(game_id, player_id):
     questions = request.get_json()["results"]
     for question in questions:
         difficulty_level = question["difficulty"]
@@ -24,8 +24,8 @@ def add_questions():
         incorrect_answers = question["incorrect_answers"]
         incorrect_answer_1, incorrect_answer_2, incorrect_answer_3 = incorrect_answers
 
-        add_new_questions(difficulty_level, question_text, correct_answer, incorrect_answer_1, incorrect_answer_2,
-                          incorrect_answer_3)
+        add_new_question(game_id, player_id, difficulty_level, question_text, correct_answer, incorrect_answer_1,
+                         incorrect_answer_2, incorrect_answer_3)
     return jsonify({"message": "Questions added successfully"})
 
 
