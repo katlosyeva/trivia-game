@@ -110,7 +110,7 @@ def add_new_game(user_id, score):
             # close the connection
             db_connection.close()
 
-    return {"game_id": game_id}
+    return game_id
 
 
 # DB function to add questions data to questions table in DB - will be used for API call
@@ -287,50 +287,6 @@ def update_game_score(game_id):
             db_connection.close()
 
 
-# DB function to update scoreboard after every question in the game, including after last question when game ends:
-def update_scoreboard_total_score(game_id, player_id):
-    try:
-        # Establish a connection to the MySQL database
-        db_name = "trivia_game"
-        db_connection = _connect_to_db(db_name)
-        cur = db_connection.cursor()  # Create a cursor object to interact with the database
-        print(f"Connected to database {db_name}")
-
-        # SQL query to update total_score in the scoreboard table
-        update_query = """
-                UPDATE scoreboard sb
-                SET total_score = (
-                    SELECT SUM(CAST(gq.is_correct AS SIGNED))
-                    FROM game_questions gq
-                    WHERE gq.game_id = sb.game_id AND gq.player_id = sb.player_id
-                )
-                WHERE sb.game_id = %s AND sb.player_id = %s
-            """
-
-        # Tuple containing the values for the WHERE clause
-        values = (game_id, player_id)
-
-        # Execute the update query with the provided values
-        cur.execute(update_query, values)
-
-        # Commit the changes to the database
-        db_connection.commit()
-        print("Total score updated successfully!\n")
-
-    except mysql.connector.Error as err:
-        print(f"MySQL Error: {err}")
-
-    except Exception as exc:
-        print(f"An unexpected error occurred: {exc}\n")
-
-    finally:
-        if db_connection:
-            # Close the connection
-            db_connection.close()
-
-
-
-
 
 def get_user_score(game_id):
     try:
@@ -363,6 +319,10 @@ def get_user_score(game_id):
 
 def get_leader_board():
     pass
+# SELECT players.username, games.score
+# FROM players
+# JOIN games ON players.id = games.user_id
+# ORDER BY games.score DESC;
 
 
 def main():

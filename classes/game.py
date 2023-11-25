@@ -9,7 +9,7 @@ class Game:
     def start_game(self):
 
         # to write a new game to a database
-        game_id = add_new_game(self.user_id)
+        game_id = add_new_game(self.user_id, 0)
 
         # to get question from the API
         self.set_questions(game_id)
