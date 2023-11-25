@@ -36,11 +36,11 @@ CREATE TABLE games (
 CREATE TABLE questions (
   id int NOT NULL AUTO_INCREMENT PRIMARY KEY,
   game_id int,
-  question varchar(100),
+  question varchar(255),
   correct_answer varchar(50),
-  answer_1 varchar(50),
-  answer_2 varchar(50),
-  answer_3 varchar(50),
+  answer_1 varchar(200),
+  answer_2 varchar(200),
+  answer_3 varchar(200),
   is_provided boolean,
   FOREIGN KEY (game_id) REFERENCES games (id)
 );
