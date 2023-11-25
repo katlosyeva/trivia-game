@@ -66,7 +66,7 @@ const Game = () => {
         }),
       });
       const result = await response.json();
-      setCorrectAnswer(result.correctAnswer);
+      setCorrectAnswer(result.answer_was_correct);
 
       if (result.correct) {
         setScore(score + 1);
