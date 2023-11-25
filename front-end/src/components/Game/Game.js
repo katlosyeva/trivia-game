@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Box, Button, Typography } from "@mui/material";
 import Question from "./Question";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -11,7 +11,8 @@ const Game = () => {
   const [showCorrectAnswer, setShowCorrectAnswer] = useState(false);
   const [questionsCount, setQuestionsCount] = useState(1);
   const location = useLocation();
-  const question = location.state;
+  const questionObj = location.state;
+  const [question, setQuestion] = useState(questionObj.question_text);
   const navigate = useNavigate();
   const game_id = localStorage.getItem("game_id");
   const question_id = localStorage.getItem("question_id");
@@ -28,28 +29,24 @@ const Game = () => {
     return shuffledArray;
   };
 
-  // const fetchQuestions = async () => {
-  //   try {
-  //     const response = await fetch(
-  //       `http://127.0.0.1:5000/next_question/${game_id}`
-  //     );
-  //     const data = await response.json();
+  const fetchQuestions = async () => {
+    try {
+      const response = await fetch(
+        `http://127.0.0.1:5000/next_question/${game_id}`
+      );
+      const data = await response.json();
 
-  //     if (data.question) {
-  //       const { question, answers } = data;
-  //       setQuestion(question);
-  //       setAnswers(shuffleArray(answers));
-  //       setSelectedAnswer(null);
-  //       setShowCorrectAnswer(false);
-  //     }
-  //   } catch (error) {
-  //     console.error("Error fetching questions:", error);
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   fetchQuestions();
-  // }, []);
+      if (data.question) {
+        const { question, answers } = data;
+        setQuestion(question);
+        setAnswers(shuffleArray(answers));
+        setSelectedAnswer(null);
+        setShowCorrectAnswer(false);
+      }
+    } catch (error) {
+      console.error("Error fetching questions:", error);
+    }
+  };
 
   const handleAnswerChange = (event) => {
     setSelectedAnswer(event.target.value);
@@ -65,7 +62,7 @@ const Game = () => {
         body: JSON.stringify({
           game_id: game_id,
           answer: selectedAnswer,
-          question_id: 1, // You need to get the question_id from the API response
+          question_id: question_id,
         }),
       });
       const result = await response.json();
@@ -82,6 +79,7 @@ const Game = () => {
   };
 
   const handleNext = async () => {
+    fetchQuestions();
     setQuestionsCount(questionsCount + 1);
     if (questionsCount >= 5) {
       navigate("/congratulations", { state: { score } });
@@ -103,7 +101,6 @@ const Game = () => {
       <Typography variant="h4" gutterBottom>
         Question {questionsCount}
       </Typography>
-      {/* Assume Question component receives props correctly */}
       <Question
         question={question}
         answers={answers}
