@@ -34,12 +34,13 @@ class Game:
         # user's score is got
         # if it is correct the score is increased and returned
         correct_answer = get_correct_answer(question_id)
+
         if user_answer == correct_answer:
             user_score = update_game_score(game_id)
-            return {"score": user_score, "result": "correct"}
+            return {"score": user_score, "correct_answer": correct_answer, "result": "correct"}
         else:
             previous_score = get_user_score(game_id)
-            return {"score": previous_score, "result": "wrong"}
+            return {"score": previous_score, "correct_answer": correct_answer, "result": "wrong"}
 
     @staticmethod
     def provide_question(game_id):
