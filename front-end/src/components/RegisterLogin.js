@@ -17,11 +17,13 @@ const RegisterLogin = () => {
       });
 
       const data = await response.json();
-      const question = data.question;
+      console.log("🚀 ~ file: RegisterLogin.js:20 ~ handleLogin ~ data:", data);
+      const questionObj = data.question;
       localStorage.setItem("user_id", data.player_id);
       localStorage.setItem("game_id", data.game_id);
+      localStorage.setItem("question_id", data.question.question_id);
 
-      navigate("/game", { state: { question } });
+      navigate("/game", { state: { questionObj } });
     } catch (error) {
       console.error("Error logging in:", error);
     }

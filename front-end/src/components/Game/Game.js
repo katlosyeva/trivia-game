@@ -14,6 +14,7 @@ const Game = () => {
   const question = location.state;
   const navigate = useNavigate();
   const game_id = localStorage.getItem("game_id");
+  const question_id = localStorage.getItem("question_id");
 
   const shuffleArray = (array) => {
     const shuffledArray = [...array];
