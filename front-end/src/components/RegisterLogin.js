@@ -4,26 +4,27 @@ import { useNavigate } from "react-router-dom";
 
 const RegisterLogin = () => {
   const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
   const navigate = useNavigate();
-  const handleLogin = () => {
-    //TODO change when BE login is ready
-    // fetch("/login", {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-    //   body: JSON.stringify({ username, password }),
-    // })
-    //   .then((response) => response.json())
-    //   .then((data) => {
 
-    // })
-    // .catch((error) => console.error("Error logging in:", error));
-    localStorage.setItem("user_id", 22);
-    localStorage.setItem("game_id", 22);
+  const handleLogin = async () => {
+    try {
+      const response = await fetch("http://127.0.0.1:5000/add_new_player", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ user_name: username }),
+      });
 
-    navigate("/game");
+      const data = await response.json();
+      const question = data.question;
+      localStorage.setItem("user_id", data.player_id);
+      localStorage.setItem("game_id", data.game_id);
+
+      navigate("/game", { state: { question } });
+    } catch (error) {
+      console.error("Error logging in:", error);
+    }
   };
 
   return (
@@ -45,12 +46,6 @@ const RegisterLogin = () => {
         label="Username"
         value={username}
         onChange={(e) => setUsername(e.target.value)}
-      />
-      <TextField
-        label="Password"
-        type="password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
       />
       <Button variant="contained" color="primary" onClick={handleLogin}>
         Login
