@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { TextField, Button, Box, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import backgroundImage from "../assets/background2.jpg";
 
 const RegisterLogin = () => {
   const [username, setUsername] = useState("");
@@ -32,6 +33,9 @@ const RegisterLogin = () => {
   return (
     <Box
       sx={{
+        backgroundImage: `url(${backgroundImage})`,
+        backgroundPosition: "center",
+        backgroundSize: "200%",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",

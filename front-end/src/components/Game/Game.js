@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { Box, Button, Typography } from "@mui/material";
 import Question from "./Question";
 import { useLocation, useNavigate } from "react-router-dom";
+import backgroundImage from "../../assets/background2.jpg";
+import { shuffleArray } from "../../utils/functions";
 
 const Game = () => {
   const location = useLocation();
@@ -15,21 +17,9 @@ const Game = () => {
   const [showCorrectAnswer, setShowCorrectAnswer] = useState(false);
   const [questionsCount, setQuestionsCount] = useState(1);
   const [question, setQuestion] = useState(questionObj.question_text);
+  console.log("🚀 ~ file: Game.js:20 ~ Game ~ question:", question);
 
   const game_id = localStorage.getItem("game_id");
-  const question_id = localStorage.getItem("question_id");
-
-  const shuffleArray = (array) => {
-    const shuffledArray = [...array];
-    for (let i = shuffledArray.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [shuffledArray[i], shuffledArray[j]] = [
-        shuffledArray[j],
-        shuffledArray[i],
-      ];
-    }
-    return shuffledArray;
-  };
 
   const fetchQuestions = async () => {
     try {
@@ -37,9 +27,9 @@ const Game = () => {
         `http://127.0.0.1:5000/next_question/${game_id}`
       );
       const data = await response.json();
-      console.log("🚀 ~ file: Game.js:40 ~ fetchQuestions ~ data:", data);
 
       if (data) {
+        localStorage.setItem("question_id", data.question_id);
         setQuestion(data.question_text);
         setAnswers(shuffleArray(data.answers));
         setSelectedAnswer(null);
@@ -55,6 +45,7 @@ const Game = () => {
   };
 
   const handleSubmit = async () => {
+    const question_id = localStorage.getItem("question_id");
     try {
       const response = await fetch("http://127.0.0.1:5000/check_answer", {
         method: "PUT",
@@ -68,13 +59,8 @@ const Game = () => {
         }),
       });
       const result = await response.json();
-      console.log("🚀 ~ file: Game.js:71 ~ handleSubmit ~ result:", result);
-      setCorrectAnswer(result.answer_was_correct);
-
-      if (result.correct) {
-        setScore(score + 1);
-      }
-
+      setCorrectAnswer(result.correct_answer);
+      setScore(result.score);
       setShowCorrectAnswer(true);
     } catch (error) {
       console.error("Error submitting answer:", error);
@@ -92,6 +78,9 @@ const Game = () => {
   return (
     <Box
       sx={{
+        backgroundImage: `url(${backgroundImage})`,
+        backgroundPosition: "center",
+        backgroundSize: "200%",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",

@@ -1,11 +1,15 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { Box, Button, Typography } from "@mui/material";
+import backgroundImage from "../assets/background2.jpg";
 
 const WelcomePage = () => {
   return (
     <Box
       sx={{
+        backgroundImage: `url(${backgroundImage})`,
+        backgroundPosition: "center",
+        backgroundSize: "200%",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
