@@ -8,7 +8,7 @@ const RegisterLogin = () => {
 
   const handleLogin = async () => {
     try {
-      const response = await fetch("http://127.0.0.1:5000/add_new_player", {
+      const response = await fetch("http://127.0.0.1:5000/add_new_game", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -17,8 +17,8 @@ const RegisterLogin = () => {
       });
 
       const data = await response.json();
-      console.log("🚀 ~ file: RegisterLogin.js:20 ~ handleLogin ~ data:", data);
       const questionObj = data.question;
+
       localStorage.setItem("user_id", data.player_id);
       localStorage.setItem("game_id", data.game_id);
       localStorage.setItem("question_id", data.question.question_id);

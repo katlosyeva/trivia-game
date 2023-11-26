@@ -4,16 +4,18 @@ import Question from "./Question";
 import { useLocation, useNavigate } from "react-router-dom";
 
 const Game = () => {
-  const [answers, setAnswers] = useState([]);
+  const location = useLocation();
+  const navigate = useNavigate();
+  const questionObj = location.state.questionObj;
+
+  const [answers, setAnswers] = useState(questionObj.answers);
   const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [score, setScore] = useState(0);
-  const [correctAnswer, setCorrectAnswer] = useState(null);
+  const [correctAnswer, setCorrectAnswer] = useState("");
   const [showCorrectAnswer, setShowCorrectAnswer] = useState(false);
   const [questionsCount, setQuestionsCount] = useState(1);
-  const location = useLocation();
-  const questionObj = location.state;
   const [question, setQuestion] = useState(questionObj.question_text);
-  const navigate = useNavigate();
+
   const game_id = localStorage.getItem("game_id");
   const question_id = localStorage.getItem("question_id");
 
@@ -35,11 +37,11 @@ const Game = () => {
         `http://127.0.0.1:5000/next_question/${game_id}`
       );
       const data = await response.json();
+      console.log("🚀 ~ file: Game.js:40 ~ fetchQuestions ~ data:", data);
 
-      if (data.question) {
-        const { question, answers } = data;
-        setQuestion(question);
-        setAnswers(shuffleArray(answers));
+      if (data) {
+        setQuestion(data.question_text);
+        setAnswers(shuffleArray(data.answers));
         setSelectedAnswer(null);
         setShowCorrectAnswer(false);
       }
@@ -66,6 +68,7 @@ const Game = () => {
         }),
       });
       const result = await response.json();
+      console.log("🚀 ~ file: Game.js:71 ~ handleSubmit ~ result:", result);
       setCorrectAnswer(result.answer_was_correct);
 
       if (result.correct) {
