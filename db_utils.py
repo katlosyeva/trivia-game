@@ -2,7 +2,6 @@ import mysql.connector  # module that allows to establish database connection
 from config import USER, PASSWORD, HOST
 
 
-
 class DbConnectionError(Exception):
     pass
 
@@ -170,6 +169,7 @@ def add_new_questions(game_id, question_text, correct_answer, incorrect_answers)
             # close the connection
             db_connection.close()
 
+
 def display_question_to_player(game_id):
     try:
         # Establish a connection to the MySQL database
@@ -206,22 +206,62 @@ def display_question_to_player(game_id):
         answers.sort()
 
         return {
-                "question_id": question_id,
-                "game_id": game_id,
-                "question_text": question_text,
-                "answers": answers
-                }
+            "question_id": question_id,
+            "game_id": game_id,
+            "question_text": question_text,
+            "answers": answers
+        }
 
 
     except Exception:
         return {"error": "No more questions"}
 
     finally:
-         if db_connection:
+        if db_connection:
             db_connection.close()
 
 
+def display_question_to_player_fifty_fifty(question_id):
+    try:
+        # Establish a connection to the MySQL database
+        db_name = "trivia_game"
+        db_connection = _connect_to_db(db_name)
+        cur = db_connection.cursor()  # Create a cursor object to interact with the database
+        print(f"Connected to database {db_name}")
 
+        # SQL query to fetch the question details
+        query = f"""
+                SELECT id, game_id, question, correct_answer, answer_1
+                FROM questions
+                WHERE id = {question_id}
+            """
+
+        cur.execute(query)
+        question_displayed = cur.fetchone()
+
+        db_connection.commit()
+        cur.close()
+
+        # if question_displayed:
+        question_id = question_displayed[0]
+        game_id = question_displayed[1]
+        question_text = question_displayed[2]
+        answers = [question_displayed[3], question_displayed[4]]
+        answers.sort()
+
+        return {
+            "question_id": question_id,
+            "game_id": game_id,
+            "question_text": question_text,
+            "answers": answers
+        }
+
+    except Exception as exc:
+        return {"error": exc}
+
+    finally:
+        if db_connection:
+            db_connection.close()
 
 
 def get_correct_answer(question_id):
@@ -252,6 +292,7 @@ def get_correct_answer(question_id):
     finally:
         if db_connection:
             db_connection.close()
+
 
 def update_game_score(game_id):
     try:
@@ -286,6 +327,7 @@ def update_game_score(game_id):
             # Close the connection
             db_connection.close()
 
+
 def get_user_score(game_id):
     try:
         # Establish a connection to the MySQL database
@@ -317,6 +359,8 @@ def get_user_score(game_id):
 
 def get_leader_board():
     pass
+
+
 # SELECT players.username, games.score
 # FROM players
 # JOIN games ON players.id = games.user_id
@@ -336,4 +380,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-

@@ -10,6 +10,14 @@ def next_question(game_id):
     return result.json()
 
 
+def fifty_fifty(question_id):
+    result = requests.get(
+        "http://127.0.0.1:5000//fifty_fifty/{}".format(question_id),
+        headers={"content-type": "application/json"}
+    )
+    return result.json()
+
+
 def add_game(user_name):
     info = {
         "user_name": user_name
