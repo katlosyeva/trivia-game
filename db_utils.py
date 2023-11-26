@@ -72,7 +72,7 @@ def get_or_add_player_id(username):
 
 
 # DB function to add new game to DB
-def add_new_game(user_id, score):
+def add_new_game(user_id, score=0):
     try:
         # Establish a connection to the MySQL database
         db_name = "trivia_game"
