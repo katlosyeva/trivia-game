@@ -286,8 +286,6 @@ def update_game_score(game_id):
             # Close the connection
             db_connection.close()
 
-
-
 def get_user_score(game_id):
     try:
         # Establish a connection to the MySQL database
