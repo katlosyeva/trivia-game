@@ -56,12 +56,6 @@ class Game:
         return result
 
 
-    def show_leaderboard():
-        result = get_leaderboard()
-        return result
-    
-
-
 if __name__ == '__main__':
     game = Game(1)
     game.set_questions(1)
