@@ -315,12 +315,34 @@ def get_user_score(game_id):
             db_connection.close()
 
 
-def get_leader_board():
-    pass
-# SELECT players.username, games.score
-# FROM players
-# JOIN games ON players.id = games.user_id
-# ORDER BY games.score DESC;
+def get_leaderboard():
+    try:
+        # Establish a connection to the MySQL database
+        db_name = "trivia_game"
+        db_connection = _connect_to_db(db_name)
+        cur = db_connection.cursor() # Create a cursor object to interact with the database
+        print(f"Connected to database {db_name}")
+
+        # SQL query to fetch the score details
+        query = f"""
+                    SELECT players.username, games.score
+                    FROM players
+                    JOIN games ON players.id = games.user_id
+                    ORDER BY games.score DESC
+                """
+
+        cur.execute(query)
+        leaderboard = cur.fetchall()
+        cur.close()
+
+        return leaderboard[:10]
+
+    except Exception:
+        raise DbConnectionError("Failed to retrieve leaderboard from DB\n")
+
+    finally:
+        if db_connection:
+            db_connection.close()
 
 
 def main():
@@ -332,6 +354,7 @@ def main():
     # print(get_correct_answer(13))
     # get_or_add_player_id("Megan")
     # add_new_questions(2, "HHHH", "HE", ["TU", "TT","hhh"])
+    # print(get_leaderboard())
 
 
 if __name__ == '__main__':
