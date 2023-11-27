@@ -3,7 +3,6 @@ import { Box, Button, Typography } from "@mui/material";
 import Question from "./Question";
 import { useLocation, useNavigate } from "react-router-dom";
 import backgroundImage from "../../assets/background2.jpg";
-import { shuffleArray } from "../../utils/functions";
 
 const Game = () => {
   const location = useLocation();
@@ -17,7 +16,6 @@ const Game = () => {
   const [showCorrectAnswer, setShowCorrectAnswer] = useState(false);
   const [questionsCount, setQuestionsCount] = useState(1);
   const [question, setQuestion] = useState(questionObj.question_text);
-  console.log("🚀 ~ file: Game.js:20 ~ Game ~ question:", question);
 
   const game_id = localStorage.getItem("game_id");
 
@@ -31,7 +29,7 @@ const Game = () => {
       if (data) {
         localStorage.setItem("question_id", data.question_id);
         setQuestion(data.question_text);
-        setAnswers(shuffleArray(data.answers));
+        setAnswers(data.answers);
         setSelectedAnswer(null);
         setShowCorrectAnswer(false);
       }
@@ -67,6 +65,24 @@ const Game = () => {
     }
   };
 
+  const handleHint = async () => {
+    const question_id = localStorage.getItem("question_id");
+    try {
+      const response = await fetch(
+        `http://127.0.0.1:5000/fifty_fifty/${question_id}`
+      );
+      const data = await response.json();
+
+      if (data) {
+        setAnswers(data.answers);
+        setSelectedAnswer(null);
+        setShowCorrectAnswer(false);
+      }
+    } catch (error) {
+      console.error("Error submitting answer:", error);
+    }
+  };
+
   const handleNext = async () => {
     fetchQuestions();
     setQuestionsCount(questionsCount + 1);
@@ -79,63 +95,92 @@ const Game = () => {
     <Box
       sx={{
         backgroundImage: `url(${backgroundImage})`,
+        backgroundRepeat: false,
         backgroundPosition: "center",
         backgroundSize: "200%",
         display: "flex",
-        justifyContent: "center",
+        // justifyContent: "center",
         alignItems: "center",
         flexDirection: "column",
         minHeight: "100vh",
-        m: "0 auto",
-        gap: 3,
+        // m: "0 auto",
+        // gap: 3,
       }}
     >
-      <Typography variant="h4" gutterBottom>
-        Question {questionsCount}
-      </Typography>
-      <Question
-        question={question}
-        answers={answers}
-        selectedAnswer={selectedAnswer}
-        onChange={handleAnswerChange}
-        disabled={showCorrectAnswer}
-      />
       <Box
         sx={{
           display: "flex",
-          gap: 2,
+          flex: "1",
+          justifyContent: "center",
+          alignItems: "center",
+          flexDirection: "column",
+          m: "0 auto",
+          gap: 3,
         }}
       >
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handleSubmit}
-          disabled={!selectedAnswer || showCorrectAnswer}
+        <Typography variant="h4">Question {questionsCount}</Typography>
+        <Question
+          question={question}
+          answers={answers}
+          selectedAnswer={selectedAnswer}
+          onChange={handleAnswerChange}
+          disabled={showCorrectAnswer}
+        />
+        <Box
+          sx={{
+            display: "flex",
+            gap: 2,
+          }}
         >
-          Submit
-        </Button>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handleNext}
-          disabled={!showCorrectAnswer}
-        >
-          Next
-        </Button>
+          {" "}
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleHint}
+            disabled
+            // ={showCorrectAnswer}
+          >
+            Hint
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleSubmit}
+            disabled={!selectedAnswer || showCorrectAnswer}
+          >
+            Submit
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleNext}
+            disabled={!showCorrectAnswer}
+          >
+            Next
+          </Button>
+        </Box>
+        <Typography variant="h6">Score: {score}</Typography>
       </Box>
       {showCorrectAnswer && (
-        <Box>
-          <Typography variant="h6" style={{ color: "green" }}>
+        <Box
+          sx={{
+            minHeight: 100,
+            m: "0 auto",
+            gap: 3,
+            position: "absolute",
+            bottom: 100,
+          }}
+        >
+          <Typography variant="h6" sx={{ color: "green" }}>
             Correct Answer: {correctAnswer}
           </Typography>
           {selectedAnswer !== correctAnswer && (
-            <Typography variant="h6" style={{ color: "red" }}>
+            <Typography variant="h6" sx={{ color: "red" }}>
               Your Answer: {selectedAnswer}
             </Typography>
           )}
         </Box>
       )}
-      <Typography variant="h6">Score: {score}</Typography>
     </Box>
   );
 };
