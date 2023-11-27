@@ -46,6 +46,14 @@ def check_question(game_id, answer, question_id):
     return result.json()
 
 
+def show_leaderboard():
+    result = requests.get(
+        "http://127.0.0.1:5000/leaderboard/",
+        headers={"content-type": "application/json"}
+    )
+    return result.json()
+
+
 # BEFORE RUNNING THIS FILE REMEMBER to create a database and all the tables with the code from database.sql
 # Remember to run the app.py file
 # Remember to set your password in config file
@@ -86,6 +94,9 @@ def run():
 
             result = check_question(game_id, answer, question['question_id'])
             print(result)
+    print(" ")
+    print("LEADERBOARD\n")
+    print(show_leaderboard())
 
 
 if __name__ == '__main__':
