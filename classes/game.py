@@ -48,13 +48,7 @@ class Game:
         result = display_question_to_player(game_id)
         return result
 
-    @staticmethod
-    def fifty_fifty(question_id):
-        result = display_question_to_player_fifty_fifty(question_id)
-        return result
-
-
-if __name__ == '__main__':
-    game = Game(1)
-    game.set_questions(1)
-    print(game.fifty_fifty(57))
+# if __name__ == '__main__':
+#     game = Game(1)
+#     game.set_questions(1)
+#     print(game.fifty_fifty(57))
