@@ -53,5 +53,11 @@ def next_question(game_id):
         return next_quest
 
 
+@app.route("/leaderboard/")
+def show_leaderboard():
+    leaderboard = Game.show_leaderboard()
+    return leaderboard
+
+
 if __name__ == '__main__':
     app.run(debug=True)
