@@ -1,4 +1,5 @@
 from api_utils import get_questions_from_api
+
 from db_utils import add_new_game, add_new_questions, display_question_to_player, get_correct_answer, update_game_score, \
     get_user_score, display_question_to_player_fifty_fifty, get_leaderboard
 
