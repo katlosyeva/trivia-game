@@ -1,5 +1,9 @@
 from api_utils import get_questions_from_api
-from db_utils import add_new_game, add_new_questions, display_question_to_player, get_correct_answer, update_game_score, get_user_score, get_leaderboard
+
+from db_utils import add_new_game, add_new_questions, display_question_to_player, get_correct_answer, update_game_score, \
+    get_user_score, display_question_to_player_fifty_fifty, get_leaderboard
+
+
 
 class Game:
 
@@ -26,7 +30,6 @@ class Game:
         for question in questions:
             add_new_questions(game_id, question["question"], question["correct_answer"], question["incorrect_answers"])
 
-
     @staticmethod
     def check_answer(game_id, question_id, user_answer):
         # request is sent to db to get the right answer for this question and question's value
@@ -48,7 +51,18 @@ class Game:
         return result
 
     @staticmethod
+    def fifty_fifty(question_id):
+        result = display_question_to_player_fifty_fifty(question_id)
+        return result
+
+
     def show_leaderboard():
         result = get_leaderboard()
         return result
     
+
+
+if __name__ == '__main__':
+    game = Game(1)
+    game.set_questions(1)
+    print(game.fifty_fifty(57))

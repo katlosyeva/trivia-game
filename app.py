@@ -10,7 +10,6 @@ app = Flask(__name__)
 CORS(app)
 
 
-
 @app.route("/add_new_game", methods=["POST"])
 def add_game():
     # Accepts POST requests with JSON data containing user_name
@@ -32,6 +31,7 @@ def add_game():
     #
     return jsonify(response)
 
+
 @app.route("/check_answer", methods=["PUT"])
 def check_answer():
     answer = request.get_json()
@@ -41,6 +41,7 @@ def check_answer():
     answer_was_correct = Game.check_answer(game_id, question_id, user_answer)
     print(game_id, user_answer, question_id)
     return answer_was_correct
+
 
 @app.route("/next_question/<game_id>")
 def next_question(game_id):
@@ -53,11 +54,20 @@ def next_question(game_id):
         return next_quest
 
 
+
+@app.route("/fifty_fifty/<question_id>")
+def updated_question(question_id):
+    updated_quest = Game.fifty_fifty(question_id)
+    return updated_quest
+ 
+
 @app.route("/leaderboard/")
 def show_leaderboard():
     leaderboard = Game.show_leaderboard()
     return leaderboard
 
 
+
 if __name__ == '__main__':
     app.run(debug=True)
+
