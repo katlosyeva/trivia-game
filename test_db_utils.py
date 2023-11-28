@@ -15,7 +15,8 @@ class TestGetOrAddPlayerId(unittest.TestCase):
     @patch('db_utils._connect_to_db')  # Mock the database connection
     def test_existing_player(self, mock_connect):
         # Set up the mock behavior
-        mock_connection = MagicMock() # for database interactions, use mocking to replace actual database calls with mock objects
+        mock_connection = MagicMock()  # for database interactions, use mocking to replace actual database calls with
+        # mock objects
         mock_cursor = MagicMock()
         mock_connection.cursor.return_value = mock_cursor
         mock_connect.return_value = mock_connection
@@ -26,11 +27,10 @@ class TestGetOrAddPlayerId(unittest.TestCase):
         existing_result = get_or_add_player_id(existing_username)
 
         # Check that the result is as expected
-        self.assertEqual(existing_result,  1)
+        self.assertEqual(existing_result, 1)
 
         # Check that _connect_to_db was called with the correct arguments
         mock_connect.assert_called_with('trivia_game')
-
 
     @patch('db_utils._connect_to_db')  # Mock the database connection
     def test_add_new_player(self, mock_connect):
@@ -46,7 +46,8 @@ class TestGetOrAddPlayerId(unittest.TestCase):
         new_result = get_or_add_player_id(new_username)
 
         #  Check that the result is as expected
-        self.assertEqual(new_result,  2)  # Assuming the new player gets player_id (doesn't work as expected as test return random virtual ID)
+        self.assertEqual(new_result,2)  # Assuming the new player gets player_id (doesn't work as expected as test
+        # return random virtual ID)
 
         # Check that _connect_to_db was called with the correct arguments
         mock_connect.assert_called_with('trivia_game')
