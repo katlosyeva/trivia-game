@@ -1,18 +1,20 @@
-# class Lifeline:
-#
-#     def provide_lifeline(self):
-#         pass
-#
-#
-#
-# class Fifty_Fifty(Lifeline):
-#     def __init__(self, question_id):
-#         self.question_id = question_id
-#
-#     def provide_lifeline(self):
-#         # request to database is made, and two wrong answers are sent and returned
-#         # front sees them and eliminates these two
-#         pass
+from db_utils import display_question_to_player_fifty_fifty
+
+
+class Lifeline:
+
+    def provide_lifeline(self):
+        pass
+
+
+class FiftyFifty(Lifeline):
+    def __init__(self, question_id):
+        self.question_id = question_id
+
+    @staticmethod
+    def fifty_fifty(question_id):
+        result = display_question_to_player_fifty_fifty(question_id)
+        return result
 #
 #
 # class Phone(Lifeline):

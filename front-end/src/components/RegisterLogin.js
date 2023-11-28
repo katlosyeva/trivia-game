@@ -1,34 +1,41 @@
 import React, { useState } from "react";
 import { TextField, Button, Box, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import backgroundImage from "../assets/background2.jpg";
 
 const RegisterLogin = () => {
   const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
   const navigate = useNavigate();
-  const handleLogin = () => {
-    //TODO change when BE login is ready
-    // fetch("/login", {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-    //   body: JSON.stringify({ username, password }),
-    // })
-    //   .then((response) => response.json())
-    //   .then((data) => {
 
-    // })
-    // .catch((error) => console.error("Error logging in:", error));
-    localStorage.setItem("user_id", 22);
-    localStorage.setItem("game_id", 22);
+  const handleLogin = async () => {
+    try {
+      const response = await fetch("http://127.0.0.1:5000/add_new_game", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ user_name: username }),
+      });
 
-    navigate("/game");
+      const data = await response.json();
+      const questionObj = data.question;
+
+      localStorage.setItem("user_id", data.player_id);
+      localStorage.setItem("game_id", data.game_id);
+      localStorage.setItem("question_id", data.question.question_id);
+
+      navigate("/game", { state: { questionObj } });
+    } catch (error) {
+      console.error("Error logging in:", error);
+    }
   };
 
   return (
     <Box
       sx={{
+        backgroundImage: `url(${backgroundImage})`,
+        backgroundPosition: "center",
+        backgroundSize: "200%",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
@@ -45,12 +52,6 @@ const RegisterLogin = () => {
         label="Username"
         value={username}
         onChange={(e) => setUsername(e.target.value)}
-      />
-      <TextField
-        label="Password"
-        type="password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
       />
       <Button variant="contained" color="primary" onClick={handleLogin}>
         Login

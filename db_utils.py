@@ -69,8 +69,10 @@ def get_or_add_player_id(username):
 
 
 
-def add_new_game(user_id, score):
+
+def add_new_game(user_id, score = 0):
     """"DB function to add new game to DB, returns game_id"""
+
     try:
         # Establish a connection to the MySQL database
         db_name = "trivia_game"
@@ -221,6 +223,49 @@ def display_question_to_player(game_id):
             db_connection.close()
 
 
+def display_question_to_player_fifty_fifty(question_id):
+    try:
+        # Establish a connection to the MySQL database
+        db_name = "trivia_game"
+        db_connection = _connect_to_db(db_name)
+        cur = db_connection.cursor()  # Create a cursor object to interact with the database
+        print(f"Connected to database {db_name}")
+
+        # SQL query to fetch the question details
+        query = f"""
+                SELECT id, game_id, question, correct_answer, answer_1
+                FROM questions
+                WHERE id = {question_id}
+            """
+
+        cur.execute(query)
+        question_displayed = cur.fetchone()
+
+        db_connection.commit()
+        cur.close()
+
+        # if question_displayed:
+        question_id = question_displayed[0]
+        game_id = question_displayed[1]
+        question_text = question_displayed[2]
+        answers = [question_displayed[3], question_displayed[4]]
+        answers.sort()
+
+        return {
+            "question_id": question_id,
+            "game_id": game_id,
+            "question_text": question_text,
+            "answers": answers
+        }
+
+    except Exception as exc:
+        return {"error": exc}
+
+    finally:
+        if db_connection:
+            db_connection.close()
+
+
 def get_correct_answer(question_id):
     """takes question_id, makes request to db and returns the correct answer for this question"""
     try:
@@ -307,14 +352,37 @@ def get_user_score(game_id):
             db_connection.close()
 
 
-def get_leader_board():
-    pass
+
+def get_leaderboard():
+    try:
+        # Establish a connection to the MySQL database
+        db_name = "trivia_game"
+        db_connection = _connect_to_db(db_name)
+        cur = db_connection.cursor() # Create a cursor object to interact with the database
+        print(f"Connected to database {db_name}")
+
+        # SQL query to fetch the score details
+        query = f"""
+                    SELECT players.username, games.score
+                    FROM players
+                    JOIN games ON players.id = games.user_id
+                    ORDER BY games.score DESC
+                """
+
+        cur.execute(query)
+        leaderboard = cur.fetchall()
+        cur.close()
+
+        return leaderboard[:10]
+
+    except Exception:
+        raise DbConnectionError("Failed to retrieve leaderboard from DB\n")
+
+    finally:
+        if db_connection:
+            db_connection.close()
 
 
-# SELECT players.username, games.score
-# FROM players
-# JOIN games ON players.id = games.user_id
-# ORDER BY games.score DESC;
 
 
 def main():
@@ -326,6 +394,7 @@ def main():
     # print(get_correct_answer(13))
     # get_or_add_player_id("Megan")
     # add_new_questions(2, "HHHH", "HE", ["TU", "TT","hhh"])
+    # print(get_leaderboard())
 
 
 if __name__ == '__main__':

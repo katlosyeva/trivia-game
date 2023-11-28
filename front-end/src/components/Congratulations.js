@@ -1,6 +1,7 @@
 import React from "react";
 import { Typography, Button, Box } from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
+import backgroundImage from "../assets/background2.jpg";
 
 const Congratulations = () => {
   const navigate = useNavigate();
@@ -14,6 +15,9 @@ const Congratulations = () => {
   return (
     <Box
       sx={{
+        backgroundImage: `url(${backgroundImage})`,
+        backgroundPosition: "center",
+        backgroundSize: "200%",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",

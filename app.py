@@ -1,4 +1,6 @@
 from flask import Flask, jsonify, request  # imports specific objects and functions from the Flask web framework
+
+from classes.lifeline import FiftyFifty
 from classes.user import User
 from classes.game import Game
 
@@ -8,7 +10,6 @@ from flask_cors import CORS
 # Define a Flask web application
 app = Flask(__name__)
 CORS(app)
-
 
 
 @app.route("/add_new_game", methods=["POST"])
@@ -32,6 +33,7 @@ def add_game():
     #
     return jsonify(response)
 
+
 @app.route("/check_answer", methods=["PUT"])
 def check_answer():
     answer = request.get_json()
@@ -42,6 +44,7 @@ def check_answer():
     print(game_id, user_answer, question_id)
     return answer_was_correct
 
+
 @app.route("/next_question/<game_id>")
 def next_question(game_id):
     next_quest = Game.provide_question(game_id)
@@ -51,6 +54,20 @@ def next_question(game_id):
         return response
     else:
         return next_quest
+
+
+
+@app.route("/fifty_fifty/<question_id>")
+def updated_question(question_id):
+    updated_quest = FiftyFifty.fifty_fifty(question_id)
+    return updated_quest
+ 
+
+@app.route("/leaderboard/")
+def show_leaderboard():
+    leaderboard = Game.show_leaderboard()
+    return leaderboard
+
 
 
 if __name__ == '__main__':
