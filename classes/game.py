@@ -7,6 +7,7 @@ class Game:
         self.user_id = user_id
 
     def start_game(self):
+        """""method sets the new game to the db, returns the game_id"""
 
         # to write a new game to a database
         game_id = add_new_game(self.user_id, 0)
@@ -17,32 +18,39 @@ class Game:
         return game_id
 
     def set_questions(self, game_id):
-
+        """method takes game_id and makes request to the third-party API to get 15 questions,
+         which later sets to the db"""
         try:
             questions = get_questions_from_api('https://opentdb.com/api.php?amount=15&type=multiple')["results"]
         except Exception:
             raise ConnectionError("Failed to get questions from API")
-
+        # setting questions one by one to the db
         for question in questions:
             add_new_questions(game_id, question["question"], question["correct_answer"], question["incorrect_answers"])
 
 
     @staticmethod
     def check_answer(game_id, question_id, user_answer):
-        # request is sent to db to get the right answer for this question and question's value
-        # the right answer is compared with the player's answer
-        # user's score is got
-        # if it is correct the score is increased and returned
-        correct_answer = get_correct_answer(question_id)
+        """method takes game_id, question_id, user_answer as parameters,
+        gets the correct answer from the db and checks it with the player's answer,
+        updates player's score and returns score, correct answer and string wrong/correct"""
 
+        # request is sent to db to get the right answer for this question and question's value
+        correct_answer = get_correct_answer(question_id)
+        # the right answer is compared with the player's answer
         if user_answer == correct_answer:
-            user_score = update_game_score(game_id)
+            # if it is correct the score is increased and returned
+            update_game_score(game_id)
+            user_score = get_user_score(game_id)
+
             return {"score": user_score, "correct_answer": correct_answer, "result": "correct"}
         else:
+            # user's score is got
             previous_score = get_user_score(game_id)
             return {"score": previous_score, "correct_answer": correct_answer, "result": "wrong"}
 
     @staticmethod
     def provide_question(game_id):
+        """"method takes one parameter game_id and returns the question from the database"""
         result = display_question_to_player(game_id)
         return result
