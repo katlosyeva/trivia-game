@@ -82,5 +82,51 @@ class TestAddNewGame(unittest.TestCase):
         mock_cursor.execute.assert_called_once_with(insert_query, expected_values)
 
 
+class TestAddNewQuestions(unittest.TestCase):
+
+    @patch('db_utils._connect_to_db')  # Mock the database connection
+    def test_add_new_questions(self, mock_connect):
+        # Mocking the database connection and cursor
+        mock_connection = MagicMock()
+        mock_connect.return_value = mock_connection
+        mock_cursor = MagicMock()
+        mock_connection.cursor.return_value = mock_cursor
+
+        # Mocking the execute method to avoid actual database operations
+        mock_cursor.execute.return_value = None
+
+        # Input values for the function
+        game_id = 1
+        question_text = "What is the capital of France?"
+        correct_answer = "Paris"
+        incorrect_answers = ["Berlin", "Madrid", "Rome"]
+
+        # Call the function
+        add_new_questions(game_id, question_text, correct_answer, incorrect_answers)
+
+        # Assertions
+        mock_connect.assert_called_once_with('trivia_game')  # Assuming 'trivia_game' is the expected database name
+        mock_connection.cursor.assert_called_once()
+
+        expected_query = """
+                INSERT INTO questions (
+                    game_id,
+                    question,
+                    correct_answer,
+                    answer_1,
+                    answer_2,
+                    answer_3,
+                    is_provided
+                ) VALUES (%s, %s, %s, %s, %s, %s, %s)
+                """
+        expected_values = (game_id, question_text, correct_answer, incorrect_answers[0], incorrect_answers[1],
+                           incorrect_answers[2], False)
+        mock_cursor.execute.assert_called_once_with(expected_query, expected_values)
+
+        mock_connection.commit.assert_called_once()
+        mock_cursor.close.assert_called_once()
+        mock_connection.close.assert_called_once()
+
+
 if __name__ == '__main__':
     unittest.main()
