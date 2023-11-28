@@ -357,13 +357,12 @@ def get_user_score(game_id):
             db_connection.close()
 
 
-
 def get_leaderboard():
     try:
         # Establish a connection to the MySQL database
         db_name = "trivia_game"
         db_connection = _connect_to_db(db_name)
-        cur = db_connection.cursor() # Create a cursor object to interact with the database
+        cur = db_connection.cursor()  # Create a cursor object to interact with the database
         print(f"Connected to database {db_name}")
 
         # SQL query to fetch the score details
@@ -388,17 +387,20 @@ def get_leaderboard():
             db_connection.close()
 
 
-
 def main():
-    pass
-    # print(add_new_game(1))
-    # print(display_question_to_player(1))
-    # add_new_questions(1, "Blablabla", "gla", ["na", "ma", "pa"])
-    # print(update_game_score(24))
-    # print(get_correct_answer(13))
-    # get_or_add_player_id("Megan")
-    # add_new_questions(2, "HHHH", "HE", ["TU", "TT","hhh"])
-    # print(get_leaderboard())
+    #pass
+    # Run quick tests on DB functions:
+    get_or_add_player_id("Megan")
+    add_new_game(1)
+    add_new_questions(1, "Blablabla", "gla", ["na", "ma", "pa"])
+    add_new_questions(1, "HHHH", "HE", ["TU", "TT", "hhh"])
+    print(f"Question details for question to be displayed:\n{display_question_to_player(1)}")
+    print("\n")
+    print(f"Correct answer: {get_correct_answer(1)}")
+    print("\n")
+    print(f"Updated game score: {update_game_score(1)}")
+    print("\n")
+    print(f"Leaderboard Top 10:\n{get_leaderboard()}")
 
 
 if __name__ == '__main__':
