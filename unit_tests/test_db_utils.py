@@ -7,7 +7,7 @@ from db_utils import (
     display_question_to_player,
     update_game_score,
     get_user_score,
-    get_leader_board
+    get_leaderboard
 )
 
 
