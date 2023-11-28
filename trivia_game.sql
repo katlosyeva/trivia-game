@@ -44,3 +44,8 @@ CREATE TABLE questions (
   already_displayed boolean,
   FOREIGN KEY (game_id) REFERENCES games (id)
 );
+
+-- After running DB_utils.py file, re-run the below SELECT queries to check resulting changes to the DB:
+SELECT * FROM players;
+SELECT * FROM games;
+SELECT * FROM questions;
