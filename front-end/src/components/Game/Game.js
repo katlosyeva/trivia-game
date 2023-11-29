@@ -93,10 +93,11 @@ const Game = () => {
   };
 
   const handleNext = async () => {
-    fetchQuestions();
     setQuestionsCount(questionsCount + 1);
     if (questionsCount >= 15) {
       navigate("/congratulations", { state: { score } });
+    } else {
+      fetchQuestions();
     }
   };
 
