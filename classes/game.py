@@ -4,17 +4,6 @@ from db_utils import add_new_game, add_new_questions, display_question_to_player
     get_user_score, display_question_to_player_fifty_fifty, get_leaderboard
 
 
-def set_questions(game_id):
-
-    try:
-        questions = get_questions_from_api('https://opentdb.com/api.php?amount=15&type=multiple')["results"]
-    except Exception:
-        raise ConnectionError("Failed to get questions from API")
-
-    for question in questions:
-        add_new_questions(game_id, question["question"], question["correct_answer"], question["incorrect_answers"])
-
-
 class Game:
 
     def __init__(self, user_id):
@@ -26,9 +15,20 @@ class Game:
         game_id = add_new_game(self.user_id)
 
         # to get question from the API
-        set_questions(game_id)
+        self.set_questions(game_id)
 
         return game_id
+
+    @staticmethod
+    def set_questions(game_id):
+
+        try:
+            questions = get_questions_from_api('https://opentdb.com/api.php?amount=15&type=multiple')["results"]
+        except Exception:
+            raise ConnectionError("Failed to get questions from API")
+
+        for question in questions:
+            add_new_questions(game_id, question["question"], question["correct_answer"], question["incorrect_answers"])
 
     @staticmethod
     def check_answer(game_id, question_id, user_answer):
@@ -55,6 +55,7 @@ class Game:
         result = display_question_to_player_fifty_fifty(question_id)
         return result
 
+    @staticmethod
     def show_leaderboard():
         result = get_leaderboard()
         return result
@@ -62,5 +63,5 @@ class Game:
 
 if __name__ == '__main__':
     game = Game(1)
-    set_questions(1)
+    game.set_questions(1)
     print(game.fifty_fifty(57))
