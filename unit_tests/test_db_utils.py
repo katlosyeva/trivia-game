@@ -1,4 +1,4 @@
-import unittest
+import unittest, random
 from unittest.mock import MagicMock, patch
 from db_utils import (
     get_or_add_player_id,
@@ -46,7 +46,7 @@ class TestGetOrAddPlayerId(unittest.TestCase):
         new_result = get_or_add_player_id(new_username)
 
         #  Check that the result is as expected
-        self.assertEqual(new_result,2)  # Assuming the new player gets player_id (doesn't work as expected as test
+        self.assertEqual(new_result, 2)  # Assuming the new player gets player_id (doesn't work as expected as test
         # return random virtual ID)
 
         # Check that _connect_to_db was called with the correct arguments
@@ -128,5 +128,76 @@ class TestAddNewQuestions(unittest.TestCase):
         mock_connection.close.assert_called_once()
 
 
+# def shuffle_answers(correct_answer, incorrect_answers):
+#     answers = [correct_answer] + incorrect_answers
+#     random.shuffle(answers)
+#     return answers
+
+
+class TestDisplayQuestionToPlayer(unittest.TestCase):
+
+    @patch('db_utils._connect_to_db')  # Mock the database connection
+    def test_display_question_to_player(self, mock_connect):
+        # Mocking the database connection and cursor
+        mock_connection = MagicMock()
+        mock_connect.return_value = mock_connection
+        mock_cursor = MagicMock()
+        mock_connection.cursor.return_value = mock_cursor
+
+        # Mocking the execute method to avoid actual database operations
+        mock_cursor.execute.return_value = None
+
+        # Mocking the fetchone method to simulate a question being returned
+        mock_cursor.fetchone.return_value = (
+        1, 1, "What is the capital of France?", "Paris", "Berlin", "Madrid", "Rome")
+
+        # Input values for the function
+        game_id = 1
+
+        # Call the function
+        result = display_question_to_player(game_id)
+
+        # Assertions
+        mock_connect.assert_called_once_with('trivia_game')  # Assuming 'trivia_game' is the expected database name
+        mock_connection.cursor.assert_called_once()
+
+        # Check the first execute call for the SELECT query
+        expected_query_select = """
+            SELECT id, game_id, question, correct_answer, answer_1, answer_2, answer_3
+            FROM questions
+            WHERE game_id = %s
+            AND is_provided = False
+            LIMIT 1
+        """
+        expected_values_select = (game_id,)
+        mock_cursor.execute.assert_any_call(expected_query_select, expected_values_select)
+
+        # Check the second execute call for the UPDATE query
+        expected_query_update = """
+                UPDATE questions
+                SET is_provided = True
+                WHERE id = %s
+            """
+        expected_values_update = (1,)  # Assuming the question_id is always 1 for this test
+        mock_cursor.execute.assert_any_call(expected_query_update, expected_values_update)
+
+        # Additional assertions
+        mock_cursor.fetchone.assert_called_once()
+
+        mock_connection.commit.assert_called_once()
+        mock_cursor.close.assert_called_once()
+        mock_connection.close.assert_called_once()
+
+        # Additional assertions for the returned result with randomized answers
+        expected_result = {
+            "question_id": 1,
+            "game_id": 1,
+            "question_text": "What is the capital of France?",
+            "answers": ["Paris", "Berlin", "Madrid", "Rome"]
+        }
+        self.assertEqual(result, expected_result)
+
+
 if __name__ == '__main__':
     unittest.main()
+
