@@ -1,16 +1,11 @@
 import React from "react";
 import { Typography, Button, Box } from "@mui/material";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import backgroundImage from "../assets/background2.jpg";
 
 const Congratulations = () => {
-  const navigate = useNavigate();
   const location = useLocation();
   const score = location.state.score;
-
-  const handlePlayAgain = () => {
-    navigate("/");
-  };
 
   return (
     <Box
@@ -33,8 +28,16 @@ const Congratulations = () => {
       <Typography variant="h6" paragraph>
         You scored {score} points.
       </Typography>
-      <Button variant="contained" color="primary" onClick={handlePlayAgain}>
+      <Button variant="contained" color="primary" component={Link} to="/">
         Play Again
+      </Button>
+      <Button
+        component={Link}
+        to="/leaderboard"
+        variant="contained"
+        color="primary"
+      >
+        Leaderboard
       </Button>
     </Box>
   );
