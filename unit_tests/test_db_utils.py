@@ -108,8 +108,7 @@ class TestAddNewGame(unittest.TestCase):
 
         # Test with the mocked database connection
         user_id = 3  # Assuming user_id 1 (replace as needed)
-        score = 15  # Assuming a score of 100 (replace as needed)
-        game_id = add_new_game(user_id, score)
+        game_id = add_new_game(user_id)
 
         # Assertions:
         # Check that the result is as expected
@@ -119,9 +118,73 @@ class TestAddNewGame(unittest.TestCase):
         mock_connect.assert_called_with('trivia_game')
 
         # Check that execute() was called on the mock_cursor to insert a new game
-        insert_query = "INSERT INTO games (user_id, score) VALUES (%s, %s)"
-        expected_values = (user_id, score)
+        insert_query = "INSERT INTO games (user_id, score) VALUES (%s, 0)"
+        expected_values = (user_id,)
         mock_cursor.execute.assert_called_once_with(insert_query, expected_values)
+
+    @patch('db_utils._connect_to_db')  # Mock the database connection
+    def test_invalid_user_id(self, mock_connect):
+        # Set up the mock behavior for an invalid user_id
+        mock_connection = MagicMock()
+        mock_cursor = MagicMock()
+        mock_connection.cursor.return_value = mock_cursor
+        mock_connect.return_value = mock_connection
+
+        # Configure the cursor mock to return None when lastrowid is accessed
+        mock_cursor.lastrowid = None
+
+        # Test with the mocked database connection for an invalid user_id
+        user_id = 'invalid_user_id'  # Invalid user_id (non-integer)
+        game_id = add_new_game(user_id)
+
+        # Assertions:
+        # Check that the result is None for an invalid user_id
+        self.assertIsNone(game_id)
+
+        # Check that _connect_to_db was called with the correct arguments
+        mock_connect.assert_called_with('trivia_game')
+
+        # Check that execute() was called on the mock_cursor due to the invalid user_id
+        mock_cursor.execute.assert_called_once_with('INSERT INTO games (user_id, score) VALUES (%s, 0)',
+                                                    (user_id,))
+
+    @patch('db_utils._connect_to_db')  # Mock the database connection
+    def test_database_error(self, mock_connect):
+        # Set up the mock behavior for a database error
+        mock_connection = MagicMock()
+        mock_cursor = MagicMock()
+        mock_connection.cursor.side_effect = Exception('Database error')  # Simulate a database error
+        mock_connect.return_value = mock_connection
+
+        # Test with the mocked database connection for a database error
+        user_id = 4
+        game_id = add_new_game(user_id)
+
+        # Assertions:
+        # Check that the result is None for a database error
+        self.assertIsNone(game_id)
+
+        # Check that _connect_to_db was called with the correct arguments
+        mock_connect.assert_called_with('trivia_game')
+
+        # Check that execute() was not called on the mock_cursor due to the simulated database error
+        mock_cursor.execute.assert_not_called()
+
+    @patch('db_utils._connect_to_db')  # Mock the database connection
+    def test_connection_error(self, mock_connect):
+        # Set up the mock behavior for a connection error
+        mock_connect.side_effect = Exception('Connection error')  # Simulate a connection error
+
+        # Test with the mocked database connection for a connection error
+        user_id = 5
+        game_id = add_new_game(user_id)
+
+        # Assertions:
+        # Check that the result is None for a connection error
+        self.assertIsNone(game_id)
+
+        # Check that _connect_to_db was called with the correct arguments
+        mock_connect.assert_called_with('trivia_game')
 
 
 class TestAddNewQuestions(unittest.TestCase):
@@ -191,8 +254,10 @@ class TestDisplayQuestionToPlayer(unittest.TestCase):
         # Input values for the function
         game_id = 1
 
-        # Call the function
-        result = display_question_to_player(game_id)
+        # Mocking random.sample to ensure predictable shuffling for testing
+        with patch('random.sample', side_effect=lambda data, k: data[:k]):
+            # Call the function
+            result = display_question_to_player(game_id)
 
         # Assertions
         mock_connect.assert_called_once_with('trivia_game')  # Assuming 'trivia_game' is the expected database name
@@ -225,12 +290,12 @@ class TestDisplayQuestionToPlayer(unittest.TestCase):
         mock_cursor.close.assert_called_once()
         mock_connection.close.assert_called_once()
 
-        # Additional assertions for the returned result with sorted answers
+        # Additional assertions for the returned result with shuffled answers
         expected_result = {
             "question_id": 1,
             "game_id": 1,
             "question_text": "What is the capital of France?",
-            "answers": ["Berlin", "Madrid", "Paris", "Rome"]  # Adjusted to the sorted order
+            "answers": ["Berlin", "Madrid", "Paris", "Rome"]  # Adjusted to the shuffled order
         }
         self.assertEqual(result["question_id"], expected_result["question_id"])
         self.assertEqual(result["game_id"], expected_result["game_id"])
@@ -238,6 +303,76 @@ class TestDisplayQuestionToPlayer(unittest.TestCase):
 
         # Use assertCountEqual to check if the answers are the same regardless of order
         self.assertCountEqual(result["answers"], expected_result["answers"])
+
+# LAST ON USED FOR SORT:
+# class TestDisplayQuestionToPlayer(unittest.TestCase):
+#
+#     @patch('db_utils._connect_to_db')  # Mock the database connection
+#     def test_display_question_to_player(self, mock_connect):
+#         # Mocking the database connection and cursor
+#         mock_connection = MagicMock()
+#         mock_connect.return_value = mock_connection
+#         mock_cursor = MagicMock()
+#         mock_connection.cursor.return_value = mock_cursor
+#
+#         # Mocking the execute method to avoid actual database operations
+#         mock_cursor.execute.return_value = None
+#
+#         # Mocking the fetchone method to simulate a question being returned
+#         mock_cursor.fetchone.return_value = (
+#             1, 1, "What is the capital of France?", "Paris", "Berlin", "Madrid", "Rome"
+#         )
+#
+#         # Input values for the function
+#         game_id = 1
+#
+#         # Call the function
+#         result = display_question_to_player(game_id)
+#
+#         # Assertions
+#         mock_connect.assert_called_once_with('trivia_game')  # Assuming 'trivia_game' is the expected database name
+#         mock_connection.cursor.assert_called_once()
+#
+#         # Check the first execute call for the SELECT query
+#         expected_query_select = """
+#             SELECT id, game_id, question, correct_answer, answer_1, answer_2, answer_3
+#             FROM questions
+#             WHERE game_id = %s
+#             AND is_provided = False
+#             LIMIT 1
+#         """
+#         expected_values_select = (game_id,)
+#         mock_cursor.execute.assert_any_call(expected_query_select, expected_values_select)
+#
+#         # Check the second execute call for the UPDATE query
+#         expected_query_update = """
+#                 UPDATE questions
+#                 SET is_provided = True
+#                 WHERE id = %s
+#             """
+#         expected_values_update = (1,)  # Assuming the question_id is always 1 for this test
+#         mock_cursor.execute.assert_any_call(expected_query_update, expected_values_update)
+#
+#         # Additional assertions
+#         mock_cursor.fetchone.assert_called_once()
+#
+#         mock_connection.commit.assert_called_once()
+#         mock_cursor.close.assert_called_once()
+#         mock_connection.close.assert_called_once()
+#
+#         # Additional assertions for the returned result with sorted answers
+#         expected_result = {
+#             "question_id": 1,
+#             "game_id": 1,
+#             "question_text": "What is the capital of France?",
+#             "answers": ["Berlin", "Madrid", "Paris", "Rome"]  # Adjusted to the sorted order
+#         }
+#         self.assertEqual(result["question_id"], expected_result["question_id"])
+#         self.assertEqual(result["game_id"], expected_result["game_id"])
+#         self.assertEqual(result["question_text"], expected_result["question_text"])
+#
+#         # Use assertCountEqual to check if the answers are the same regardless of order
+#         self.assertCountEqual(result["answers"], expected_result["answers"])
 
 
 # class TestDisplayQuestionToPlayer(unittest.TestCase):
