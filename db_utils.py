@@ -175,49 +175,52 @@ def display_question_to_player(game_id):
         # Establish a connection to the MySQL database
         db_name = "trivia_game"
         db_connection = _connect_to_db(db_name)
-        cur = db_connection.cursor()  # Create a cursor object to interact with the database
+        cur = db_connection.cursor()
+
         print(f"Connected to database {db_name}")
 
-        # SQL query to fetch the question details
-        query = f"""
-                SELECT id, game_id, question, correct_answer, answer_1, answer_2, answer_3
-                FROM questions
-                WHERE game_id = {game_id}
-                AND is_provided = False
-                LIMIT 1
-            """
-
-        cur.execute(query)
+        # SQL query to fetch the question details using parameterized query
+        query = """
+            SELECT id, game_id, question, correct_answer, answer_1, answer_2, answer_3
+            FROM questions
+            WHERE game_id = %s
+            AND is_provided = False
+            LIMIT 1
+        """
+        cur.execute(query, (game_id,))
         question_displayed = cur.fetchone()
-        query2 = f"""
+
+        if question_displayed is not None:
+            question_id = question_displayed[0]
+            game_id = question_displayed[1]
+            question_text = question_displayed[2]
+            answers = [question_displayed[3], question_displayed[4], question_displayed[5], question_displayed[6]]
+
+            # SQL query to mark the question as provided using parameterized query
+            query2 = """
                 UPDATE questions
                 SET is_provided = True
-                WHERE id = {question_displayed[0]}
-                """
-        cur.execute(query2)
-        db_connection.commit()
-        cur.close()
-        # Return the individual variables
-        # if question_displayed:
-        question_id = question_displayed[0]
-        game_id = question_displayed[1]
-        question_text = question_displayed[2]
-        answers = [question_displayed[3], question_displayed[4], question_displayed[5], question_displayed[6]]
-        answers.sort()
+                WHERE id = %s
+            """
+            cur.execute(query2, (question_id,))
+            db_connection.commit()
 
-        return {
-            "question_id": question_id,
-            "game_id": game_id,
-            "question_text": question_text,
-            "answers": answers
-        }
+            return {
+                "question_id": question_id,
+                "game_id": game_id,
+                "question_text": question_text,
+                "answers": answers
+            }
+        else:
+            return {"error": "No more questions"}
 
-
-    except Exception:
-        return {"error": "No more questions"}
+    except mysql.connector.Error as err:
+        print(f"MySQL Error: {err}\n")
+        return {"error": "An error occurred while fetching the question"}
 
     finally:
         if db_connection:
+            cur.close()
             db_connection.close()
 
 
@@ -388,19 +391,19 @@ def get_leaderboard():
 
 
 def main():
-    #pass
+    pass
     # Run quick tests on DB functions:
-    get_or_add_player_id("Megan")
-    add_new_game(1)
-    add_new_questions(1, "Blablabla", "gla", ["na", "ma", "pa"])
-    add_new_questions(1, "HHHH", "HE", ["TU", "TT", "hhh"])
-    print(f"Question details for question to be displayed:\n{display_question_to_player(1)}")
-    print("\n")
-    print(f"Correct answer: {get_correct_answer(1)}")
-    print("\n")
-    print(f"Updated game score: {update_game_score(1)}")
-    print("\n")
-    print(f"Leaderboard Top 10:\n{get_leaderboard()}")
+    # get_or_add_player_id("Megan")
+    # add_new_game(1)
+    # add_new_questions(1, "What is the capital of France?", "Paris", ["Berlin", "Madrid", "Rome"])
+    # add_new_questions(1, "HHHH", "HE", ["TU", "TT", "hhh"])
+    # print(f"Question details for question to be displayed:\n{display_question_to_player(1)}")
+    # print("\n")
+    # print(f"Correct answer: {get_correct_answer(1)}")
+    # print("\n")
+    # print(f"Updated game score: {update_game_score(1)}")
+    # print("\n")
+    # print(f"Leaderboard Top 10:\n{get_leaderboard()}")
 
 
 if __name__ == '__main__':
