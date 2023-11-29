@@ -4,6 +4,15 @@ import Question from "./Question";
 import { useLocation, useNavigate } from "react-router-dom";
 import backgroundImage from "../../assets/background2.jpg";
 
+const shuffleArray = (array) => {
+  const shuffledArray = [...array];
+  for (let i = shuffledArray.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffledArray[i], shuffledArray[j]] = [shuffledArray[j], shuffledArray[i]];
+  }
+  return shuffledArray;
+};
+
 const Game = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -29,7 +38,7 @@ const Game = () => {
       if (data) {
         localStorage.setItem("question_id", data.question_id);
         setQuestion(data.question_text);
-        setAnswers(data.answers);
+        setAnswers(shuffleArray(data.answers));
         setSelectedAnswer(null);
         setShowCorrectAnswer(false);
       }
@@ -137,8 +146,7 @@ const Game = () => {
             variant="contained"
             color="primary"
             onClick={handleHint}
-            disabled
-            // ={showCorrectAnswer}
+            disabled={showCorrectAnswer}
           >
             Hint
           </Button>
