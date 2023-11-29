@@ -9,6 +9,7 @@ from flask_cors import CORS
 
 # Define a Flask web application
 app = Flask(__name__)
+
 CORS(app)
 
 
@@ -56,18 +57,16 @@ def next_question(game_id):
         return next_quest
 
 
-
 @app.route("/fifty_fifty/<question_id>")
 def updated_question(question_id):
     updated_quest = FiftyFifty.fifty_fifty(question_id)
     return updated_quest
- 
+
 
 @app.route("/leaderboard/")
 def show_leaderboard():
     leaderboard = Game.show_leaderboard()
     return leaderboard
-
 
 
 if __name__ == '__main__':

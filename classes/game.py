@@ -4,7 +4,6 @@ from db_utils import add_new_game, add_new_questions, display_question_to_player
     get_user_score, display_question_to_player_fifty_fifty, get_leaderboard
 
 
-
 class Game:
 
     def __init__(self, user_id):
@@ -13,14 +12,15 @@ class Game:
     def start_game(self):
 
         # to write a new game to a database
-        game_id = add_new_game(self.user_id, 0)
+        game_id = add_new_game(self.user_id)
 
         # to get question from the API
         self.set_questions(game_id)
 
         return game_id
 
-    def set_questions(self, game_id):
+    @staticmethod
+    def set_questions(game_id):
 
         try:
             questions = get_questions_from_api('https://opentdb.com/api.php?amount=15&type=multiple')["results"]
@@ -54,7 +54,8 @@ class Game:
     def fifty_fifty(question_id):
         result = display_question_to_player_fifty_fifty(question_id)
         return result
-    
+
+    @staticmethod
     def show_leaderboard():
         result = get_leaderboard()
         return result

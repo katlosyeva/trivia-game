@@ -1,4 +1,5 @@
 import mysql.connector  # module that allows to establish database connection
+import random
 from config import USER, PASSWORD, HOST
 
 
@@ -71,7 +72,7 @@ def get_or_add_player_id(username):
 
 
 # DB function to add new game to DB
-def add_new_game(user_id, score=0):
+def add_new_game(user_id):
     try:
         # Establish a connection to the MySQL database
         db_name = "trivia_game"
@@ -79,10 +80,10 @@ def add_new_game(user_id, score=0):
         cur = db_connection.cursor()  # Create a cursor object to interact with the database
         print(f"Connected to database {db_name}")
 
-        # SQL query for inserting a new row into the 'games' table
-        insert_query = "INSERT INTO games (user_id, score) VALUES (%s, %s)"
-        # values to be inserted
-        data = (user_id, score)
+        # SQL query for inserting a new row into the 'games' table with score set to 0
+        insert_query = "INSERT INTO games (user_id, score) VALUES (%s, 0)"
+        # value to be inserted
+        data = (user_id,)
         # Execute the query with the provided values
         cur.execute(insert_query, data)
         # Commit the changes to the database
@@ -195,7 +196,8 @@ def display_question_to_player(game_id):
             game_id = question_displayed[1]
             question_text = question_displayed[2]
             answers = [question_displayed[3], question_displayed[4], question_displayed[5], question_displayed[6]]
-            answers.sort()  # sort answers in alphabetical order, which will then be shuffled in Frontend/main.py later
+            # answers.sort()  # sort answers in alphabetical order, which will then be shuffled in Frontend/main.py
+            # later
 
             # SQL query to mark the question as provided using parameterized query
             query2 = """
@@ -206,11 +208,21 @@ def display_question_to_player(game_id):
             cur.execute(query2, (question_id,))
             db_connection.commit()
 
+            # fetched_question = {
+            #     "question_id": question_id,
+            #     "game_id": game_id,
+            #     "question_text": question_text,
+            #     "answers": random.sample(answers, len(answers))
+            # }
+            # print(f"Fetched question:\n{fetched_question}")
+
             return {
                 "question_id": question_id,
                 "game_id": game_id,
                 "question_text": question_text,
-                "answers": answers
+                "answers": random.sample(answers, len(answers))  # randomize the order of answers, so they will be
+                # displayed to player in random order
+                # "answers": answers
             }
         else:
             return {"error": "No more questions"}
@@ -251,7 +263,7 @@ def display_question_to_player_fifty_fifty(question_id):
         game_id = question_displayed[1]
         question_text = question_displayed[2]
         answers = [question_displayed[3], question_displayed[4]]
-        answers.sort()
+        random.sample(answers, len(answers))  # randomize the order of the two remaining answers to display to player
 
         return {
             "question_id": question_id,
@@ -394,17 +406,17 @@ def get_leaderboard():
 def main():
     pass
     # Run quick tests on DB functions:
-    # get_or_add_player_id("Megan")
-    # add_new_game(1)
-    # add_new_questions(1, "What is the capital of France?", "Paris", ["Berlin", "Madrid", "Rome"])
-    # add_new_questions(1, "HHHH", "HE", ["TU", "TT", "hhh"])
-    # print(f"Question details for question to be displayed:\n{display_question_to_player(1)}")
-    # print("\n")
-    # print(f"Correct answer: {get_correct_answer(1)}")
-    # print("\n")
-    # print(f"Updated game score: {update_game_score(1)}")
-    # print("\n")
-    # print(f"Leaderboard Top 10:\n{get_leaderboard()}")
+    get_or_add_player_id("Megan")
+    add_new_game(1)
+    add_new_questions(1, "What is the capital of France?", "Paris", ["Berlin", "Madrid", "Rome"])
+    add_new_questions(1, "HHHH", "HE", ["TU", "TT", "hhh"])
+    print(f"Question details for question to be displayed:\n{display_question_to_player(1)}")
+    print("\n")
+    print(f"Correct answer: {get_correct_answer(1)}")
+    print("\n")
+    print(f"Updated game score: {update_game_score(1)}")
+    print("\n")
+    print(f"Leaderboard Top 10:\n{get_leaderboard()}")
 
 
 if __name__ == '__main__':
