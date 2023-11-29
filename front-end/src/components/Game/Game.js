@@ -95,7 +95,7 @@ const Game = () => {
   const handleNext = async () => {
     fetchQuestions();
     setQuestionsCount(questionsCount + 1);
-    if (questionsCount >= 5) {
+    if (questionsCount >= 15) {
       navigate("/congratulations", { state: { score } });
     }
   };
@@ -108,12 +108,9 @@ const Game = () => {
         backgroundPosition: "center",
         backgroundSize: "200%",
         display: "flex",
-        // justifyContent: "center",
         alignItems: "center",
         flexDirection: "column",
         minHeight: "100vh",
-        // m: "0 auto",
-        // gap: 3,
       }}
     >
       <Box
