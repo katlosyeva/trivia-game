@@ -195,7 +195,7 @@ def display_question_to_player(game_id):
             game_id = question_displayed[1]
             question_text = question_displayed[2]
             answers = [question_displayed[3], question_displayed[4], question_displayed[5], question_displayed[6]]
-            answers.sort()
+            answers.sort()  # sort answers in alphabetical order, which will then be shuffled in Frontend/main.py later
 
             # SQL query to mark the question as provided using parameterized query
             query2 = """
