@@ -54,6 +54,10 @@ class Game:
     def fifty_fifty(question_id):
         result = display_question_to_player_fifty_fifty(question_id)
         return result
+    
+    def show_leaderboard():
+        result = get_leaderboard()
+        return result
 
 
 if __name__ == '__main__':

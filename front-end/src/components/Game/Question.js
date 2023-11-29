@@ -11,12 +11,14 @@ const Question = ({
   const sanitizedQuestion = question
     .replace(/&quot;/g, '"')
     .replace(/&#039;/g, "'")
+    .replace(/&amp;/g, "&")
     .replace(/&aacute;/g, "á");
   const sanitizedAnswers = answers.map((answer) =>
     answer
       .replace(/&quot;/g, '"')
       .replace(/&#039;/g, "'")
       .replace(/&aacute;/g, "á")
+      .replace(/&amp;/g, "&")
   );
 
   return (
