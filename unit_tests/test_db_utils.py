@@ -1,4 +1,4 @@
-import unittest, random
+import unittest
 from unittest.mock import MagicMock, patch
 from db_utils import (
     get_or_add_player_id,
@@ -126,12 +126,6 @@ class TestAddNewQuestions(unittest.TestCase):
         mock_connection.commit.assert_called_once()
         mock_cursor.close.assert_called_once()
         mock_connection.close.assert_called_once()
-
-
-# def shuffle_answers(correct_answer, incorrect_answers):
-#     answers = [correct_answer] + incorrect_answers
-#     random.shuffle(answers)
-#     return answers
 
 
 class TestDisplayQuestionToPlayer(unittest.TestCase):

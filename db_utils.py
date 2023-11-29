@@ -1,4 +1,3 @@
-import random
 import mysql.connector  # module that allows to establish database connection
 from config import USER, PASSWORD, HOST
 

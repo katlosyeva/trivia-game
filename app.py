@@ -5,11 +5,11 @@ from classes.user import User
 from classes.game import Game
 
 # We need CORS when we connect front and back
-# from flask_cors import CORS
+from flask_cors import CORS
 
 # Define a Flask web application
 app = Flask(__name__)
-# CORS(app)
+CORS(app)
 
 
 @app.route("/add_new_game", methods=["POST"])
