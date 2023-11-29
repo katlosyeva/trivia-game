@@ -55,7 +55,7 @@ class TestGetOrAddPlayerId(unittest.TestCase):
         mock_connect.assert_called_with('trivia_game')
 
     @patch('db_utils._connect_to_db')  # Mock the database connection
-    def test_invalid_username(self, mock_connect):
+    def test_invalid_empty_username(self, mock_connect):
         # Set up the mock behavior for an invalid case
         mock_connection_invalid = MagicMock()
         mock_cursor_invalid = MagicMock()
@@ -66,6 +66,26 @@ class TestGetOrAddPlayerId(unittest.TestCase):
 
         # Test with the mocked database connection for an invalid case
         invalid_username = ''  # Invalid username (empty string)
+        invalid_result = get_or_add_player_id(invalid_username)
+
+        # Check that the result is as expected (e.g., -1 or any indicator for an invalid case)
+        self.assertEqual(invalid_result, -1)
+
+        # Check that _connect_to_db was called with the correct arguments
+        mock_connect.assert_called_with('trivia_game')
+
+    @patch('db_utils._connect_to_db')  # Mock the database connection
+    def test_exceeds_username_limit(self, mock_connect):
+        # Set up the mock behavior for the case where the username exceeds the limit
+        mock_connection_invalid = MagicMock()
+        mock_cursor_invalid = MagicMock()
+        mock_cursor_invalid.fetchone.return_value = None  # Simulate that the player doesn't exist
+        mock_cursor_invalid.lastrowid = -1  # Set lastrowid for the invalid case
+        mock_connection_invalid.cursor.return_value = mock_cursor_invalid
+        mock_connect.return_value = mock_connection_invalid
+
+        # Test with the mocked database connection for the case where the username exceeds the limit
+        invalid_username = 'a' * 41  # Username with 41 characters, exceeding the 40-character limit
         invalid_result = get_or_add_player_id(invalid_username)
 
         # Check that the result is as expected (e.g., -1 or any indicator for an invalid case)
@@ -219,6 +239,7 @@ class TestDisplayQuestionToPlayer(unittest.TestCase):
         # Use assertCountEqual to check if the answers are the same regardless of order
         self.assertCountEqual(result["answers"], expected_result["answers"])
 
+
 # class TestDisplayQuestionToPlayer(unittest.TestCase):
 #
 #     @patch('db_utils._connect_to_db')  # Mock the database connection
@@ -334,4 +355,3 @@ class TestDisplayQuestionToPlayer(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-
