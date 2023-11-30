@@ -8,8 +8,7 @@ const Question = ({
   disabled,
 }) => (
   <div>
-    <Typography variant="h5" sx={{ maxWidth: 500 }}>
-      {question}
+    <Typography variant="h5" sx={{ maxWidth: 500 }} innerHTML={{__html: question }}>
     </Typography>
     <RadioGroup
       aria-label="answers"

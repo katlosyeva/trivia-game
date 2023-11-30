@@ -76,7 +76,7 @@ def run():
     answer = input(f"Write the answer: ")
     result = check_question(game_id, answer, question['question_id'])
     print(result)
-    for n in range(13):
+    for n in range(14):
         continue_agreement = input("To see the question press y")
         if continue_agreement == "y":
             question = next_question(game_id)
