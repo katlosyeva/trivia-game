@@ -186,7 +186,7 @@ def display_question_to_player(game_id):
             SELECT id, game_id, question, correct_answer, answer_1, answer_2, answer_3
             FROM questions
             WHERE game_id = %s
-            AND is_provided = False
+            AND already_displayed = False
             LIMIT 1
         """
         cur.execute(query, (game_id,))
@@ -203,7 +203,7 @@ def display_question_to_player(game_id):
             # SQL query to mark the question as provided using parameterized query
             query2 = """
                 UPDATE questions
-                SET is_provided = True
+                SET already_displayed = True
                 WHERE id = %s
             """
             cur.execute(query2, (question_id,))
@@ -398,20 +398,20 @@ def get_leaderboard():
 
 
 def main():
-    pass
-    # Run quick tests on DB functions:
-    get_or_add_player_id("Megan")
-    add_new_game(1)
-    add_new_questions(1, "What is the capital of France?", "Paris", ["Berlin", "Madrid", "Rome"])
-    add_new_questions(1, "HHHH", "HE", ["TU", "TT", "hhh"])
-    print(f"Question details for question to be displayed:\n{display_question_to_player(1)}")
-    print("\n")
-    print(f"Correct answer: {get_correct_answer(1)}")
-    print("\n")
-    print(f"Updated game score: {update_game_score(1)}")
-    print("\n")
-    print(f"Leaderboard Top 10:\n{get_leaderboard()}")
-
+    # pass
+    # # Run quick tests on DB functions:
+    # get_or_add_player_id("Megan")
+    # add_new_game(1)
+    # add_new_questions(1, "What is the capital of France?", "Paris", ["Berlin", "Madrid", "Rome"])
+    # add_new_questions(1, "HHHH", "HE", ["TU", "TT", "hhh"])
+    # print(f"Question details for question to be displayed:\n{display_question_to_player(1)}")
+    # print("\n")
+    # print(f"Correct answer: {get_correct_answer(1)}")
+    # print("\n")
+    # print(f"Updated game score: {update_game_score(1)}")
+    # print("\n")
+    # print(f"Leaderboard Top 10:\n{get_leaderboard()}")
+    print(display_question_to_player(27))
 
 if __name__ == '__main__':
     main()
