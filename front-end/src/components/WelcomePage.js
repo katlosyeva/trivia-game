@@ -24,13 +24,7 @@ const WelcomePage = () => {
       <Typography variant="body1" paragraph>
         To start the game, please login.
       </Typography>
-      <Button
-        component={Link}
-        to="/login"
-        variant="contained"
-        color="primary"
-        style={{ marginLeft: "10px" }}
-      >
+      <Button component={Link} to="/login" variant="contained" color="primary">
         Login
       </Button>
     </Box>
