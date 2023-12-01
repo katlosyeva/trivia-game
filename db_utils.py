@@ -259,37 +259,42 @@ def display_question_to_player_fifty_fifty(question_id):
         print(f"Connected to database {db_name}")
 
         # SQL query to fetch the question details
-        query = f"""
+        query = """
                 SELECT id, game_id, question, correct_answer, answer_1
                 FROM questions
-                WHERE id = {question_id}
+                WHERE id = %s
             """
 
-        cur.execute(query)
+        cur.execute(query, (question_id,))
         question_displayed = cur.fetchone()
 
-        db_connection.commit()
-        cur.close()
+        if question_displayed:
+            question_id = question_displayed[0]
+            game_id = question_displayed[1]
+            question_text = question_displayed[2]
+            answers = [question_displayed[3], question_displayed[4]]
+            random.sample(answers,
+                          len(answers))  # randomize the order of the two remaining answers to display to player
 
-        # if question_displayed:
-        question_id = question_displayed[0]
-        game_id = question_displayed[1]
-        question_text = question_displayed[2]
-        answers = [question_displayed[3], question_displayed[4]]
-        random.sample(answers, len(answers))  # randomize the order of the two remaining answers to display to player
-
-        return {
-            "question_id": question_id,
-            "game_id": game_id,
-            "question_text": question_text,
-            "answers": answers
-        }
+            return {
+                "question_id": question_id,
+                "game_id": game_id,
+                "question_text": question_text,
+                "answers": answers
+            }
+        else:
+            # If question is not found, raise an exception
+            raise ValueError(f"Question with ID {question_id} not found.")
 
     except Exception as exc:
-        return {"error": exc}
+        return {"error": str(exc)}
+
 
     finally:
+        if cur:
+            cur.close()  # Close the cursor if it exists
         if db_connection:
+            db_connection.commit()  # Commit the changes
             db_connection.close()
 
 
@@ -423,7 +428,7 @@ def main():
     print(f"Updated game score: {update_game_score(1)}")
     print("\n")
     print(f"Leaderboard Top 10:\n{get_leaderboard()}")
-    print(display_question_to_player(27))
+    print(display_question_to_player(1))
 
 
 if __name__ == '__main__':

@@ -451,5 +451,153 @@ class TestDisplayQuestionToPlayer(unittest.TestCase):
         self.assertCountEqual(result["answers"], expected_result["answers"])
 
 
+class TestDisplayQuestionToPlayerFiftyFifty(unittest.TestCase):
+
+    @patch('db_utils._connect_to_db')  # Mock the database connection
+    def test_display_question_to_player_fifty_fifty(self, mock_connect):
+        # Set up the mock behavior
+        mock_connection = MagicMock()
+        mock_cursor = MagicMock()
+        mock_connection.cursor.return_value = mock_cursor
+        mock_connect.return_value = mock_connection
+
+        # Test with the mocked database connection and a question_id
+        question_id = 42
+        correct_answer = "Paris"
+        incorrect_answer = "Berlin"
+
+        mock_cursor.fetchone.return_value = (1, 1, f"What is the capital of France?", correct_answer, incorrect_answer)
+
+        # Call the function
+        result = display_question_to_player_fifty_fifty(question_id)
+
+        # Assertions:
+        # Check that the result is a dictionary
+        self.assertIsInstance(result, dict)
+
+        # Check that the expected keys are present in the result
+        expected_keys = ["question_id", "game_id", "question_text", "answers"]
+        self.assertCountEqual(result.keys(), expected_keys)
+
+        # Check that the correct keys have the expected values
+        self.assertEqual(result["question_id"], 1)
+        self.assertEqual(result["game_id"], 1)
+        self.assertEqual(result["question_text"], f"What is the capital of France?")
+
+        # Check that the answers list has two elements
+        self.assertEqual(len(result["answers"]), 2)
+
+        # Check that the database connection was closed
+        mock_connection.close.assert_called_once()
+
+    @patch('db_utils._connect_to_db')  # Mock the database connection
+    def test_edge_case_empty_result(self, mock_connect):
+        # Set up the mock behavior for an empty result (edge case)
+        mock_connection = MagicMock()
+        mock_cursor = MagicMock()
+        mock_cursor.fetchone.return_value = None  # Simulate an empty result
+        mock_connection.cursor.return_value = mock_cursor
+        mock_connect.return_value = mock_connection
+
+        # Test with the mocked database connection and an existing question_id
+        existing_question_id = 42
+        result = display_question_to_player_fifty_fifty(existing_question_id)
+
+        # Assertions:
+        # Check if result is a dictionary
+        self.assertIsInstance(result, dict)
+
+        if 'error' in result:
+            # Check that the error message is as expected
+            expected_error_message = f"Question with ID {existing_question_id} not found."
+            self.assertEqual(str(result.get('error', '')), expected_error_message)
+        else:
+            # Check that the keys are present in the result dictionary
+            expected_keys = ["question_id", "game_id", "question_text", "answers"]
+            for key in expected_keys:
+                self.assertIn(key, result)
+
+        # Check that _connect_to_db was called with the correct arguments
+        mock_connect.assert_called_with('trivia_game')
+
+        # Check that execute() was called on the mock_cursor with the correct query
+        expected_query = """
+                SELECT id, game_id, question, correct_answer, answer_1
+                FROM questions
+                WHERE id = %s
+            """
+        mock_cursor.execute.assert_called_once_with(expected_query, (existing_question_id,))
+
+        # Check additional assertions
+        mock_connection.commit.assert_called_once()
+        mock_cursor.close.assert_called_once()  # Add this line
+        mock_connection.close.assert_called_once()
+
+    @patch('db_utils._connect_to_db')  # Mock the database connection
+    def test_existing_question_id(self, mock_connect):
+        # Set up the mock behavior
+        mock_connection = MagicMock()
+        mock_cursor = MagicMock()
+        mock_cursor.fetchone.return_value = (1, 2, 'Sample Question', 'Correct Answer', 'Incorrect Answer')
+        mock_connection.cursor.return_value = mock_cursor
+        mock_connect.return_value = mock_connection
+
+        # Test with the mocked database connection and an existing question_id
+        question_id = 1
+        result = display_question_to_player_fifty_fifty(question_id)
+
+        # Assertions:
+        self.assertIsNotNone(result)
+        self.assertIn('question_id', result)
+        self.assertIn('game_id', result)
+        self.assertIn('question_text', result)
+        self.assertIn('answers', result)
+
+        # Check that _connect_to_db was called with the correct arguments
+        mock_connect.assert_called_with('trivia_game')
+
+        # Check that execute() was called on the mock_cursor with the correct query and values
+        expected_query = """
+                SELECT id, game_id, question, correct_answer, answer_1
+                FROM questions
+                WHERE id = %s
+            """
+        expected_values = (question_id,)
+        mock_cursor.execute.assert_called_once_with(expected_query, expected_values)
+
+    @patch('db_utils._connect_to_db')  # Mock the database connection
+    def test_non_existent_question_id(self, mock_connect):
+        # Set up the mock behavior for a non-existent question_id
+        mock_connection = MagicMock()
+        mock_cursor = MagicMock()
+        mock_cursor.fetchone.return_value = None  # Simulate non-existent question
+        mock_connection.cursor.return_value = mock_cursor
+        mock_connect.return_value = mock_connection
+
+        # Test with the mocked database connection and a non-existent question_id
+        question_id = 9999
+        result = display_question_to_player_fifty_fifty(question_id)
+
+        # Assertions:
+        self.assertIsNotNone(result)
+        self.assertIn('error', result)
+        expected_error_message = f"Question with ID {question_id} not found."
+        self.assertEqual(result['error'], expected_error_message)
+
+        # Check that _connect_to_db was called with the correct arguments
+        mock_connect.assert_called_with('trivia_game')
+
+        # Check that execute() was called on the mock_cursor with the correct query and values
+        expected_query = (
+            """
+                SELECT id, game_id, question, correct_answer, answer_1
+                FROM questions
+                WHERE id = %s
+            """
+        )
+        expected_values = (question_id,)
+        mock_cursor.execute.assert_called_once_with(expected_query, expected_values)
+
+
 if __name__ == '__main__':
     unittest.main()
