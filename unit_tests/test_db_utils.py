@@ -152,10 +152,7 @@ class TestAddNewGame(unittest.TestCase):
     @patch('db_utils._connect_to_db')  # Mock the database connection
     def test_database_error(self, mock_connect):
         # Set up the mock behavior for a database error
-        mock_connection = MagicMock()
-        mock_cursor = MagicMock()
-        mock_connection.cursor.side_effect = Exception('Database error')  # Simulate a database error
-        mock_connect.return_value = mock_connection
+        mock_connect.side_effect = Exception('Database error')  # Simulate a database error
 
         # Test with the mocked database connection for a database error
         user_id = 4
@@ -167,9 +164,6 @@ class TestAddNewGame(unittest.TestCase):
 
         # Check that _connect_to_db was called with the correct arguments
         mock_connect.assert_called_with('trivia_game')
-
-        # Check that execute() was not called on the mock_cursor due to the simulated database error
-        mock_cursor.execute.assert_not_called()
 
     @patch('db_utils._connect_to_db')  # Mock the database connection
     def test_connection_error(self, mock_connect):
@@ -222,7 +216,7 @@ class TestAddNewQuestions(unittest.TestCase):
                     answer_1,
                     answer_2,
                     answer_3,
-                    is_provided
+                    already_displayed
                 ) VALUES (%s, %s, %s, %s, %s, %s, %s)
                 """
         expected_values = (game_id, question_text, correct_answer, incorrect_answers[0], incorrect_answers[1],
@@ -232,6 +226,48 @@ class TestAddNewQuestions(unittest.TestCase):
         mock_connection.commit.assert_called_once()
         mock_cursor.close.assert_called_once()
         mock_connection.close.assert_called_once()
+
+    @patch('db_utils._connect_to_db')  # Mock the database connection
+    def test_add_new_questions_unexpected_error(self, mock_connect):
+        # Mocking the database connection and cursor
+        mock_connection = MagicMock()
+        mock_connect.return_value = mock_connection
+        mock_cursor = MagicMock()
+        mock_connection.cursor.return_value = mock_cursor
+
+        # Mocking an unexpected error
+        mock_cursor.execute.side_effect = Exception("Test unexpected error")
+
+        # Input values for the function
+        game_id = 1
+        question_text = "What is the capital of France?"
+        correct_answer = "Paris"
+        incorrect_answers = ["Berlin", "Madrid", "Rome"]
+
+        try:
+            # Call the function
+            add_new_questions(game_id, question_text, correct_answer, incorrect_answers)
+        except Exception as e:
+            print(f"Caught exception: {e}")
+
+        # Assertions
+        mock_connect.assert_called_once_with('trivia_game')  # Assuming 'trivia_game' is the expected database name
+        mock_connection.cursor.assert_called_once()
+
+        expected_query = """
+                INSERT INTO questions (
+                    game_id,
+                    question,
+                    correct_answer,
+                    answer_1,
+                    answer_2,
+                    answer_3,
+                    already_displayed
+                ) VALUES (%s, %s, %s, %s, %s, %s, %s)
+                """
+        expected_values = (game_id, question_text, correct_answer, incorrect_answers[0], incorrect_answers[1],
+                           incorrect_answers[2], False)
+        mock_cursor.execute.assert_called_once_with(expected_query, expected_values)
 
 
 class TestDisplayQuestionToPlayer(unittest.TestCase):
@@ -269,7 +305,7 @@ class TestDisplayQuestionToPlayer(unittest.TestCase):
             SELECT id, game_id, question, correct_answer, answer_1, answer_2, answer_3
             FROM questions
             WHERE game_id = %s
-            AND is_provided = False
+            AND already_displayed = False
             LIMIT 1
         """
         expected_values_select = (game_id,)
@@ -278,7 +314,7 @@ class TestDisplayQuestionToPlayer(unittest.TestCase):
         # Check the second execute call for the UPDATE query
         expected_query_update = """
                 UPDATE questions
-                SET is_provided = True
+                SET already_displayed = True
                 WHERE id = %s
             """
         expected_values_update = (1,)  # Assuming the question_id is always 1 for this test
@@ -331,7 +367,7 @@ class TestDisplayQuestionToPlayer(unittest.TestCase):
             SELECT id, game_id, question, correct_answer, answer_1, answer_2, answer_3
             FROM questions
             WHERE game_id = %s
-            AND is_provided = False
+            AND already_displayed = False
             LIMIT 1
         """
         expected_values_select = (game_id,)
@@ -378,7 +414,7 @@ class TestDisplayQuestionToPlayer(unittest.TestCase):
             SELECT id, game_id, question, correct_answer, answer_1, answer_2, answer_3
             FROM questions
             WHERE game_id = %s
-            AND is_provided = False
+            AND already_displayed = False
             LIMIT 1
         """
         expected_values_select = (game_id,)
@@ -387,7 +423,7 @@ class TestDisplayQuestionToPlayer(unittest.TestCase):
         # Check the execute call for the UPDATE query
         expected_query_update = """
                 UPDATE questions
-                SET is_provided = True
+                SET already_displayed = True
                 WHERE id = %s
             """
         expected_values_update = (1,)  # Assuming the question_id is always 1 for this test

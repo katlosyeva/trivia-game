@@ -69,9 +69,10 @@ def get_or_add_player_id(username):
         return player_id
 
 
-
 def add_new_game(user_id):
-    """DB function to add new game to DB, returns game_id"""
+    """DB function to add a new game to DB, returns game_id"""
+    db_connection = None  # Initialize db_connection to None
+
     try:
         # Establish a connection to the MySQL database
         db_name = "trivia_game"
@@ -93,9 +94,6 @@ def add_new_game(user_id):
         game_id = cur.lastrowid
         print(f"add_new_game function returns game_id: {game_id}\n")
 
-        # Close the cursor
-        cur.close()
-
     except mysql.connector.Error as err:
         print(f"MySQL Error: {err}\n")
         game_id = None  # Set game_id to None in case of an error
@@ -106,10 +104,13 @@ def add_new_game(user_id):
 
     finally:
         if db_connection:
+            # Close the cursor
+            cur.close()
             # close the connection
             db_connection.close()
 
     return game_id
+
 
 
 def add_new_questions(game_id, question_text, correct_answer, incorrect_answers):
@@ -399,19 +400,20 @@ def get_leaderboard():
 
 def main():
     # pass
-    # # Run quick tests on DB functions:
-    # get_or_add_player_id("Megan")
-    # add_new_game(1)
-    # add_new_questions(1, "What is the capital of France?", "Paris", ["Berlin", "Madrid", "Rome"])
-    # add_new_questions(1, "HHHH", "HE", ["TU", "TT", "hhh"])
-    # print(f"Question details for question to be displayed:\n{display_question_to_player(1)}")
-    # print("\n")
-    # print(f"Correct answer: {get_correct_answer(1)}")
-    # print("\n")
-    # print(f"Updated game score: {update_game_score(1)}")
-    # print("\n")
-    # print(f"Leaderboard Top 10:\n{get_leaderboard()}")
+    # Run quick tests on DB functions:
+    get_or_add_player_id("Megan")
+    add_new_game(1)
+    add_new_questions(1, "What is the capital of France?", "Paris", ["Berlin", "Madrid", "Rome"])
+    add_new_questions(1, "HHHH", "HE", ["TU", "TT", "hhh"])
+    print(f"Question details for question to be displayed:\n{display_question_to_player(1)}")
+    print("\n")
+    print(f"Correct answer: {get_correct_answer(1)}")
+    print("\n")
+    print(f"Updated game score: {update_game_score(1)}")
+    print("\n")
+    print(f"Leaderboard Top 10:\n{get_leaderboard()}")
     print(display_question_to_player(27))
+
 
 if __name__ == '__main__':
     main()
