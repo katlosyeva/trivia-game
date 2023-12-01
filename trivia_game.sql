@@ -41,7 +41,7 @@ CREATE TABLE questions (
   answer_1 varchar(200),
   answer_2 varchar(200),
   answer_3 varchar(200),
-  is_provided boolean,
+  already_displayed boolean,
   FOREIGN KEY (game_id) REFERENCES games (id)
 );
 

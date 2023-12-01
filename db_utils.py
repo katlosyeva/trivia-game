@@ -18,11 +18,9 @@ def _connect_to_db(db_name):
     return connection
 
 
-# Function which checks whether username exists and returns player_id,
-# and if username does not exist, new username is added to players and returns new player_id:
-
-
 def get_or_add_player_id(username):
+    """function which checks whether username exists and returns player_id,
+    # and if username does not exist, new username is added to players and returns new player_id"""
     player_id = None
 
     try:
@@ -71,8 +69,9 @@ def get_or_add_player_id(username):
         return player_id
 
 
-# DB function to add new game to DB
+
 def add_new_game(user_id):
+    """DB function to add new game to DB, returns game_id"""
     try:
         # Establish a connection to the MySQL database
         db_name = "trivia_game"
@@ -113,8 +112,9 @@ def add_new_game(user_id):
     return game_id
 
 
-# DB function to add questions data to questions table in DB - will be used for API call
 def add_new_questions(game_id, question_text, correct_answer, incorrect_answers):
+    """"DB function to add questions data to questions table in DB,
+     takes game_id, question_text, correct_answer, incorrect_answers"""
     try:
         # Establish a connection to the MySQL database
         db_name = "trivia_game"
@@ -131,7 +131,7 @@ def add_new_questions(game_id, question_text, correct_answer, incorrect_answers)
                     answer_1,
                     answer_2,
                     answer_3,
-                    is_provided
+                    already_displayed
                 ) VALUES (%s, %s, %s, %s, %s, %s, %s)
                 """
 
@@ -172,6 +172,7 @@ def add_new_questions(game_id, question_text, correct_answer, incorrect_answers)
 
 
 def display_question_to_player(game_id):
+    """"DB function, that takes game_id and returns question_id, game_id, question_text and answers"""
     try:
         # Establish a connection to the MySQL database
         db_name = "trivia_game"
@@ -185,7 +186,7 @@ def display_question_to_player(game_id):
             SELECT id, game_id, question, correct_answer, answer_1, answer_2, answer_3
             FROM questions
             WHERE game_id = %s
-            AND is_provided = False
+            AND already_displayed = False
             LIMIT 1
         """
         cur.execute(query, (game_id,))
@@ -202,7 +203,7 @@ def display_question_to_player(game_id):
             # SQL query to mark the question as provided using parameterized query
             query2 = """
                 UPDATE questions
-                SET is_provided = True
+                SET already_displayed = True
                 WHERE id = %s
             """
             cur.execute(query2, (question_id,))
@@ -281,26 +282,24 @@ def display_question_to_player_fifty_fifty(question_id):
 
 
 def get_correct_answer(question_id):
+    """takes question_id, makes request to db and returns the correct answer for this question"""
     try:
         # Establish a connection to the MySQL database
         db_name = "trivia_game"
         db_connection = _connect_to_db(db_name)
         cur = db_connection.cursor()  # Create a cursor object to interact with the database
         print(f"Connected to database {db_name}")
-
-        # SQL query to fetch the question details
+        # SQL query to fetch the correct answer
         query = f"""
                     SELECT correct_answer
                     FROM questions
                     WHERE id = {question_id}
                 """
-
         cur.execute(query)
         correct_answer = cur.fetchone()
+        # Close the cursor
         cur.close()
-
         return correct_answer[0]
-
 
     except Exception:
         raise DbConnectionError("Failed to fetch question from DB\n")
@@ -311,30 +310,24 @@ def get_correct_answer(question_id):
 
 
 def update_game_score(game_id):
+    """DB function, that takes game_id and updates the game score"""
     try:
         # Establish a connection to the MySQL database
         db_name = "trivia_game"
         db_connection = _connect_to_db(db_name)
         cur = db_connection.cursor()  # Create a cursor object to interact with the database
         print(f"Connected to database {db_name}")
-
-        query1 = f"""
+        # query to update the score
+        query_to_update_score = f"""
                 UPDATE games
                 SET score = score + 1
                 WHERE id = {game_id}
             """
-        cur.execute(query1)
+        cur.execute(query_to_update_score)
         db_connection.commit()
-        query2 = f"""
-               SELECT score
-               FROM games
-               WHERE id = {game_id}
-            """
-        cur.execute(query2)
-        player_score = cur.fetchone()
+        # Close the cursor
         cur.close()
 
-        return player_score[0]
     except Exception:
         raise DbConnectionError("Failed to update and fetch update score\n")
 
@@ -345,6 +338,7 @@ def update_game_score(game_id):
 
 
 def get_user_score(game_id):
+    """DB function, that takes game_id and returns the game score"""
     try:
         # Establish a connection to the MySQL database
         db_name = "trivia_game"
@@ -352,7 +346,7 @@ def get_user_score(game_id):
         cur = db_connection.cursor()  # Create a cursor object to interact with the database
         print(f"Connected to database {db_name}")
 
-        # SQL query to fetch the score details
+        # SQL query to fetch the score
         query = f"""
                     SELECT score
                     FROM games
@@ -360,9 +354,9 @@ def get_user_score(game_id):
                 """
 
         cur.execute(query)
+        # storing the score in a variable
         score = cur.fetchone()
         cur.close()
-
         return score[0]
 
     except Exception:
@@ -404,20 +398,20 @@ def get_leaderboard():
 
 
 def main():
-    pass
-    # Run quick tests on DB functions:
-    get_or_add_player_id("Megan")
-    add_new_game(1)
-    add_new_questions(1, "What is the capital of France?", "Paris", ["Berlin", "Madrid", "Rome"])
-    add_new_questions(1, "HHHH", "HE", ["TU", "TT", "hhh"])
-    print(f"Question details for question to be displayed:\n{display_question_to_player(1)}")
-    print("\n")
-    print(f"Correct answer: {get_correct_answer(1)}")
-    print("\n")
-    print(f"Updated game score: {update_game_score(1)}")
-    print("\n")
-    print(f"Leaderboard Top 10:\n{get_leaderboard()}")
-
+    # pass
+    # # Run quick tests on DB functions:
+    # get_or_add_player_id("Megan")
+    # add_new_game(1)
+    # add_new_questions(1, "What is the capital of France?", "Paris", ["Berlin", "Madrid", "Rome"])
+    # add_new_questions(1, "HHHH", "HE", ["TU", "TT", "hhh"])
+    # print(f"Question details for question to be displayed:\n{display_question_to_player(1)}")
+    # print("\n")
+    # print(f"Correct answer: {get_correct_answer(1)}")
+    # print("\n")
+    # print(f"Updated game score: {update_game_score(1)}")
+    # print("\n")
+    # print(f"Leaderboard Top 10:\n{get_leaderboard()}")
+    print(display_question_to_player(27))
 
 if __name__ == '__main__':
     main()

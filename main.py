@@ -99,6 +99,7 @@ def run():
     info = add_game(player)
     game_id = info["game_id"]
     question = info["question"]
+    print(question)
     question_id = question["question_id"]
     print("\nThe question: ", question['question_text'])
     print("Answers: ")
@@ -114,9 +115,11 @@ def run():
 
     answer = input(f"Write the answer: ")
     result = check_question(game_id, answer, question['question_id'])
+
     print(result, "\n")
     for n in range(13):
         continue_agreement = input("\nTo see the question press y ")
+
         if continue_agreement == "y":
             question = next_question(game_id)
             question_id = question["question_id"]
