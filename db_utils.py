@@ -72,6 +72,17 @@ def get_or_add_player_id(username):
 def add_new_game(user_id):
     """DB function to add a new game to DB, returns game_id"""
     db_connection = None  # Initialize db_connection to None
+    cur = None  # Initialize cur to None
+
+    try:
+        # Check if user_id is a valid integer and positive
+        user_id = int(user_id)
+        if user_id <= 0:
+            raise ValueError("Invalid user_id. Must be a positive integer.")
+    except ValueError as ve:
+        # Handle the case where user_id is not a valid integer or not positive
+        print(f"Invalid user_id: {ve}")
+        return None
 
     try:
         # Establish a connection to the MySQL database
@@ -103,14 +114,14 @@ def add_new_game(user_id):
         game_id = None  # Set game_id to None in case of an error
 
     finally:
-        if db_connection:
+        if cur:
             # Close the cursor
             cur.close()
-            # close the connection
+        if db_connection:
+            # Close the connection
             db_connection.close()
 
     return game_id
-
 
 
 def add_new_questions(game_id, question_text, correct_answer, incorrect_answers):
