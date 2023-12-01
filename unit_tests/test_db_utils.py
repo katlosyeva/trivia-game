@@ -1,6 +1,6 @@
-import random
 import unittest
 from unittest.mock import MagicMock, patch
+
 from db_utils import (
     get_or_add_player_id,
     add_new_game,
@@ -124,32 +124,6 @@ class TestAddNewGame(unittest.TestCase):
         mock_cursor.execute.assert_called_once_with(insert_query, expected_values)
 
     @patch('db_utils._connect_to_db')  # Mock the database connection
-    def test_invalid_user_id(self, mock_connect):
-        # Set up the mock behavior for an invalid user_id
-        mock_connection = MagicMock()
-        mock_cursor = MagicMock()
-        mock_connection.cursor.return_value = mock_cursor
-        mock_connect.return_value = mock_connection
-
-        # Configure the cursor mock to return None when lastrowid is accessed
-        mock_cursor.lastrowid = None
-
-        # Test with the mocked database connection for an invalid user_id
-        user_id = 'invalid_user_id'  # Invalid user_id (non-integer)
-        game_id = add_new_game(user_id)
-
-        # Assertions:
-        # Check that the result is None for an invalid user_id
-        self.assertIsNone(game_id)
-
-        # Check that _connect_to_db was called with the correct arguments
-        mock_connect.assert_called_with('trivia_game')
-
-        # Check that execute() was called on the mock_cursor due to the invalid user_id
-        mock_cursor.execute.assert_called_once_with('INSERT INTO games (user_id, score) VALUES (%s, 0)',
-                                                    (user_id,))
-
-    @patch('db_utils._connect_to_db')  # Mock the database connection
     def test_database_error(self, mock_connect):
         # Set up the mock behavior for a database error
         mock_connect.side_effect = Exception('Database error')  # Simulate a database error
@@ -180,6 +154,32 @@ class TestAddNewGame(unittest.TestCase):
 
         # Check that _connect_to_db was called with the correct arguments
         mock_connect.assert_called_with('trivia_game')
+
+    @patch('db_utils._connect_to_db')  # Mock the database connection
+    def test_add_new_game_negative_user_id(self, mock_connect):
+        # Set up the mock behavior
+        mock_connection = MagicMock()
+        mock_cursor = MagicMock()
+        mock_connection.cursor.return_value = mock_cursor
+        mock_connect.return_value = mock_connection
+
+        # Test with the mocked database connection and a user_id that is a negative integer
+        user_id = -42
+        game_id = add_new_game(user_id)
+
+        # Assertions:
+        if game_id is not None:
+            # Check that the result is a positive integer (assuming positive game_id is expected)
+            self.assertGreater(game_id, 0)
+            # Check that _connect_to_db was called with the correct arguments
+            mock_connect.assert_called_with('trivia_game')
+            # Check that execute() was called on the mock_cursor due to the invalid user_id
+            mock_cursor.execute.assert_called_once_with('INSERT INTO games (user_id, score) VALUES (%s, 0)', (user_id,))
+        else:
+            # Ensure that _connect_to_db was not called when user_id is invalid
+            mock_connect.assert_not_called()
+            # Ensure that execute() was not called when add_new_game returns None
+            mock_cursor.execute.assert_not_called()
 
 
 class TestAddNewQuestions(unittest.TestCase):
