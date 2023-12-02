@@ -337,30 +337,32 @@ def get_correct_answer(question_id):
 
 
 def update_game_score(game_id):
-    """DB function, that takes game_id and updates the game score"""
+    """DB function that takes game_id and updates the game score."""
+    cur = None  # Initialize cur outside the try block
     try:
         # Establish a connection to the MySQL database
         db_name = "trivia_game"
         db_connection = _connect_to_db(db_name)
         cur = db_connection.cursor()  # Create a cursor object to interact with the database
         print(f"Connected to database {db_name}")
-        # query to update the score
-        query_to_update_score = f"""
-                UPDATE games
-                SET score = score + 1
-                WHERE id = {game_id}
-            """
-        cur.execute(query_to_update_score)
-        db_connection.commit()
-        # Close the cursor
-        cur.close()
 
-    except Exception:
-        raise DbConnectionError("Failed to update and fetch update score\n")
+        # Query to update the score
+        query_to_update_score = """
+            UPDATE games
+            SET score = score + 1
+            WHERE id = %s
+        """
+        cur.execute(query_to_update_score, (game_id,))
+        db_connection.commit()
+
+    except Exception as e:
+        print(f"Failed to update game score in DB. Error: {e}")
+        raise DbConnectionError("Failed to update game score in DB")
 
     finally:
+        if cur:
+            cur.close()  # Close the cursor if it exists
         if db_connection:
-            # Close the connection
             db_connection.close()
 
 
