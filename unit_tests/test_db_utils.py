@@ -109,7 +109,7 @@ class TestAddNewGame(unittest.TestCase):
         mock_connect.return_value = mock_connection
 
         # Test with the mocked database connection
-        user_id = 3  # Assuming user_id 1 (replace as needed)
+        user_id = 3  # Assuming user_id 1
         game_id = add_new_game(user_id)
 
         # Assertions:
@@ -746,6 +746,22 @@ class TestUpdateGameScore(unittest.TestCase):
         mock_cursor.close.assert_called_once()
         mock_db_connection.close.assert_called_once()
 
+    @patch("db_utils._connect_to_db")
+    def test_update_game_score_invalid_game_id(self, mock_connect_to_db):
+        # Set up an invalid mock game_id (non-integer)
+        invalid_game_id = "invalid_id"
+
+        # Call the function and check for the expected exception
+        with self.assertRaises(ValueError) as context:
+            update_game_score(invalid_game_id)
+
+        # Ensure the exception type is ValueError
+        self.assertEqual(ValueError, type(context.exception))
+
+        # Ensure the exception message contains the expected string
+        expected_error_message = "Invalid game_id. Please provide an integer."
+        self.assertIn(expected_error_message, str(context.exception))
+
     @patch('db_utils._connect_to_db')
     def test_update_game_score_db_error(self, mock_connect_to_db):
         # Mock the database connection to raise an exception
@@ -764,6 +780,80 @@ class TestUpdateGameScore(unittest.TestCase):
 
         # Check if the cursor and connection were closed even in case of an error
         mock_db_connection.cursor.assert_called_once()
+        mock_db_connection.close.assert_called_once()
+
+
+class TestGetUserScore(unittest.TestCase):
+    @patch("db_utils._connect_to_db")
+    def test_get_user_score_success(self, mock_connect_to_db):
+        # Mocking the database connection and cursor
+        mock_db_connection = MagicMock()
+        mock_cursor = MagicMock()
+        mock_connect_to_db.return_value = mock_db_connection
+        mock_db_connection.cursor.return_value = mock_cursor
+
+        # Mocking the execute result
+        mock_cursor.fetchone.return_value = (42,)
+
+        # Call the function
+        result = get_user_score(game_id=123)
+
+        # Assertions
+        self.assertEqual(result, 42)
+        mock_connect_to_db.assert_called_once_with("trivia_game")
+        mock_db_connection.cursor.assert_called_once()
+        mock_cursor.execute.assert_called_once()
+        mock_cursor.close.assert_called_once()
+        mock_db_connection.close.assert_called_once()
+
+    @patch("db_utils._connect_to_db")
+    def test_get_user_score_db_error(self, mock_connect_to_db):
+        # Mocking the database connection and cursor
+        mock_db_connection = MagicMock()
+        mock_cursor = MagicMock()
+        mock_connect_to_db.return_value = mock_db_connection
+        mock_db_connection.cursor.return_value = mock_cursor
+
+        # Mocking an exception during execution
+        mock_cursor.execute.side_effect = Exception("Database error")
+
+        # Call the function
+        with self.assertRaises(DbConnectionError) as context:
+            get_user_score(game_id=123)
+
+        # Assertions
+        self.assertEqual(
+            str(context.exception), "Failed to fetch score from DB\n"
+        )
+        mock_connect_to_db.assert_called_once_with("trivia_game")
+        mock_db_connection.cursor.assert_called_once()
+        mock_cursor.execute.assert_called_once()
+        mock_cursor.close.assert_called_once()
+        mock_db_connection.close.assert_called_once()
+
+    @patch("db_utils._connect_to_db")
+    def test_get_user_score_no_data(self, mock_connect_to_db):
+        # Mocking the database connection and cursor
+        mock_db_connection = MagicMock()
+        mock_cursor = MagicMock()
+        mock_connect_to_db.return_value = mock_db_connection
+        mock_db_connection.cursor.return_value = mock_cursor
+
+        # Mocking the case where no data is found
+        mock_cursor.fetchone.return_value = None
+
+        # Call the function
+        with self.assertRaises(DbConnectionError) as context:
+            get_user_score(game_id=999)
+
+        # Assertions
+        self.assertEqual(
+            str(context.exception), "Failed to fetch score from DB\n"
+        )
+        mock_connect_to_db.assert_called_once_with("trivia_game")
+        mock_db_connection.cursor.assert_called_once()
+        mock_cursor.execute.assert_called_once()
+        mock_cursor.close.assert_called_once()
         mock_db_connection.close.assert_called_once()
 
 

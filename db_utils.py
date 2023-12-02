@@ -339,6 +339,11 @@ def get_correct_answer(question_id):
 def update_game_score(game_id):
     """DB function that takes game_id and updates the game score."""
     cur = None  # Initialize cur outside the try block
+
+    # Check if game_id is not an integer
+    if not isinstance(game_id, int):
+        raise ValueError("Invalid game_id. Please provide an integer.")
+
     try:
         # Establish a connection to the MySQL database
         db_name = "trivia_game"
@@ -368,6 +373,7 @@ def update_game_score(game_id):
 
 def get_user_score(game_id):
     """DB function, that takes game_id and returns the game score"""
+    cur = None  # Initialize cur outside the try block
     try:
         # Establish a connection to the MySQL database
         db_name = "trivia_game"
@@ -385,13 +391,14 @@ def get_user_score(game_id):
         cur.execute(query)
         # storing the score in a variable
         score = cur.fetchone()
-        cur.close()
         return score[0]
 
     except Exception:
         raise DbConnectionError("Failed to fetch score from DB\n")
 
     finally:
+        if cur:
+            cur.close()  # Close the cursor if it exists
         if db_connection:
             db_connection.close()
 
@@ -435,12 +442,15 @@ def main():
     add_new_questions(1, "HHHH", "HE", ["TU", "TT", "hhh"])
     print(f"Question details for question to be displayed:\n{display_question_to_player(1)}")
     print("\n")
+    print(f"Fifty/fifty answers: {display_question_to_player_fifty_fifty(1)}")
+    print("\n")
     print(f"Correct answer: {get_correct_answer(1)}")
     print("\n")
     print(f"Updated game score: {update_game_score(1)}")
     print("\n")
+    print(f"After score is updated, get_user_score returns score: {get_user_score(1)}")
+    print("\n")
     print(f"Leaderboard Top 10:\n{get_leaderboard()}")
-    print(display_question_to_player(1))
 
 
 if __name__ == '__main__':
