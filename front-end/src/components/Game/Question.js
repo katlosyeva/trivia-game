@@ -8,24 +8,14 @@ const Question = ({
   onChange,
   disabled,
 }) => {
-  const sanitizedQuestion = question
-    .replace(/&quot;/g, '"')
-    .replace(/&#039;/g, "'")
-    .replace(/&amp;/g, "&")
-    .replace(/&aacute;/g, "á");
-  const sanitizedAnswers = answers.map((answer) =>
-    answer
-      .replace(/&quot;/g, '"')
-      .replace(/&#039;/g, "'")
-      .replace(/&aacute;/g, "á")
-      .replace(/&amp;/g, "&")
-  );
-
   return (
     <div>
-      <Typography variant="h5" sx={{ maxWidth: 500, mb: 2 }}>
-        {sanitizedQuestion}
-      </Typography>
+      <Typography
+        variant="h5"
+        sx={{ maxWidth: 500, mb: 2 }}
+        dangerouslySetInnerHTML={{ __html: question }}
+      />
+
       <RadioGroup
         aria-label="answers"
         name="answers"
@@ -39,12 +29,12 @@ const Question = ({
           flexWrap: true,
         }}
       >
-        {sanitizedAnswers.map((answer, index) => (
+        {answers.map((answer, index) => (
           <FormControlLabel
             key={index}
             value={answer}
             control={<Radio />}
-            label={answer}
+            label={<span dangerouslySetInnerHTML={{ __html: answer }} />}
             disabled={disabled}
           />
         ))}
