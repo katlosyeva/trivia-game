@@ -896,6 +896,36 @@ class TestGetLeaderboard(unittest.TestCase):
         mock_db_connection.close.assert_called_once()
 
     @patch('db_utils._connect_to_db')
+    def test_get_leaderboard_empty_data(self, mock_connect_to_db):
+        # Mock the database connection
+        mock_db_connection = mock_connect_to_db.return_value
+        mock_cursor = mock_db_connection.cursor.return_value
+
+        # Set up a mock leaderboard data (empty in this case)
+        mock_leaderboard_data = []
+
+        mock_cursor.fetchall.return_value = mock_leaderboard_data
+
+        # Call the function
+        leaderboard = get_leaderboard()
+
+        # Check if the correct SQL query was executed
+        expected_query = """
+            SELECT players.username, games.score
+            FROM players
+            JOIN games ON players.id = games.user_id
+            ORDER BY games.score DESC
+        """
+        mock_cursor.execute.assert_called_once_with(expected_query)
+
+        # Check if the result matches the expected leaderboard data (empty)
+        self.assertEqual(leaderboard, mock_leaderboard_data)
+
+        # Check if the cursor and connection were closed
+        mock_cursor.close.assert_called_once()
+        mock_db_connection.close.assert_called_once()
+
+    @patch('db_utils._connect_to_db')
     def test_get_leaderboard_db_error(self, mock_connect_to_db):
         # Mock the database connection to raise an exception
         mock_db_connection = mock_connect_to_db.return_value
