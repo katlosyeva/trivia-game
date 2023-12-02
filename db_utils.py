@@ -404,6 +404,7 @@ def get_user_score(game_id):
 
 
 def get_leaderboard():
+    cur = None  # Initialize cur outside the try block
     try:
         # Establish a connection to the MySQL database
         db_name = "trivia_game"
@@ -412,23 +413,25 @@ def get_leaderboard():
         print(f"Connected to database {db_name}")
 
         # SQL query to fetch the score details
-        query = f"""
-                    SELECT players.username, games.score
-                    FROM players
-                    JOIN games ON players.id = games.user_id
-                    ORDER BY games.score DESC
-                """
+        query = """
+            SELECT players.username, games.score
+            FROM players
+            JOIN games ON players.id = games.user_id
+            ORDER BY games.score DESC
+        """
 
         cur.execute(query)
         leaderboard = cur.fetchall()
-        cur.close()
 
+        # Return the top 10 entries if available
         return leaderboard[:10]
 
     except Exception:
-        raise DbConnectionError("Failed to retrieve leaderboard from DB\n")
+        raise DbConnectionError("Failed to retrieve leaderboard from DB")
 
     finally:
+        if cur:
+            cur.close()  # Close the cursor if it exists
         if db_connection:
             db_connection.close()
 
