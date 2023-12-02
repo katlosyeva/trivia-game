@@ -25,6 +25,7 @@ const Game = () => {
   const [showCorrectAnswer, setShowCorrectAnswer] = useState(false);
   const [questionsCount, setQuestionsCount] = useState(1);
   const [question, setQuestion] = useState(questionObj.question_text);
+  const [remainingHints, setRemainingHints] = useState(3); // New state for remaining hints
 
   const game_id = localStorage.getItem("game_id");
 
@@ -75,20 +76,23 @@ const Game = () => {
   };
 
   const handleHint = async () => {
-    const question_id = localStorage.getItem("question_id");
-    try {
-      const response = await fetch(
-        `http://127.0.0.1:5000/fifty_fifty/${question_id}`
-      );
-      const data = await response.json();
+    if (remainingHints > 0) {
+      const question_id = localStorage.getItem("question_id");
+      try {
+        const response = await fetch(
+          `http://127.0.0.1:5000/fifty_fifty/${question_id}`
+        );
+        const data = await response.json();
 
-      if (data) {
-        setAnswers(data.answers);
-        setSelectedAnswer(null);
-        setShowCorrectAnswer(false);
+        if (data) {
+          setAnswers(data.answers);
+          setSelectedAnswer(null);
+          setShowCorrectAnswer(false);
+          setRemainingHints((prevHints) => prevHints - 1); // Decrement remaining hints
+        }
+      } catch (error) {
+        console.error("Error submitting answer:", error);
       }
-    } catch (error) {
-      console.error("Error submitting answer:", error);
     }
   };
 
@@ -144,9 +148,9 @@ const Game = () => {
             variant="contained"
             color="primary"
             onClick={handleHint}
-            disabled={showCorrectAnswer}
+            disabled={showCorrectAnswer || remainingHints === 0}
           >
-            Hint
+            Hint ({remainingHints} left)
           </Button>
           <Button
             variant="contained"
