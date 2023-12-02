@@ -306,22 +306,32 @@ def get_correct_answer(question_id):
         db_connection = _connect_to_db(db_name)
         cur = db_connection.cursor()  # Create a cursor object to interact with the database
         print(f"Connected to database {db_name}")
+
         # SQL query to fetch the correct answer
-        query = f"""
-                    SELECT correct_answer
-                    FROM questions
-                    WHERE id = {question_id}
-                """
-        cur.execute(query)
+        query = """
+                        SELECT correct_answer
+                        FROM questions
+                        WHERE id = %s
+                        """
+        cur.execute(query, (question_id,))
         correct_answer = cur.fetchone()
-        # Close the cursor
-        cur.close()
+
+        # Check if no question is found
+        if correct_answer is None:
+            raise ValueError(f"No question found with ID {question_id}")
+
         return correct_answer[0]
 
-    except Exception:
-        raise DbConnectionError("Failed to fetch question from DB\n")
+    except ValueError as ve:
+        raise ve  # Reraise the specific ValueError
+
+    except Exception as e:
+        print(f"Failed to fetch question from DB. Error: {e}")
+        raise DbConnectionError("Failed to fetch question from DB")
 
     finally:
+        if cur:
+            cur.close()  # Close the cursor if it exists
         if db_connection:
             db_connection.close()
 
