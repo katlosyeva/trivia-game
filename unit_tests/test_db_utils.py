@@ -10,7 +10,8 @@ from db_utils import (
     get_correct_answer,
     update_game_score,
     get_user_score,
-    get_leaderboard, DbConnectionError
+    get_leaderboard,
+    DbConnectionError
 )
 
 
@@ -716,6 +717,54 @@ class TestGetCorrectAnswer(unittest.TestCase):
         mock_connection.commit.assert_not_called()
         mock_cursor.close.assert_called_once()
         mock_connection.close.assert_called_once()
+
+
+class TestUpdateGameScore(unittest.TestCase):
+
+    @patch('db_utils._connect_to_db')
+    def test_update_game_score_success(self, mock_connect_to_db):
+        # Mock the database connection
+        mock_db_connection = mock_connect_to_db.return_value
+        mock_cursor = mock_db_connection.cursor.return_value
+
+        # Set up a mock game_id
+        game_id = 123
+
+        # Call the function
+        update_game_score(game_id)
+
+        # Check if the correct SQL query was executed
+        expected_query = """
+            UPDATE games
+            SET score = score + 1
+            WHERE id = %s
+        """
+        mock_cursor.execute.assert_called_once_with(expected_query, (game_id,))
+        mock_db_connection.commit.assert_called_once()
+
+        # Check if the cursor and connection were closed
+        mock_cursor.close.assert_called_once()
+        mock_db_connection.close.assert_called_once()
+
+    @patch('db_utils._connect_to_db')
+    def test_update_game_score_db_error(self, mock_connect_to_db):
+        # Mock the database connection to raise an exception
+        mock_db_connection = mock_connect_to_db.return_value
+        mock_db_connection.cursor.side_effect = Exception("Database error")
+
+        # Set up a mock game_id
+        game_id = 123
+
+        # Call the function and check for the expected exception
+        with self.assertRaises(DbConnectionError) as context:
+            update_game_score(game_id)
+
+        expected_error_message = "Failed to update game score in DB"
+        self.assertEqual(str(context.exception), expected_error_message)
+
+        # Check if the cursor and connection were closed even in case of an error
+        mock_db_connection.cursor.assert_called_once()
+        mock_db_connection.close.assert_called_once()
 
 
 if __name__ == '__main__':
