@@ -87,7 +87,7 @@ def run():
     print("#    #        #     #        #         #      ")
     print(" #### #        #####        ###       ####### ")
 
-    hints = 2
+    hints = 3
     player = input("\nYour name is ... ")
     print(f"\n{player.capitalize()} welcome to the Quiz!")
     print("You will be presented with 15 questions to test your knowledge.")
