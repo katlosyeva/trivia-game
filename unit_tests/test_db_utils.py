@@ -36,6 +36,10 @@ class TestGetOrAddPlayerId(unittest.TestCase):
         # Check that _connect_to_db was called with the correct arguments
         mock_connect.assert_called_with('trivia_game')
 
+        # Check that the cursor methods were called
+        mock_cursor.execute.assert_called_once()
+        mock_cursor.fetchone.assert_called_once()
+
     @patch('db_utils._connect_to_db')  # Mock the database connection
     def test_add_new_player(self, mock_connect):
         mock_connection_new = MagicMock()
@@ -62,19 +66,26 @@ class TestGetOrAddPlayerId(unittest.TestCase):
         mock_connection_invalid = MagicMock()
         mock_cursor_invalid = MagicMock()
         mock_cursor_invalid.fetchone.return_value = None  # Simulate that the player doesn't exist
-        mock_cursor_invalid.lastrowid = -1  # Set lastrowid for the invalid case
-        mock_connection_invalid.cursor.return_value = mock_cursor_invalid
+        # Set the side effect for the function being tested (get_or_add_player_id)
         mock_connect.return_value = mock_connection_invalid
+        mock_connection_invalid.cursor.return_value = mock_cursor_invalid
+        mock_cursor_invalid.execute.side_effect = ValueError(
+            "Invalid username. It cannot be empty and must be 40 characters or less.")
 
         # Test with the mocked database connection for an invalid case
         invalid_username = ''  # Invalid username (empty string)
         invalid_result = get_or_add_player_id(invalid_username)
 
-        # Check that the result is as expected (e.g., -1 or any indicator for an invalid case)
-        self.assertEqual(invalid_result, -1)
+        # Assertions:
+        # Check that the result is None
+        self.assertEqual(invalid_result, None)
 
-        # Check that _connect_to_db was called with the correct arguments
-        mock_connect.assert_called_with('trivia_game')
+        # Check that _connect_to_db was not called
+        mock_connect.assert_not_called()
+
+        # Check that the cursor methods were not called
+        mock_cursor_invalid.execute.assert_not_called()
+        mock_cursor_invalid.fetchone.assert_not_called()
 
     @patch('db_utils._connect_to_db')  # Mock the database connection
     def test_exceeds_username_limit(self, mock_connect):
@@ -82,19 +93,27 @@ class TestGetOrAddPlayerId(unittest.TestCase):
         mock_connection_invalid = MagicMock()
         mock_cursor_invalid = MagicMock()
         mock_cursor_invalid.fetchone.return_value = None  # Simulate that the player doesn't exist
-        mock_cursor_invalid.lastrowid = -1  # Set lastrowid for the invalid case
-        mock_connection_invalid.cursor.return_value = mock_cursor_invalid
+
+        # Set the side effect for the function being tested (get_or_add_player_id)
         mock_connect.return_value = mock_connection_invalid
+        mock_connection_invalid.cursor.return_value = mock_cursor_invalid
+        mock_cursor_invalid.execute.side_effect = ValueError(
+            "Invalid username. It cannot be empty and must be 40 characters or less.")
 
         # Test with the mocked database connection for the case where the username exceeds the limit
         invalid_username = 'a' * 41  # Username with 41 characters, exceeding the 40-character limit
         invalid_result = get_or_add_player_id(invalid_username)
 
-        # Check that the result is as expected (e.g., -1 or any indicator for an invalid case)
-        self.assertEqual(invalid_result, -1)
+        # Assertions:
+        # Check that the result is None
+        self.assertEqual(invalid_result, None)
 
-        # Check that _connect_to_db was called with the correct arguments
-        mock_connect.assert_called_with('trivia_game')
+        # Ensure that _connect_to_db was not called when username is invalid
+        mock_connect.assert_not_called()
+
+        # Check that the cursor methods were not called
+        mock_cursor_invalid.execute.assert_not_called()
+        mock_cursor_invalid.fetchone.assert_not_called()
 
 
 class TestAddNewGame(unittest.TestCase):
@@ -162,25 +181,24 @@ class TestAddNewGame(unittest.TestCase):
         mock_connection = MagicMock()
         mock_cursor = MagicMock()
         mock_connection.cursor.return_value = mock_cursor
+        mock_cursor.fetchone.return_value = None
         mock_connect.return_value = mock_connection
+        mock_cursor.execute.side_effect = ValueError("Invalid user_id. Must be a positive integer.")
 
         # Test with the mocked database connection and a user_id that is a negative integer
         user_id = -42
-        game_id = add_new_game(user_id)
+        invalid_result = add_new_game(user_id)
 
         # Assertions:
-        if game_id is not None:
-            # Check that the result is a positive integer (assuming positive game_id is expected)
-            self.assertGreater(game_id, 0)
-            # Check that _connect_to_db was called with the correct arguments
-            mock_connect.assert_called_with('trivia_game')
-            # Check that execute() was called on the mock_cursor due to the invalid user_id
-            mock_cursor.execute.assert_called_once_with('INSERT INTO games (user_id, score) VALUES (%s, 0)', (user_id,))
-        else:
-            # Ensure that _connect_to_db was not called when user_id is invalid
-            mock_connect.assert_not_called()
-            # Ensure that execute() was not called when add_new_game returns None
-            mock_cursor.execute.assert_not_called()
+        # Check that the result is None
+        self.assertEqual(invalid_result, None)
+
+        # Check that _connect_to_db was not called due to the invalid user_id
+        mock_connect.assert_not_called()
+
+        # Check that cursor methods were not called on the mock_cursor due to the invalid user_id
+        mock_cursor.execute.assert_not_called()
+        mock_cursor.fetchone.assert_not_called()
 
 
 class TestAddNewQuestions(unittest.TestCase):
