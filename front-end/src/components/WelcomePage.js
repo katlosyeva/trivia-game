@@ -16,6 +16,7 @@ const WelcomePage = () => {
         flexDirection: "column",
         minHeight: "100vh",
         m: "0 auto",
+        gap: 2,
       }}
     >
       <Typography variant="h4" gutterBottom>
@@ -26,6 +27,17 @@ const WelcomePage = () => {
       </Typography>
       <Button component={Link} to="/login" variant="contained" color="primary">
         Login
+      </Button>
+      <Typography variant="body1" paragraph>
+        Or you can see the leaderboard:
+      </Typography>
+      <Button
+        component={Link}
+        to="/leaderboard"
+        variant="contained"
+        color="primary"
+      >
+        Leaderboard
       </Button>
     </Box>
   );
