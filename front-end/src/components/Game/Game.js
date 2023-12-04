@@ -25,9 +25,9 @@ const Game = () => {
   const [showCorrectAnswer, setShowCorrectAnswer] = useState(false);
   const [questionsCount, setQuestionsCount] = useState(1);
   const [question, setQuestion] = useState(questionObj.question_text);
-  const [remainingHints, setRemainingHints] = useState(3); // New state for remaining hints
+  const [remainingHints, setRemainingHints] = useState(3);
 
-  const game_id = localStorage.getItem("game_id");
+  const game_id = Number(localStorage.getItem("game_id"));
 
   const fetchQuestions = async () => {
     try {
@@ -66,6 +66,7 @@ const Game = () => {
           question_id: question_id,
         }),
       });
+
       const result = await response.json();
       setCorrectAnswer(result.correct_answer);
       setScore(result.score);
