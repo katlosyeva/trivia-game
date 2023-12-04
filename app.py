@@ -48,13 +48,24 @@ def check_answer():
 
 @app.route("/next_question/<game_id>")
 def next_question(game_id):
-    next_quest = Game.provide_question(game_id)
-    if next_quest is None:
-        response = jsonify({'error': 'End of game'})
-        response.status_code = 404
-        return response
-    else:
+    # next_quest = Game.provide_question(game_id)
+    # if next_quest is None:
+    #     response = jsonify({'error': 'End of game'})
+    #     response.status_code = 404
+    #     return response
+    # else:
+    #     return next_quest
+    try:
+        next_quest = Game.provide_question(game_id)
+        # if next_quest is None:
+        #     response = jsonify({'error': 'End of game'})
+        #     response.status_code = 404
+        #     return response
+
         return next_quest
+    except Exception:
+        raise Exception
+
 
 
 @app.route("/fifty_fifty/<question_id>")

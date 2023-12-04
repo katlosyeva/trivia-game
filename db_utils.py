@@ -436,6 +436,38 @@ def get_leaderboard():
             db_connection.close()
 
 
+def get_all_answers(question_id):
+    """"DB function, that takes question_id and returns four answers"""
+    try:
+        # Establish a connection to the MySQL database
+        db_name = "trivia_game"
+        db_connection = _connect_to_db(db_name)
+        cur = db_connection.cursor()
+
+        print(f"Connected to database {db_name}")
+
+        # SQL query to fetch the question details using parameterized query
+        query = """
+            SELECT correct_answer, answer_1, answer_2, answer_3
+            FROM questions
+            WHERE id = %s
+        """
+        cur.execute(query, (question_id,))
+        answers = cur.fetchone()
+
+        return answers
+
+
+
+    except Exception:
+          raise DbConnectionError("Failed to retrieve answers from DB")
+
+    finally:
+        if db_connection:
+            cur.close()
+            db_connection.close()
+
+
 def main():
     # pass
     # Run quick tests on DB functions:
@@ -457,4 +489,5 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    print(get_all_answers(4))
+    # main()
