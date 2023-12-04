@@ -393,7 +393,7 @@ class TestDisplayQuestionToPlayer(unittest.TestCase):
         mock_cursor.execute.assert_called_once_with(expected_query_select, expected_values_select)
 
         # Additional assertions for the returned result when there are no more questions
-        expected_result = {"error": "No more questions"}
+        expected_result = {"message": "No more questions"}
         self.assertEqual(result, expected_result)
 
         # Additional assertions for no further interactions with the cursor and connection
