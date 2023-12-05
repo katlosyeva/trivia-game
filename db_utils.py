@@ -256,7 +256,7 @@ def display_question_to_player(game_id):
                 # "answers": answers
             }
         else:
-            return {"error": "No more questions"}
+            return {"message": "No more questions"}
 
     except mysql.connector.Error as err:
         print(f"MySQL Error: {err}\n")
