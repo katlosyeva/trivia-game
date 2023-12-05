@@ -97,50 +97,55 @@ def run():
     print("Good luck and enjoy the challenge!")
 
     info = add_game(player)
-    game_id = info["game_id"]
-    question = info["question"]
-    print(question)
-    question_id = question["question_id"]
-    print("\nThe question: ", question['question_text'])
-    print("Answers: ")
-    print_colored_answers(question['answers'])
-    print(question['answers'])
-    if hints > 0:
-        need_hint = input("Would you use 50/50? (y/n) ")
-        if need_hint == "y":
-            fifty_fifty_info = fifty_fifty(question_id)
-            print("Answers: ")
-            print_colored_answers(fifty_fifty_info['answers'])
-            hints -= 1
+    error_message = info.get('message', '')
+    if error_message:
+        print(info["message"], ". Try again\n")
+        run()
+    else:
 
-    answer = input(f"Write the answer: ")
-    result = check_question(game_id, answer, question['question_id'])
+        game_id = info["game_id"]
+        question = info["question"]
+        question_id = question["question_id"]
+        print("\nThe question: ", question['question_text'])
+        print("Answers: ")
+        print_colored_answers(question['answers'])
+        print(question['answers'])
+        if hints > 0:
+            need_hint = input("Would you use 50/50? (y/n) ")
+            if need_hint == "y":
+                fifty_fifty_info = fifty_fifty(question_id)
+                print("Answers: ")
+                print_colored_answers(fifty_fifty_info['answers'])
+                hints -= 1
 
-    print(result, "\n")
-    for n in range(13):
-        continue_agreement = input("\nTo see the question press y ")
+        answer = input(f"Write the answer: ")
+        result = check_question(game_id, answer, question['question_id'])
 
-        if continue_agreement == "y":
-            question = next_question(game_id)
-            question_id = question["question_id"]
-            print("\nThe question: ", question['question_text'])
-            print("Answers: ")
-            print_colored_answers(question['answers'])
-            if hints > 0:
-                need_hint = input("Would you use 50/50? (y/n) ")
-                if need_hint == "y":
-                    fifty_fifty_info = fifty_fifty(question_id)
-                    print("Answers: ")
-                    print_colored_answers(fifty_fifty_info['answers'])
-                    hints -= 1
+        print(result, "\n")
+        for n in range(13):
+            continue_agreement = input("\nTo see the question press y ")
 
-            answer = input(f"Write the answer: ")
+            if continue_agreement == "y":
+                question = next_question(game_id)
+                question_id = question["question_id"]
+                print("\nThe question: ", question['question_text'])
+                print("Answers: ")
+                print_colored_answers(question['answers'])
+                if hints > 0:
+                    need_hint = input("Would you use 50/50? (y/n) ")
+                    if need_hint == "y":
+                        fifty_fifty_info = fifty_fifty(question_id)
+                        print("Answers: ")
+                        print_colored_answers(fifty_fifty_info['answers'])
+                        hints -= 1
 
-            result = check_question(game_id, answer, question['question_id'])
-            print(result)
-    print(" ")
-    print("LEADERBOARD\n")
-    print(show_leaderboard())
+                answer = input(f"Write the answer: ")
+
+                result = check_question(game_id, answer, question['question_id'])
+                print(result)
+        print(" ")
+        print("LEADERBOARD\n")
+        print(show_leaderboard())
 
 
 if __name__ == '__main__':
