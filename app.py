@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, request  # imports specific objects and functions from the Flask web framework
 
 from classes.lifeline import FiftyFifty
+from classes.lifeline import AskAudience
 from classes.user import User
 from classes.game import Game
 
@@ -70,9 +71,13 @@ def next_question(game_id):
 
 @app.route("/fifty_fifty/<question_id>")
 def updated_question(question_id):
-    updated_quest = FiftyFifty.fifty_fifty(question_id)
+    updated_quest = FiftyFifty.provide_lifeline(question_id)
     return updated_quest
 
+@app.route("/ask_audience/<question_id>")
+def get_audience_choice(question_id):
+    audience_choice = AskAudience.provide_lifeline(question_id)
+    return audience_choice
 
 @app.route("/leaderboard/")
 def show_leaderboard():
