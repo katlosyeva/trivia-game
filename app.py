@@ -18,22 +18,29 @@ CORS(app)
 def add_game():
     # Accepts POST requests with JSON data containing user_name
     user_data = request.get_json()
-    # creates new instance of user
-    user = User(user_data["user_name"])
-    # # calls method on this user to create a new game, returns user id
-    user_id = user.get_or_create()
-    # creates new instance of game
-    game = Game(user_id)
-    # # start_game method gets questions from API, sets to db, and returns first question and four answers
-    game_id = game.start_game()
-    question = Game.provide_question(game_id)
-    response = {
-        "player_id": user_id,
-        "game_id": game_id,
-        "question": question
-    }
-    #
-    return jsonify(response)
+    if not user_data["user_name"]:
+        return {"message": "User has to have a valid name"}, 400
+    if len(user_data["user_name"]) >= 40:
+        return {"message": "Username has to be less than 40 characters long"}, 400
+    try:
+        # creates new instance of user
+        user = User(user_data["user_name"])
+        # # calls method on this user to create a new game, returns user id
+        user_id = user.get_or_create()
+        # creates new instance of game
+        game = Game(user_id)
+        # # start_game method gets questions from API, sets to db, and returns first question and four answers
+        game_id = game.start_game()
+        question = Game.provide_question(game_id)
+        response = {
+            "player_id": user_id,
+            "game_id": game_id,
+            "question": question
+        }
+        #
+        return jsonify(response)
+    except Exception:
+        return {"message": "Internal server error"}, 500
 
 
 @app.route("/check_answer", methods=["PUT"])
@@ -42,13 +49,17 @@ def check_answer():
     game_id = answer["game_id"]
     user_answer = answer["answer"]
     question_id = answer["question_id"]
-    answer_was_correct = Game.check_answer(game_id, question_id, user_answer)
-    print(game_id, user_answer, question_id)
-    return answer_was_correct
+    try:
+        answer_was_correct = Game.check_answer(game_id, question_id, user_answer)
+        return answer_was_correct
+    except Exception:
+        return {"message": "Internal server error"}, 500
+
 
 
 @app.route("/next_question/<game_id>")
 def next_question(game_id):
+
     # next_quest = Game.provide_question(game_id)
     # if next_quest is None:
     #     response = jsonify({'error': 'End of game'})
@@ -56,23 +67,24 @@ def next_question(game_id):
     #     return response
     # else:
     #     return next_quest
+
     try:
         next_quest = Game.provide_question(game_id)
-        # if next_quest is None:
-        #     response = jsonify({'error': 'End of game'})
-        #     response.status_code = 404
-        #     return response
-
         return next_quest
     except Exception:
-        raise Exception
+        return {"message": "Internal server error"}, 500
+
 
 
 
 @app.route("/fifty_fifty/<question_id>")
 def updated_question(question_id):
-    updated_quest = FiftyFifty.provide_lifeline(question_id)
-    return updated_quest
+    try:
+        updated_quest = FiftyFifty.provide_lifeline(question_id)
+        return updated_quest
+    except Exception:
+        return {"message": "Internal server error"}, 500
+
 
 @app.route("/ask_audience/<question_id>")
 def get_audience_choice(question_id):
@@ -81,8 +93,11 @@ def get_audience_choice(question_id):
 
 @app.route("/leaderboard/")
 def show_leaderboard():
-    leaderboard = Game.show_leaderboard()
-    return leaderboard
+    try:
+        leaderboard = Game.show_leaderboard()
+        return leaderboard
+    except Exception:
+        return {"message": "Internal server error"}, 500
 
 
 if __name__ == '__main__':

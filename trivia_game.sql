@@ -24,7 +24,7 @@ CREATE DATABASE trivia_game;
 use trivia_game;
 CREATE TABLE players (
   id int NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  username varchar(40)
+  username varchar(40) NOT NULL
 );
 
 CREATE TABLE games (

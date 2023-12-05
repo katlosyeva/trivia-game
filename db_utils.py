@@ -22,6 +22,18 @@ def get_or_add_player_id(username):
     """function which checks whether username exists and returns player_id,
     # and if username does not exist, new username is added to players and returns new player_id"""
     player_id = None
+    cur = None  # Initialize cur outside the try block
+    db_connection = None  # Initialize db_connection outside the try block
+
+    try:
+        # Check if username is not NULL and does not exceed 40 characters
+        if username == "" or len(username) > 40:
+            raise ValueError("Invalid username. It cannot be empty and must be 40 characters or less.")
+
+    except ValueError as ve:
+        print(f"Invalid username: {ve}")
+        return None
+
 
     try:
         # Establish a connection to the MySQL database
@@ -37,7 +49,7 @@ def get_or_add_player_id(username):
         existing_player_id = cur.fetchone()
 
         if existing_player_id:
-            # Player exists
+            # Player exist  s
             player_id = existing_player_id[0]
             print(f"Username '{username}' already exists in the database.")
             print(f"For existing username '{username}', player_id: {player_id}\n")
@@ -51,6 +63,12 @@ def get_or_add_player_id(username):
             # Get the ID of the last inserted row (player_id)
             player_id = cur.lastrowid
             print(f"For new username '{username}', new player_id: {player_id}\n")
+
+
+    # except ValueError as ve:
+    #     print(f"ValueError: {ve}")
+    #     raise  # Re-raise the exception after printing
+    #     return None
 
     except mysql.connector.Error as err:
         print(f"MySQL Error: {err}")
@@ -238,7 +256,7 @@ def display_question_to_player(game_id):
                 # "answers": answers
             }
         else:
-            return {"error": "No more questions"}
+            return {"message": "No more questions"}
 
     except mysql.connector.Error as err:
         print(f"MySQL Error: {err}\n")
@@ -475,6 +493,9 @@ def main():
     add_new_game(1)
     add_new_questions(1, "What is the capital of France?", "Paris", ["Berlin", "Madrid", "Rome"])
     add_new_questions(1, "HHHH", "HE", ["TU", "TT", "hhh"])
+    get_or_add_player_id("")
+    get_or_add_player_id("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+    add_new_game(-1)
     print(f"Question details for question to be displayed:\n{display_question_to_player(1)}")
     print("\n")
     print(f"Fifty/fifty answers: {display_question_to_player_fifty_fifty(1)}")
@@ -486,6 +507,7 @@ def main():
     print(f"After score is updated, get_user_score returns score: {get_user_score(1)}")
     print("\n")
     print(f"Leaderboard Top 10:\n{get_leaderboard()}")
+
 
 
 if __name__ == '__main__':

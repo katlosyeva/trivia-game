@@ -16,12 +16,12 @@ def move_answers(answers):
     rand_num = random.random()
 
     # Determine the correct answer position based on the random number
-    if rand_num < 0.5:
+    if rand_num <= 0.6:
         return dequed_answers
-    elif 0.5 < rand_num < 0.75:
+    elif 0.6 < rand_num < 0.8:
         dequed_answers.rotate(1)
         print("0.75", dequed_answers)
-    elif 0.75 < rand_num < 0.9:
+    elif 0.8 <= rand_num < 0.95:
         dequed_answers.rotate(2)
         print("0.9", dequed_answers)
     else:

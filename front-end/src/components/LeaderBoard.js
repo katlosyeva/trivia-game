@@ -66,7 +66,7 @@ const Leaderboard = () => {
         </Table>
       </TableContainer>
       <Button variant="contained" color="primary" component={Link} to="/">
-        Play Again
+        Play New Game
       </Button>
     </Box>
   );
