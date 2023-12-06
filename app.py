@@ -6,8 +6,7 @@ from classes.user import User
 from classes.game import Game
 
 # We need CORS when we connect front and back
-# from flask_cors import CORS  - can someone confirm this is right? it doesn't work unless I run the below line instead:
-from flask import CORS
+from flask_cors import CORS
 
 # Define a Flask web application
 app = Flask(__name__)
