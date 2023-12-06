@@ -994,5 +994,6 @@ class TestGetLeaderboard(unittest.TestCase):
         mock_cursor.close.assert_called_once()
         mock_connection.close.assert_called_once()
 
+
 if __name__ == '__main__':
     unittest.main()
