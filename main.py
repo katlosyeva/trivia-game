@@ -38,7 +38,12 @@ def fifty_fifty(question_id):
     )
     return result.json()
 
-
+def ask_audience(question_id):
+    result = requests.get(
+        "http://127.0.0.1:5000/ask_audience/{}".format(question_id),
+        headers={"content-type": "application/json"}
+    )
+    return result.json()
 def add_game(user_name):
     info = {
         "user_name": user_name
@@ -102,29 +107,33 @@ def run():
         print(info["message"], ". Try again\n")
         run()
     else:
-
         game_id = info["game_id"]
         question = info["question"]
+        print(question)
         question_id = question["question_id"]
         print("\nThe question: ", question['question_text'])
         print("Answers: ")
         print_colored_answers(question['answers'])
         print(question['answers'])
         if hints > 0:
-            need_hint = input("Would you use 50/50? (y/n) ")
-            if need_hint == "y":
+            need_hint = input("Would you use like to use 50/50 hint or ask the audience? For 50/50 type 1,"
+                              " and to ask the audience - 2, if you don't want to use a hint click 3 ")
+            if need_hint == "1":
                 fifty_fifty_info = fifty_fifty(question_id)
                 print("Answers: ")
                 print_colored_answers(fifty_fifty_info['answers'])
                 hints -= 1
-
+            elif need_hint == "2":
+                audience_responce = ask_audience(question_id)
+                for option in audience_responce:
+                    print(f"{option[0]} % of the audience thinks the correct answer is {option[1]}")
+                hints -= 1
         answer = input(f"Write the answer: ")
         result = check_question(game_id, answer, question['question_id'])
 
         print(result, "\n")
         for n in range(13):
             continue_agreement = input("\nTo see the question press y ")
-
             if continue_agreement == "y":
                 question = next_question(game_id)
                 question_id = question["question_id"]
@@ -132,17 +141,21 @@ def run():
                 print("Answers: ")
                 print_colored_answers(question['answers'])
                 if hints > 0:
-                    need_hint = input("Would you use 50/50? (y/n) ")
-                    if need_hint == "y":
+                    need_hint = input("Would you use like to use 50/50 hint or ask the audience? For 50/50 type 1,"
+                                      " and to ask the audience - 2, if you don't want to use a hint click 3 ")
+                    if need_hint == "1":
                         fifty_fifty_info = fifty_fifty(question_id)
                         print("Answers: ")
                         print_colored_answers(fifty_fifty_info['answers'])
                         hints -= 1
-
+                    elif need_hint == "2":
+                        audience_responce = ask_audience(question_id)
+                        for option in audience_responce:
+                            print(f"{option[0]} % of the audience thinks the correct answer is {option[1]}")
+                        hints -= 1
                 answer = input(f"Write the answer: ")
-
                 result = check_question(game_id, answer, question['question_id'])
-                print(result)
+                print(result, "\n")
         print(" ")
         print("LEADERBOARD\n")
         print(show_leaderboard())

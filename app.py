@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, request  # imports specific objects and functions from the Flask web framework
 
 from classes.lifeline import FiftyFifty
+from classes.lifeline import AskAudience
 from classes.user import User
 from classes.game import Game
 
@@ -58,6 +59,15 @@ def check_answer():
 
 @app.route("/next_question/<game_id>")
 def next_question(game_id):
+
+    # next_quest = Game.provide_question(game_id)
+    # if next_quest is None:
+    #     response = jsonify({'error': 'End of game'})
+    #     response.status_code = 404
+    #     return response
+    # else:
+    #     return next_quest
+
     try:
         next_quest = Game.provide_question(game_id)
         return next_quest
@@ -70,11 +80,16 @@ def next_question(game_id):
 @app.route("/fifty_fifty/<question_id>")
 def updated_question(question_id):
     try:
-        updated_quest = FiftyFifty.fifty_fifty(question_id)
+        updated_quest = FiftyFifty.provide_lifeline(question_id)
         return updated_quest
     except Exception:
         return {"message": "Internal server error"}, 500
 
+
+@app.route("/ask_audience/<question_id>")
+def get_audience_choice(question_id):
+    audience_choice = AskAudience.provide_lifeline(question_id)
+    return audience_choice
 
 @app.route("/leaderboard/")
 def show_leaderboard():
