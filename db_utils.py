@@ -28,7 +28,7 @@ def get_or_add_player_id(username):
     try:
         # Check if username is not NULL and does not exceed 40 characters
         if username == "" or len(username) > 40:
-            raise ValueError("Invalid username. It cannot be empty and must be 40 characters or less.")
+            raise ValueError("Invalid username length. Must be 1-40 characters in length")
 
     except ValueError as ve:
         print(f"Invalid username: {ve}")
@@ -49,7 +49,7 @@ def get_or_add_player_id(username):
         existing_player_id = cur.fetchone()
 
         if existing_player_id:
-            # Player exist  s
+            # Player exists
             player_id = existing_player_id[0]
             print(f"Username '{username}' already exists in the database.")
             print(f"For existing username '{username}', player_id: {player_id}\n")
