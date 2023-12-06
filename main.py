@@ -16,11 +16,11 @@ COLORS = {
 
 def print_colored_answers(answers):
     color_cycle = itertools.cycle(COLORS.keys())
-
-    for answer in answers:
+    letters = ["A", "B", "C", "D"]
+    for ind, answer in enumerate(answers):
         color_name = next(color_cycle)
         color = COLORS.get(color_name)
-        print(f"{color}{html.unescape(answer)}{COLORS['end']}")
+        print(f"{color}{letters[ind]}){html.unescape(answer)}{COLORS['end']}")
 
 
 def next_question(game_id):
@@ -125,10 +125,20 @@ def run():
                 hints -= 1
             elif need_hint == "2":
                 audience_responce = ask_audience(question_id)
+                print(audience_responce)
                 for option in audience_responce:
                     print(f"{option[0]} % of the audience thinks the correct answer is {option[1]}")
                 hints -= 1
-        answer = input(f"Write the answer: ")
+        answer_letter = input(f"Write the letter: ")
+        answer  = ""
+        if answer_letter == "A":
+            answer = question['answers'][0]
+        elif answer_letter == "B":
+            answer = question['answers'][1]
+        elif answer_letter == "C":
+            answer = question['answers'][2]
+        elif answer_letter == "D":
+            answer = question['answers'][3]
         result = check_question(game_id, answer, question['question_id'])
 
         print(result, "\n")

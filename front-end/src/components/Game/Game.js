@@ -318,8 +318,8 @@ const Game = () => {
               legend: {
                 labels: {
                   font: {
-                    family: 'Arial', // Set the font family
-                    size: 20,        // Set the font size
+                    family: 'Arial', 
+                    size: 20,        
                   },
                 },
               },
@@ -342,6 +342,7 @@ const Game = () => {
     
     </Modal>
     }
+    {/* <Typography style={{"position":"absolute", "top":"10px", "right":"10px"}}>Score</Typography> */}
     </Box>
     
   );

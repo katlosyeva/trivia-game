@@ -1,6 +1,7 @@
 from collections import deque
 import random
-
+from collections import deque
+import random
 
 def random_partition(target):
     a = random.randint(1, target - 3)

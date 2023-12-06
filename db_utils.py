@@ -511,5 +511,5 @@ def main():
 
 
 if __name__ == '__main__':
-    print(get_all_answers(4))
+    print(display_question_to_player(1))
     # main()
