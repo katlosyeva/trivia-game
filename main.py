@@ -38,12 +38,15 @@ def fifty_fifty(question_id):
     )
     return result.json()
 
+
 def ask_audience(question_id):
     result = requests.get(
         "http://127.0.0.1:5000/ask_audience/{}".format(question_id),
         headers={"content-type": "application/json"}
     )
     return result.json()
+
+
 def add_game(user_name):
     info = {
         "user_name": user_name
@@ -109,12 +112,12 @@ def run():
     else:
         game_id = info["game_id"]
         question = info["question"]
-        print(question)
+        # print(question)
         question_id = question["question_id"]
         print("\nThe question: ", question['question_text'])
         print("Answers: ")
         print_colored_answers(question['answers'])
-        print(question['answers'])
+        # print(question['answers'])
         if hints > 0:
             need_hint = input("Would you use like to use 50/50 hint or ask the audience? For 50/50 type 1,"
                               " and to ask the audience - 2, if you don't want to use a hint click 3 ")
@@ -128,7 +131,7 @@ def run():
                 for option in audience_responce:
                     print(f"{option[0]} % of the audience thinks the correct answer is {option[1]}")
                 hints -= 1
-        answer = input(f"Write the answer: ")
+        answer = input(f"To answer, either copy & paste your chosen answer, or type it (case-insensitive): ").title()
         result = check_question(game_id, answer, question['question_id'])
 
         print(result, "\n")
@@ -153,7 +156,8 @@ def run():
                         for option in audience_responce:
                             print(f"{option[0]} % of the audience thinks the correct answer is {option[1]}")
                         hints -= 1
-                answer = input(f"Write the answer: ")
+                answer = (input(f"To answer, either copy & paste your chosen answer, or type it (case-insensitive): ")
+                          .title())
                 result = check_question(game_id, answer, question['question_id'])
                 print(result, "\n")
         print(" ")
