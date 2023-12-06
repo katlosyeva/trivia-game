@@ -1,8 +1,12 @@
 import React, { useState } from "react";
 import { Box, Button, Typography } from "@mui/material";
+import CloseIcon from '@mui/icons-material/Close';
 import Question from "./Question";
 import { useLocation, useNavigate } from "react-router-dom";
 import backgroundImage from "../../assets/background2.jpg";
+import 'chart.js/auto';
+import { Pie } from "react-chartjs-2";
+import Modal from 'react-modal';
 
 const shuffleArray = (array) => {
   const shuffledArray = [...array];
@@ -11,6 +15,27 @@ const shuffleArray = (array) => {
     [shuffledArray[i], shuffledArray[j]] = [shuffledArray[j], shuffledArray[i]];
   }
   return shuffledArray;
+};
+
+// const customStyles = {
+//   content: {
+//     top: '50%',
+//     left: '50%',
+//     right: 'auto',
+//     bottom: 'auto',
+//     marginRight: '-50%',
+//     transform: 'translate(-50%, -50%)',
+//   },
+// };
+const customStyles = {
+  content: {
+    top: '20%',
+    left: 'auto',
+    right: '10%',
+    bottom: 'auto',
+    // marginRight: '-50%',
+    // transform: 'translate(-50%, -50%)',
+  },
 };
 
 const Game = () => {
@@ -26,6 +51,9 @@ const Game = () => {
   const [questionsCount, setQuestionsCount] = useState(1);
   const [question, setQuestion] = useState(questionObj.question_text);
   const [remainingHints, setRemainingHints] = useState(3);
+  const [audienceChoice, setAudienceChoice] = useState("");
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+  console.log(audienceChoice)
 
   const game_id = Number(localStorage.getItem("game_id"));
 
@@ -105,6 +133,42 @@ const Game = () => {
       fetchQuestions();
     }
   };
+  
+  const handleAskAudience = async() => {
+    if (remainingHints > 0) {
+      const question_id = localStorage.getItem("question_id");
+      try {
+        const response = await fetch(
+          `http://127.0.0.1:5000/ask_audience/${question_id}`
+        );
+        const data = await response.json();
+        console.log("data", data)
+        if (data) {
+          setAudienceChoice(data)
+          setRemainingHints((prevHints) => prevHints - 1); // Decrement remaining hints
+          
+        }
+      } catch (error) {
+        console.error("Error submitting answer:", error);
+      }
+    }
+  }
+
+  const openModal = () => {
+    handleAskAudience()
+    console.log("From", audienceChoice)
+    setModalIsOpen(true);
+  };
+  
+  
+
+  // const openModal = () => {
+  //   setModalIsOpen(true);
+  // };
+
+  const closeModal = () => {
+    setModalIsOpen(false);
+  };
 
   return (
     <Box
@@ -145,14 +209,22 @@ const Game = () => {
           }}
         >
           {" "}
+          {/* <Button
+            variant="contained"
+            color="primary"
+            onClick={handleHint}
+            disabled={showCorrectAnswer || remainingHints === 0}
+          >
+            Ask audience ({remainingHints} left)
+          </Button>
           <Button
             variant="contained"
             color="primary"
             onClick={handleHint}
             disabled={showCorrectAnswer || remainingHints === 0}
           >
-            Hint ({remainingHints} left)
-          </Button>
+            Try 50/50 ({remainingHints} left)
+          </Button> */}
           <Button
             variant="contained"
             color="primary"
@@ -169,6 +241,46 @@ const Game = () => {
           >
             Next
           </Button>
+        </Box>
+        <Box
+          sx={{
+            display: "flex",
+            gap: 2,
+          }}
+        >
+          {" "}
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={openModal}
+            disabled={showCorrectAnswer || remainingHints === 0}
+          >
+            Ask audience ({remainingHints} left)
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleHint}
+            disabled={showCorrectAnswer || remainingHints === 0}
+          >
+            Try 50/50 ({remainingHints} left)
+          </Button>
+          {/* <Button
+            variant="contained"
+            color="primary"
+            onClick={handleSubmit}
+            disabled={!selectedAnswer || showCorrectAnswer}
+          >
+            Submit
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleNext}
+            disabled={!showCorrectAnswer}
+          >
+            Next
+          </Button> */}
         </Box>
         <Typography variant="h6">Score: {score}</Typography>
       </Box>
@@ -192,7 +304,46 @@ const Game = () => {
           )}
         </Box>
       )}
+      {audienceChoice &&
+      <Modal
+        style={customStyles}
+        isOpen={modalIsOpen}
+        onRequestClose={closeModal}
+        contentLabel="Example Modal"
+      >
+        <CloseIcon onClick={closeModal} color="primary"/>
+        <Pie style={{"font":"20px"}}
+          options = {{
+            plugins: {
+              legend: {
+                labels: {
+                  font: {
+                    family: 'Arial', // Set the font family
+                    size: 20,        // Set the font size
+                  },
+                },
+              },
+            },
+          }}
+          data={{
+          labels: [audienceChoice[0][1], audienceChoice[1][1], audienceChoice[2][1], audienceChoice[3][1]],
+          datasets: [
+          {
+            label: '%',
+            data: [audienceChoice[0][0], audienceChoice[1][0], audienceChoice[2][0], audienceChoice[3][0]],
+          },
+        ],
+      
+      }}
+      
+      height={400}
+      width={400}
+    />
+    
+    </Modal>
+    }
     </Box>
+    
   );
 };
 
