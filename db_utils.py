@@ -34,7 +34,6 @@ def get_or_add_player_id(username):
         print(f"Invalid username: {ve}")
         return None
 
-
     try:
         # Establish a connection to the MySQL database
         db_name = "trivia_game"
@@ -478,7 +477,7 @@ def get_all_answers(question_id):
 
 
     except Exception:
-          raise DbConnectionError("Failed to retrieve answers from DB")
+        raise DbConnectionError("Failed to retrieve answers from DB")
 
     finally:
         if db_connection:
@@ -509,7 +508,6 @@ def main():
     print(f"Leaderboard Top 10:\n{get_leaderboard()}")
 
 
-
 if __name__ == '__main__':
     print(get_all_answers(4))
-    # main()
+    main()

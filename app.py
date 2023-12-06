@@ -6,7 +6,8 @@ from classes.user import User
 from classes.game import Game
 
 # We need CORS when we connect front and back
-from flask_cors import CORS
+# from flask_cors import CORS  - can someone confirm this is right? it doesn't work unless I run the below line instead:
+from flask import CORS
 
 # Define a Flask web application
 app = Flask(__name__)
@@ -56,10 +57,8 @@ def check_answer():
         return {"message": "Internal server error"}, 500
 
 
-
 @app.route("/next_question/<game_id>")
 def next_question(game_id):
-
     # next_quest = Game.provide_question(game_id)
     # if next_quest is None:
     #     response = jsonify({'error': 'End of game'})
@@ -75,8 +74,6 @@ def next_question(game_id):
         return {"message": "Internal server error"}, 500
 
 
-
-
 @app.route("/fifty_fifty/<question_id>")
 def updated_question(question_id):
     try:
@@ -90,6 +87,7 @@ def updated_question(question_id):
 def get_audience_choice(question_id):
     audience_choice = AskAudience.provide_lifeline(question_id)
     return audience_choice
+
 
 @app.route("/leaderboard/")
 def show_leaderboard():
