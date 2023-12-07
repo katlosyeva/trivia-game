@@ -1,5 +1,3 @@
-import html
-
 import requests  # import module for requesting API
 import json  # import module to work with json data
 import itertools
@@ -16,11 +14,11 @@ COLORS = {
 
 def print_colored_answers(answers):
     color_cycle = itertools.cycle(COLORS.keys())
-
-    for answer in answers:
+    # letters = ["A", "B", "C", "D"]
+    for ind, answer in enumerate(answers):
         color_name = next(color_cycle)
         color = COLORS.get(color_name)
-        print(f"{color}{html.unescape(answer)}{COLORS['end']}")
+        print(f"{color}{answer}{COLORS['end']}")
 
 
 def next_question(game_id):
@@ -88,6 +86,7 @@ def show_leaderboard():
 # Remember to set your password in config file
 
 def display_hints(hints, question_id):
+    """Function to run all hints logic"""
     if hints > 0:
         need_hint = input("Would you use like to use 50/50 hint or ask the audience? For 50/50 type 1,"
                           " and to ask the audience - 2, if you don't want to use a hint click 3 ")
@@ -129,10 +128,9 @@ def run():
         question = info["question"]
         # print(question)
         question_id = question["question_id"]
-        print("\nThe question: ", html.unescape(question['question_text']))
+        print("\nThe question: ", question['question_text'])
         print("Answers: ")
         print_colored_answers(question['answers'])
-        # print(question['answers'])
         display_hints(hints, question_id)
         answer = input(f"To answer, either copy & paste your chosen answer, or type it (case-insensitive): ").title()
         result = check_question(game_id, answer, question['question_id'])
@@ -146,6 +144,7 @@ def run():
                 print("Answers: ")
                 print_colored_answers(question['answers'])
                 display_hints(hints, question_id)
+
                 answer = (input(f"To answer, either copy & paste your chosen answer, or type it (case-insensitive): ")
                           .title())
                 result = check_question(game_id, answer, question['question_id'])

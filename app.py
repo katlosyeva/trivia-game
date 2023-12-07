@@ -133,8 +133,11 @@ def updated_question(question_id):
 
 @app.route("/ask_audience/<question_id>")
 def get_audience_choice(question_id):
-    audience_choice = AskAudience.provide_lifeline(question_id)
-    return audience_choice
+    try:
+        audience_choice = AskAudience.provide_lifeline(question_id)
+        return audience_choice
+    except Exception:
+        return {"message": "Internal server error"}, 500
 
 
 @app.route("/leaderboard/")
