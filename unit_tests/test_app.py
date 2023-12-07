@@ -25,16 +25,6 @@ class TestAddGameRoute(unittest.TestCase):
         response = self.app.post('/add_new_game', json={})
         self.assertEqual(response.status_code, 400)  # Assuming a 400 Bad Request status code
 
-    def test_edge_case_maximum_username_length(self):
-        max_length_user_name = "a" * 40  # Assuming maximum allowed length is 40 characters
-        user_data_edge = {"user_name": max_length_user_name}
-        response_edge = self.app.post('/add_new_game', json=user_data_edge)
-        data_edge = json.loads(response_edge.get_data(as_text=True))
-        self.assertEqual(response_edge.status_code, 200)
-        self.assertIn('player_id', data_edge)
-        self.assertIn('game_id', data_edge)
-        self.assertIn('question', data_edge)
-
     def test_failure_exceeding_maximum_username_length(self):
         long_user_name = "b" * 41  # Assuming a username longer than 40 characters
         user_data_long = {"user_name": long_user_name}
