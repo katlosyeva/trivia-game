@@ -18,18 +18,19 @@ CORS(app)
 def add_game():
     # Accepts POST requests with JSON data containing user_name
     user_data = request.get_json()
-    if not user_data["user_name"]:
-        return {"message": "User has to have a valid name"}, 400
-    if len(user_data["user_name"]) >= 40:
-        return {"message": "Username has to be less than 40 characters long"}, 400
+
+    # Check if "user_name" is missing, empty, or longer than 40 characters
+    if "user_name" not in user_data or not (1 <= len(user_data["user_name"]) <= 40):
+        return {"message": "User name must be between 1 and 40 characters"}, 400
+
     try:
-        # creates new instance of user
+        # creates a new instance of user
         user = User(user_data["user_name"])
-        # # calls method on this user to create a new game, returns user id
+        # calls method on this user to create a new game, returns user id
         user_id = user.get_or_create()
-        # creates new instance of game
+        # creates a new instance of the game
         game = Game(user_id)
-        # # start_game method gets questions from API, sets to db, and returns first question and four answers
+        # start_game method gets questions from API, sets to db, and returns the first question and four answers
         game_id = game.start_game()
         question = Game.provide_question(game_id)
         response = {
@@ -37,10 +38,37 @@ def add_game():
             "game_id": game_id,
             "question": question
         }
-        #
         return jsonify(response)
     except Exception:
         return {"message": "Internal server error"}, 500
+
+# @app.route("/add_new_game", methods=["POST"])
+# def add_game():
+#     # Accepts POST requests with JSON data containing user_name
+#     user_data = request.get_json()
+#     if not user_data["user_name"]:
+#         return {"message": "User has to have a valid name"}, 400
+#     if len(user_data["user_name"]) >= 40:
+#         return {"message": "Username has to be less than 40 characters long"}, 400
+#     try:
+#         # creates new instance of user
+#         user = User(user_data["user_name"])
+#         # # calls method on this user to create a new game, returns user id
+#         user_id = user.get_or_create()
+#         # creates new instance of game
+#         game = Game(user_id)
+#         # # start_game method gets questions from API, sets to db, and returns first question and four answers
+#         game_id = game.start_game()
+#         question = Game.provide_question(game_id)
+#         response = {
+#             "player_id": user_id,
+#             "game_id": game_id,
+#             "question": question
+#         }
+#         #
+#         return jsonify(response)
+#     except Exception:
+#         return {"message": "Internal server error"}, 500
 
 
 @app.route("/check_answer", methods=["PUT"])
