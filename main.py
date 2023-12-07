@@ -129,7 +129,7 @@ def run():
         question = info["question"]
         # print(question)
         question_id = question["question_id"]
-        print("\nThe question: ", question['question_text'])
+        print("\nThe question: ", html.unescape(question['question_text']))
         print("Answers: ")
         print_colored_answers(question['answers'])
         # print(question['answers'])
