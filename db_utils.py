@@ -167,11 +167,11 @@ def add_new_questions(game_id, question_text, correct_answer, incorrect_answers)
 
         # Tuple containing the values to be inserted
         values = (game_id,
-                  html.unescape(question_text),
-                  html.unescape(correct_answer),
-                  html.unescape(incorrect_answers[0]),
-                  html.unescape(incorrect_answers[1]),
-                  html.unescape(incorrect_answers[2]),
+                  html.unescape(question_text).strip(),
+                  html.unescape(correct_answer).strip(),
+                  html.unescape(incorrect_answers[0]).strip(),
+                  html.unescape(incorrect_answers[1]).strip(),
+                  html.unescape(incorrect_answers[2]).strip(),
                   False
                   )
 

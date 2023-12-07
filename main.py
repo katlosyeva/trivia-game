@@ -14,11 +14,11 @@ COLORS = {
 
 def print_colored_answers(answers):
     color_cycle = itertools.cycle(COLORS.keys())
-    letters = ["A", "B", "C", "D"]
+    # letters = ["A", "B", "C", "D"]
     for ind, answer in enumerate(answers):
         color_name = next(color_cycle)
         color = COLORS.get(color_name)
-        print(f"{color}{letters[ind]}){answer}{COLORS['end']}")
+        print(f"{color}{answer}{COLORS['end']}")
 
 
 def next_question(game_id):
