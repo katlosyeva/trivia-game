@@ -20,7 +20,7 @@ def print_colored_answers(answers):
     for ind, answer in enumerate(answers):
         color_name = next(color_cycle)
         color = COLORS.get(color_name)
-        print(f"{color}{letters[ind]}){html.unescape(answer)}{COLORS['end']}")
+        print(f"{color}{letters[ind]}){answer}{COLORS['end']}")
 
 
 def next_question(game_id):
@@ -132,16 +132,8 @@ def run():
         print(question['answers'])
         display_hints(hints, question_id)
 
-        answer_letter = input(f"Write the letter: ")
-        answer  = ""
-        if answer_letter == "A":
-            answer = question['answers'][0]
-        elif answer_letter == "B":
-            answer = question['answers'][1]
-        elif answer_letter == "C":
-            answer = question['answers'][2]
-        elif answer_letter == "D":
-            answer = question['answers'][3]
+        answer = input(f"Write the letter: ")
+
         result = check_question(game_id, answer, question['question_id'])
 
         print(result, "\n")

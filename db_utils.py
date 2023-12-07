@@ -1,3 +1,4 @@
+import html
 import mysql.connector  # module that allows to establish database connection
 import random
 from config import USER, PASSWORD, HOST
@@ -167,11 +168,11 @@ def add_new_questions(game_id, question_text, correct_answer, incorrect_answers)
 
         # Tuple containing the values to be inserted
         values = (game_id,
-                  question_text,
-                  correct_answer,
-                  incorrect_answers[0],
-                  incorrect_answers[1],
-                  incorrect_answers[2],
+                  html.unescape(question_text),
+                  html.unescape(correct_answer),
+                  html.unescape(incorrect_answers[0]),
+                  html.unescape(incorrect_answers[1]),
+                  html.unescape(incorrect_answers[2]),
                   False
                   )
 

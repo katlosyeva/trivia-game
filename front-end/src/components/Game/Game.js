@@ -31,7 +31,7 @@ const customStyles = {
   content: {
     top: '20%',
     left: 'auto',
-    right: '10%',
+    right: '5%',
     bottom: 'auto',
     // marginRight: '-50%',
     // transform: 'translate(-50%, -50%)',
