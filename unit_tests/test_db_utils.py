@@ -70,7 +70,7 @@ class TestGetOrAddPlayerId(unittest.TestCase):
         mock_connect.return_value = mock_connection_invalid
         mock_connection_invalid.cursor.return_value = mock_cursor_invalid
         mock_cursor_invalid.execute.side_effect = ValueError(
-            "Invalid username. It cannot be empty and must be 40 characters or less.")
+            "Invalid username length. Must be 1-40 characters in length")
 
         # Test with the mocked database connection for an invalid case
         invalid_username = ''  # Invalid username (empty string)
@@ -98,7 +98,7 @@ class TestGetOrAddPlayerId(unittest.TestCase):
         mock_connect.return_value = mock_connection_invalid
         mock_connection_invalid.cursor.return_value = mock_cursor_invalid
         mock_cursor_invalid.execute.side_effect = ValueError(
-            "Invalid username. It cannot be empty and must be 40 characters or less.")
+            "Invalid username length. Must be 1-40 characters in length")
 
         # Test with the mocked database connection for the case where the username exceeds the limit
         invalid_username = 'a' * 41  # Username with 41 characters, exceeding the 40-character limit
@@ -993,6 +993,7 @@ class TestGetLeaderboard(unittest.TestCase):
         # Check if the cursor and connection were closed
         mock_cursor.close.assert_called_once()
         mock_connection.close.assert_called_once()
+
 
 if __name__ == '__main__':
     unittest.main()

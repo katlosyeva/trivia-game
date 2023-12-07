@@ -1,5 +1,3 @@
-import html
-
 import requests  # import module for requesting API
 import json  # import module to work with json data
 import itertools
@@ -38,12 +36,15 @@ def fifty_fifty(question_id):
     )
     return result.json()
 
+
 def ask_audience(question_id):
     result = requests.get(
         "http://127.0.0.1:5000/ask_audience/{}".format(question_id),
         headers={"content-type": "application/json"}
     )
     return result.json()
+
+
 def add_game(user_name):
     info = {
         "user_name": user_name
@@ -83,14 +84,15 @@ def show_leaderboard():
 # BEFORE RUNNING THIS FILE REMEMBER to create a database and all the tables with the code from database.sql
 # Remember to run the app.py file
 # Remember to set your password in config file
+
 def display_hints(hints, question_id):
+    """Function to run all hints logic"""
     if hints > 0:
         need_hint = input("Would you use like to use 50/50 hint or ask the audience? For 50/50 type 1,"
                           " and to ask the audience - 2, if you don't want to use a hint click 3 ")
         if need_hint == "1":
             fifty_fifty_info = fifty_fifty(question_id)
             print("Answers: ")
-            print("!!!", fifty_fifty_info)
             print_colored_answers(fifty_fifty_info['answers'])
             hints -= 1
         elif need_hint == "2":
@@ -124,18 +126,14 @@ def run():
     else:
         game_id = info["game_id"]
         question = info["question"]
-        print(question)
+        # print(question)
         question_id = question["question_id"]
         print("\nThe question: ", question['question_text'])
         print("Answers: ")
         print_colored_answers(question['answers'])
-        print(question['answers'])
         display_hints(hints, question_id)
-
-        answer = input(f"Write the letter: ")
-
+        answer = input(f"To answer, either copy & paste your chosen answer, or type it (case-insensitive): ").title()
         result = check_question(game_id, answer, question['question_id'])
-
         print(result, "\n")
         for n in range(13):
             continue_agreement = input("\nTo see the question press y ")
@@ -146,7 +144,9 @@ def run():
                 print("Answers: ")
                 print_colored_answers(question['answers'])
                 display_hints(hints, question_id)
-                answer = input(f"Write the answer: ")
+
+                answer = (input(f"To answer, either copy & paste your chosen answer, or type it (case-insensitive): ")
+                          .title())
                 result = check_question(game_id, answer, question['question_id'])
                 print(result, "\n")
         print(" ")

@@ -29,12 +29,11 @@ def get_or_add_player_id(username):
     try:
         # Check if username is not NULL and does not exceed 40 characters
         if username == "" or len(username) > 40:
-            raise ValueError("Invalid username. It cannot be empty and must be 40 characters or less.")
+            raise ValueError("Invalid username length. Must be 1-40 characters in length")
 
     except ValueError as ve:
         print(f"Invalid username: {ve}")
         return None
-
 
     try:
         # Establish a connection to the MySQL database
@@ -50,7 +49,7 @@ def get_or_add_player_id(username):
         existing_player_id = cur.fetchone()
 
         if existing_player_id:
-            # Player exist  s
+            # Player exists
             player_id = existing_player_id[0]
             print(f"Username '{username}' already exists in the database.")
             print(f"For existing username '{username}', player_id: {player_id}\n")
@@ -144,7 +143,7 @@ def add_new_game(user_id):
 
 
 def add_new_questions(game_id, question_text, correct_answer, incorrect_answers):
-    """"DB function to add questions data to questions table in DB,
+    """DB function to add questions data to questions table in DB,
      takes game_id, question_text, correct_answer, incorrect_answers"""
     try:
         # Establish a connection to the MySQL database
@@ -203,7 +202,7 @@ def add_new_questions(game_id, question_text, correct_answer, incorrect_answers)
 
 
 def display_question_to_player(game_id):
-    """"DB function, that takes game_id and returns question_id, game_id, question_text and answers"""
+    """DB function, that takes game_id and returns question_id, game_id, question_text and answers"""
     try:
         # Establish a connection to the MySQL database
         db_name = "trivia_game"
@@ -270,6 +269,8 @@ def display_question_to_player(game_id):
 
 
 def display_question_to_player_fifty_fifty(question_id):
+    """connects to db and returns question_id, game_id, question_text
+     and two options for the question including one correct"""
     try:
         # Establish a connection to the MySQL database
         db_name = "trivia_game"
@@ -423,6 +424,7 @@ def get_user_score(game_id):
 
 
 def get_leaderboard():
+    """connects to db and returns ten top scores of the players in a game and their usernames"""
     cur = None  # Initialize cur outside the try block
     try:
         # Establish a connection to the MySQL database
@@ -456,7 +458,7 @@ def get_leaderboard():
 
 
 def get_all_answers(question_id):
-    """"DB function, that takes question_id and returns four answers"""
+    """DB function, that takes question_id and returns four answers"""
     try:
         # Establish a connection to the MySQL database
         db_name = "trivia_game"
@@ -479,7 +481,7 @@ def get_all_answers(question_id):
 
 
     except Exception:
-          raise DbConnectionError("Failed to retrieve answers from DB")
+        raise DbConnectionError("Failed to retrieve answers from DB")
 
     finally:
         if db_connection:
@@ -510,7 +512,8 @@ def main():
     print(f"Leaderboard Top 10:\n{get_leaderboard()}")
 
 
-
 if __name__ == '__main__':
-    print(display_question_to_player(1))
-    # main()
+
+    # print(display_question_to_player(1))
+    main()
+
