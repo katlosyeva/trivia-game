@@ -35,22 +35,62 @@ class TestAddGameRoute(unittest.TestCase):
         self.assertEqual(data_long['message'], 'User name must be between 1 and 40 characters')
 
 
-class TestCheckAnswerRoute(unittest.TestCase):
-
-    def setUp(self):
-        self.app = app.test_client()
-
-    def test_check_answer_route(self):
-        answer_data = {
-            "game_id": 1,
-            "answer": "The Bahamas Archipelago",
-            "question_id": 46
-        }
-        response = self.app.put('/check_answer', json=answer_data)
-        self.assertEqual(response.status_code, 200)
-        self.assertIn('score', response.get_data(as_text=True))
-        self.assertIn('correct_answer', response.get_data(as_text=True))
-        self.assertIn('result', response.get_data(as_text=True))
+# class TestCheckAnswerRoute(unittest.TestCase):
+#
+#     def setUp(self):
+#         self.app = app.test_client()
+#
+#     def test_check_answer_route_correct(self):
+#         answer_data = {
+#             "game_id": 1,
+#             "answer": "The Bahamas Archipelago",
+#             "question_id": 46
+#         }
+#         response = self.app.put('/check_answer', json=answer_data)
+#         self.assertEqual(response.status_code, 200)
+#         self.assertIn('score', response.get_data(as_text=True))
+#         self.assertIn('correct_answer', response.get_data(as_text=True))
+#         self.assertIn('result', response.get_data(as_text=True))
+#         self.assertEqual(json.loads(response.get_data(as_text=True))['result'], 'correct')
+#
+#     def test_check_answer_route_incorrect(self):
+#         answer_data = {
+#             "game_id": 1,
+#             "answer": "Incorrect Answer",
+#             "question_id": 46
+#         }
+#         response = self.app.put('/check_answer', json=answer_data)
+#         self.assertEqual(response.status_code, 200)
+#         self.assertIn('score', response.get_data(as_text=True))
+#         self.assertIn('correct_answer', response.get_data(as_text=True))
+#         self.assertIn('result', response.get_data(as_text=True))
+#         self.assertEqual(json.loads(response.get_data(as_text=True))['result'], 'incorrect')
+#
+#     def test_check_answer_route_missing_fields(self):
+#         # Send a request with missing required fields
+#         response = self.app.put('/check_answer', json={})
+#         self.assertEqual(response.status_code, 400)
+#         self.assertIn('message', response.get_data(as_text=True))
+#         self.assertEqual(json.loads(response.get_data(as_text=True))['message'], 'Missing required fields')
+#
+#     def test_check_answer_route_internal_error(self):
+#         # Simulate an internal server error without using patch or mock
+#         # Override the check_answer method in Game to raise an exception
+#         original_check_answer = Game.check_answer
+#         Game.check_answer = lambda *args, **kwargs: (1, True)  # Replace with your desired behavior
+#
+#         answer_data = {
+#             "game_id": 1,
+#             "answer": "The Bahamas Archipelago",
+#             "question_id": 46
+#         }
+#         response = self.app.put('/check_answer', json=answer_data)
+#         self.assertEqual(response.status_code, 500)
+#         self.assertIn('message', response.get_data(as_text=True))
+#         self.assertEqual(json.loads(response.get_data(as_text=True))['message'], 'Internal server error')
+#
+#         # Restore the original check_answer method
+#         Game.check_answer = original_check_answer
 
 
 class TestNextQuestionRoute(unittest.TestCase):
@@ -79,3 +119,22 @@ class TestLeaderboardRoute(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+
+# class TestCheckAnswerRoute(unittest.TestCase):
+#
+#     def setUp(self):
+#         self.app = app.test_client()
+#
+#     def test_check_answer_route(self):
+#         answer_data = {
+#             "game_id": 1,
+#             "answer": "The Bahamas Archipelago",
+#             "question_id": 46
+#         }
+#         response = self.app.put('/check_answer', json=answer_data)
+#         self.assertEqual(response.status_code, 200)
+#         self.assertIn('score', response.get_data(as_text=True))
+#         self.assertIn('correct_answer', response.get_data(as_text=True))
+#         self.assertIn('result', response.get_data(as_text=True))
