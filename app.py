@@ -42,6 +42,27 @@ def add_game():
     except Exception:
         return {"message": "Internal server error"}, 500
 
+
+@app.route("/check_answer", methods=["PUT"])
+def check_answer():
+    answer = request.get_json()
+
+    # Validate required fields
+    required_fields = ["game_id", "answer", "question_id"]
+    if not all(field in answer for field in required_fields):
+        return {"message": "Missing required fields"}, 400
+
+    game_id = answer["game_id"]
+    user_answer = answer["answer"]
+    question_id = answer["question_id"]
+
+    try:
+        answer_was_correct = Game.check_answer(game_id, question_id, user_answer)
+        return answer_was_correct
+    except Exception:
+        return {"message": "Internal server error"}, 500
+
+
 # @app.route("/add_new_game", methods=["POST"])
 # def add_game():
 #     # Accepts POST requests with JSON data containing user_name
@@ -71,17 +92,17 @@ def add_game():
 #         return {"message": "Internal server error"}, 500
 
 
-@app.route("/check_answer", methods=["PUT"])
-def check_answer():
-    answer = request.get_json()
-    game_id = answer["game_id"]
-    user_answer = answer["answer"]
-    question_id = answer["question_id"]
-    try:
-        answer_was_correct = Game.check_answer(game_id, question_id, user_answer)
-        return answer_was_correct
-    except Exception:
-        return {"message": "Internal server error"}, 500
+# @app.route("/check_answer", methods=["PUT"])
+# def check_answer():
+#     answer = request.get_json()
+#     game_id = answer["game_id"]
+#     user_answer = answer["answer"]
+#     question_id = answer["question_id"]
+#     try:
+#         answer_was_correct = Game.check_answer(game_id, question_id, user_answer)
+#         return answer_was_correct
+#     except Exception:
+#         return {"message": "Internal server error"}, 500
 
 
 @app.route("/next_question/<game_id>")
