@@ -58,13 +58,15 @@ class Game:
         result = display_question_to_player(game_id)
         return result
 
-    @staticmethod
-    def fifty_fifty(question_id):
-        result = display_question_to_player_fifty_fifty(question_id)
-        return result
+    # @staticmethod
+    # def fifty_fifty(question_id):
+    #
+    #     result = display_question_to_player_fifty_fifty(question_id)
+    #     return result
 
     @staticmethod
     def show_leaderboard():
+        """method shows returns ten top results of players and their usernames"""
         result = get_leaderboard()
         return result
 

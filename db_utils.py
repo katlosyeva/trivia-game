@@ -142,7 +142,7 @@ def add_new_game(user_id):
 
 
 def add_new_questions(game_id, question_text, correct_answer, incorrect_answers):
-    """"DB function to add questions data to questions table in DB,
+    """DB function to add questions data to questions table in DB,
      takes game_id, question_text, correct_answer, incorrect_answers"""
     try:
         # Establish a connection to the MySQL database
@@ -201,7 +201,7 @@ def add_new_questions(game_id, question_text, correct_answer, incorrect_answers)
 
 
 def display_question_to_player(game_id):
-    """"DB function, that takes game_id and returns question_id, game_id, question_text and answers"""
+    """DB function, that takes game_id and returns question_id, game_id, question_text and answers"""
     try:
         # Establish a connection to the MySQL database
         db_name = "trivia_game"
@@ -268,6 +268,8 @@ def display_question_to_player(game_id):
 
 
 def display_question_to_player_fifty_fifty(question_id):
+    """connects to db and returns question_id, game_id, question_text
+     and two options for the question including one correct"""
     try:
         # Establish a connection to the MySQL database
         db_name = "trivia_game"
@@ -421,6 +423,7 @@ def get_user_score(game_id):
 
 
 def get_leaderboard():
+    """connects to db and returns ten top scores of the players in a game and their usernames"""
     cur = None  # Initialize cur outside the try block
     try:
         # Establish a connection to the MySQL database
@@ -454,7 +457,7 @@ def get_leaderboard():
 
 
 def get_all_answers(question_id):
-    """"DB function, that takes question_id and returns four answers"""
+    """DB function, that takes question_id and returns four answers"""
     try:
         # Establish a connection to the MySQL database
         db_name = "trivia_game"
