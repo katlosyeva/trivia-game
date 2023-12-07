@@ -83,6 +83,21 @@ def show_leaderboard():
 # BEFORE RUNNING THIS FILE REMEMBER to create a database and all the tables with the code from database.sql
 # Remember to run the app.py file
 # Remember to set your password in config file
+def display_hints(hints, question_id):
+    if hints > 0:
+        need_hint = input("Would you use like to use 50/50 hint or ask the audience? For 50/50 type 1,"
+                          " and to ask the audience - 2, if you don't want to use a hint click 3 ")
+        if need_hint == "1":
+            fifty_fifty_info = fifty_fifty(question_id)
+            print("Answers: ")
+            print("!!!", fifty_fifty_info)
+            print_colored_answers(fifty_fifty_info['answers'])
+            hints -= 1
+        elif need_hint == "2":
+            audience_responce = ask_audience(question_id)
+            for option in audience_responce:
+                print(f"{option[0]} % of the audience thinks the correct answer is {option[1]}")
+            hints -= 1
 def run():
     print(" #####        #     #       ###       ####### ")
     print("#     #       #     #        #             #  ")
@@ -115,20 +130,8 @@ def run():
         print("Answers: ")
         print_colored_answers(question['answers'])
         print(question['answers'])
-        if hints > 0:
-            need_hint = input("Would you use like to use 50/50 hint or ask the audience? For 50/50 type 1,"
-                              " and to ask the audience - 2, if you don't want to use a hint click 3 ")
-            if need_hint == "1":
-                fifty_fifty_info = fifty_fifty(question_id)
-                print("Answers: ")
-                print_colored_answers(fifty_fifty_info['answers'])
-                hints -= 1
-            elif need_hint == "2":
-                audience_responce = ask_audience(question_id)
-                print(audience_responce)
-                for option in audience_responce:
-                    print(f"{option[0]} % of the audience thinks the correct answer is {option[1]}")
-                hints -= 1
+        display_hints(hints, question_id)
+
         answer_letter = input(f"Write the letter: ")
         answer  = ""
         if answer_letter == "A":
@@ -150,19 +153,7 @@ def run():
                 print("\nThe question: ", question['question_text'])
                 print("Answers: ")
                 print_colored_answers(question['answers'])
-                if hints > 0:
-                    need_hint = input("Would you use like to use 50/50 hint or ask the audience? For 50/50 type 1,"
-                                      " and to ask the audience - 2, if you don't want to use a hint click 3 ")
-                    if need_hint == "1":
-                        fifty_fifty_info = fifty_fifty(question_id)
-                        print("Answers: ")
-                        print_colored_answers(fifty_fifty_info['answers'])
-                        hints -= 1
-                    elif need_hint == "2":
-                        audience_responce = ask_audience(question_id)
-                        for option in audience_responce:
-                            print(f"{option[0]} % of the audience thinks the correct answer is {option[1]}")
-                        hints -= 1
+                display_hints(hints, question_id)
                 answer = input(f"Write the answer: ")
                 result = check_question(game_id, answer, question['question_id'])
                 print(result, "\n")
