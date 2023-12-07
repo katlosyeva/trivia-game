@@ -70,7 +70,7 @@ class TestGetOrAddPlayerId(unittest.TestCase):
         mock_connect.return_value = mock_connection_invalid
         mock_connection_invalid.cursor.return_value = mock_cursor_invalid
         mock_cursor_invalid.execute.side_effect = ValueError(
-            "Invalid username. It cannot be empty and must be 40 characters or less.")
+            "Invalid username length. Must be 1-40 characters in length")
 
         # Test with the mocked database connection for an invalid case
         invalid_username = ''  # Invalid username (empty string)

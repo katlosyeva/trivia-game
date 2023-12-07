@@ -1,6 +1,9 @@
 import unittest
 import json
-from app import app
+from unittest.mock import MagicMock, patch
+from flask import Flask, jsonify
+from werkzeug.test import Client
+from app import app, User, Game
 
 
 class TestAddGameRoute(unittest.TestCase):
@@ -8,7 +11,7 @@ class TestAddGameRoute(unittest.TestCase):
     def setUp(self):
         self.app = app.test_client()
 
-    def test_add_game_route(self):
+    def test_successful_game_creation(self):
         user_name = "helen"
         user_data = {"user_name": user_name}
         response = self.app.post('/add_new_game', json=user_data)
@@ -17,6 +20,29 @@ class TestAddGameRoute(unittest.TestCase):
         self.assertIn('player_id', data)
         self.assertIn('game_id', data)
         self.assertIn('question', data)
+
+    def test_failure_missing_user_name(self):
+        response = self.app.post('/add_new_game', json={})
+        self.assertEqual(response.status_code, 400)  # Assuming a 400 Bad Request status code
+
+    def test_edge_case_maximum_username_length(self):
+        max_length_user_name = "a" * 40  # Assuming maximum allowed length is 40 characters
+        user_data_edge = {"user_name": max_length_user_name}
+        response_edge = self.app.post('/add_new_game', json=user_data_edge)
+        data_edge = json.loads(response_edge.get_data(as_text=True))
+        self.assertEqual(response_edge.status_code, 200)
+        self.assertIn('player_id', data_edge)
+        self.assertIn('game_id', data_edge)
+        self.assertIn('question', data_edge)
+
+    def test_failure_exceeding_maximum_username_length(self):
+        long_user_name = "b" * 41  # Assuming a username longer than 40 characters
+        user_data_long = {"user_name": long_user_name}
+        response_long = self.app.post('/add_new_game', json=user_data_long)
+        self.assertEqual(response_long.status_code, 400)  # Assuming a 400 Bad Request status code
+        data_long = json.loads(response_long.get_data(as_text=True))
+        self.assertIn('message', data_long)
+        self.assertEqual(data_long['message'], 'User name must be between 1 and 40 characters')
 
 
 class TestCheckAnswerRoute(unittest.TestCase):
