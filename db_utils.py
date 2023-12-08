@@ -330,15 +330,16 @@ def get_correct_answer(question_id):
                         WHERE id = %s
                         """
         cur.execute(query, (question_id,))
-        fetched_correct_answer = cur.fetchone()
+        #fetched_correct_answer = cur.fetchone()
+        correct_answer = cur.fetchone()
 
-        correct_answer = fetched_correct_answer[0]  # Extract the first (and only) element from the tuple
+        # correct_answer = fetched_correct_answer[0]  # Extract the first (and only) element from the tuple
 
         # Check if no question is found
         if correct_answer is None:
             raise ValueError(f"No question found with ID {question_id}")
 
-        return correct_answer  # [0]
+        return correct_answer[0]  # [0]
 
     except ValueError as ve:
         raise ve  # Reraise the specific ValueError

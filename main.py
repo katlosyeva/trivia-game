@@ -138,6 +138,7 @@ def run():
 
         answer = input(f"To answer, either copy & paste your chosen answer, or type it (case-insensitive): ").title()
         result = check_question(game_id, answer, question['question_id'])
+        print(result) #########
         correct_answer = result['result']['correct_answer']
         is_player_answer_correct = result['result']['result']
         score = result['result']['score']
@@ -156,6 +157,7 @@ def run():
 
                 answer = input(f"To answer, either copy & paste your chosen answer, or type it (case-insensitive): ").title()
                 result = check_question(game_id, answer, question['question_id'])
+                print(result) #########
                 correct_answer = result['result']['correct_answer']
                 is_player_answer_correct = result['result']['result']
                 score = result['result']['score']

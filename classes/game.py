@@ -48,7 +48,7 @@ class Game:
             update_game_score(game_id)
             user_score = get_user_score(game_id)
 
-            return {"score": user_score, "correct_answer": correct_answer[0], "result": "correct"}
+            return {"score": user_score, "correct_answer": correct_answer, "result": "correct"}
         else:
             # user's score is got
             previous_score = get_user_score(game_id)
