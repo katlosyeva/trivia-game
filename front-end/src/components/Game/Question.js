@@ -10,11 +10,9 @@ const Question = ({
 }) => {
   return (
     <div>
-      <Typography
-        variant="h5"
-        sx={{ maxWidth: 500, mb: 2 }}
-        dangerouslySetInnerHTML={{ __html: question }}
-      />
+      <Typography variant="h5" sx={{ maxWidth: 500, mb: 2 }}>
+        {question}
+      </Typography>
 
       <RadioGroup
         aria-label="answers"
@@ -34,7 +32,7 @@ const Question = ({
             key={index}
             value={answer}
             control={<Radio />}
-            label={<span dangerouslySetInnerHTML={{ __html: answer }} />}
+            label={answer}
             disabled={disabled}
           />
         ))}

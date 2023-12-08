@@ -11,7 +11,6 @@ import {
   Box,
   Button,
 } from "@mui/material";
-import backgroundImage from "../assets/background2.jpg";
 import { Link } from "react-router-dom";
 
 const Leaderboard = () => {
@@ -34,9 +33,7 @@ const Leaderboard = () => {
   return (
     <Box
       sx={{
-        backgroundImage: `url(${backgroundImage})`,
-        backgroundPosition: "center",
-        backgroundSize: "200%",
+        backgroundColor: "#d9ecf3",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",

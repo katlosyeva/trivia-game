@@ -1,40 +1,18 @@
 import React, { useState } from "react";
 import { Box, Button, Typography } from "@mui/material";
-import CloseIcon from '@mui/icons-material/Close';
+import CloseIcon from "@mui/icons-material/Close";
 import Question from "./Question";
 import { useLocation, useNavigate } from "react-router-dom";
-import backgroundImage from "../../assets/background2.jpg";
-import 'chart.js/auto';
+import "chart.js/auto";
 import { Pie } from "react-chartjs-2";
-import Modal from 'react-modal';
+import Modal from "react-modal";
 
-const shuffleArray = (array) => {
-  const shuffledArray = [...array];
-  for (let i = shuffledArray.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [shuffledArray[i], shuffledArray[j]] = [shuffledArray[j], shuffledArray[i]];
-  }
-  return shuffledArray;
-};
-
-// const customStyles = {
-//   content: {
-//     top: '50%',
-//     left: '50%',
-//     right: 'auto',
-//     bottom: 'auto',
-//     marginRight: '-50%',
-//     transform: 'translate(-50%, -50%)',
-//   },
-// };
 const customStyles = {
   content: {
-    top: '20%',
-    left: 'auto',
-    right: '5%',
-    bottom: 'auto',
-    // marginRight: '-50%',
-    // transform: 'translate(-50%, -50%)',
+    top: "20%",
+    left: "auto",
+    right: "5%",
+    bottom: "auto",
   },
 };
 
@@ -53,7 +31,6 @@ const Game = () => {
   const [remainingHints, setRemainingHints] = useState(3);
   const [audienceChoice, setAudienceChoice] = useState("");
   const [modalIsOpen, setModalIsOpen] = useState(false);
-  console.log(audienceChoice)
 
   const game_id = Number(localStorage.getItem("game_id"));
 
@@ -67,7 +44,7 @@ const Game = () => {
       if (data) {
         localStorage.setItem("question_id", data.question_id);
         setQuestion(data.question_text);
-        setAnswers(shuffleArray(data.answers));
+        setAnswers(data.answers);
         setSelectedAnswer(null);
         setShowCorrectAnswer(false);
       }
@@ -95,12 +72,16 @@ const Game = () => {
         }),
       });
 
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
       const result = await response.json();
       setCorrectAnswer(result.correct_answer);
       setScore(result.score);
       setShowCorrectAnswer(true);
     } catch (error) {
-      console.error("Error submitting answer:", error);
+      console.error("Error submitting answer:", error.message);
     }
   };
 
@@ -117,7 +98,7 @@ const Game = () => {
           setAnswers(data.answers);
           setSelectedAnswer(null);
           setShowCorrectAnswer(false);
-          setRemainingHints((prevHints) => prevHints - 1); // Decrement remaining hints
+          setRemainingHints((prevHints) => prevHints - 1);
         }
       } catch (error) {
         console.error("Error submitting answer:", error);
@@ -133,8 +114,8 @@ const Game = () => {
       fetchQuestions();
     }
   };
-  
-  const handleAskAudience = async() => {
+
+  const handleAskAudience = async () => {
     if (remainingHints > 0) {
       const question_id = localStorage.getItem("question_id");
       try {
@@ -142,29 +123,20 @@ const Game = () => {
           `http://127.0.0.1:5000/ask_audience/${question_id}`
         );
         const data = await response.json();
-        console.log("data", data)
         if (data) {
-          setAudienceChoice(data)
-          setRemainingHints((prevHints) => prevHints - 1); // Decrement remaining hints
-          
+          setAudienceChoice(data);
+          setRemainingHints((prevHints) => prevHints - 1);
         }
       } catch (error) {
         console.error("Error submitting answer:", error);
       }
     }
-  }
+  };
 
   const openModal = () => {
-    handleAskAudience()
-    console.log("From", audienceChoice)
+    handleAskAudience();
     setModalIsOpen(true);
   };
-  
-  
-
-  // const openModal = () => {
-  //   setModalIsOpen(true);
-  // };
 
   const closeModal = () => {
     setModalIsOpen(false);
@@ -173,10 +145,7 @@ const Game = () => {
   return (
     <Box
       sx={{
-        backgroundImage: `url(${backgroundImage})`,
-        backgroundRepeat: false,
-        backgroundPosition: "center",
-        backgroundSize: "200%",
+        backgroundColor: "#d9ecf3",
         display: "flex",
         alignItems: "center",
         flexDirection: "column",
@@ -208,23 +177,6 @@ const Game = () => {
             gap: 2,
           }}
         >
-          {" "}
-          {/* <Button
-            variant="contained"
-            color="primary"
-            onClick={handleHint}
-            disabled={showCorrectAnswer || remainingHints === 0}
-          >
-            Ask audience ({remainingHints} left)
-          </Button>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleHint}
-            disabled={showCorrectAnswer || remainingHints === 0}
-          >
-            Try 50/50 ({remainingHints} left)
-          </Button> */}
           <Button
             variant="contained"
             color="primary"
@@ -265,22 +217,6 @@ const Game = () => {
           >
             Try 50/50 ({remainingHints} left)
           </Button>
-          {/* <Button
-            variant="contained"
-            color="primary"
-            onClick={handleSubmit}
-            disabled={!selectedAnswer || showCorrectAnswer}
-          >
-            Submit
-          </Button>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleNext}
-            disabled={!showCorrectAnswer}
-          >
-            Next
-          </Button> */}
         </Box>
         <Typography variant="h6">Score: {score}</Typography>
       </Box>
@@ -291,7 +227,7 @@ const Game = () => {
             m: "0 auto",
             gap: 3,
             position: "absolute",
-            bottom: 100,
+            bottom: 50,
           }}
         >
           <Typography variant="h6" sx={{ color: "green" }}>
@@ -304,47 +240,53 @@ const Game = () => {
           )}
         </Box>
       )}
-      {audienceChoice &&
-      <Modal
-        style={customStyles}
-        isOpen={modalIsOpen}
-        onRequestClose={closeModal}
-        contentLabel="Example Modal"
-      >
-        <CloseIcon onClick={closeModal} color="primary"/>
-        <Pie style={{"font":"20px"}}
-          options = {{
-            plugins: {
-              legend: {
-                labels: {
-                  font: {
-                    family: 'Arial', 
-                    size: 20,        
+      {audienceChoice && (
+        <Modal
+          style={customStyles}
+          isOpen={modalIsOpen}
+          onRequestClose={closeModal}
+          contentLabel="Example Modal"
+        >
+          <CloseIcon onClick={closeModal} color="primary" />
+          <Pie
+            style={{ font: "20px" }}
+            options={{
+              plugins: {
+                legend: {
+                  labels: {
+                    font: {
+                      family: "Arial",
+                      size: 20,
+                    },
                   },
                 },
               },
-            },
-          }}
-          data={{
-          labels: [audienceChoice[0][1], audienceChoice[1][1], audienceChoice[2][1], audienceChoice[3][1]],
-          datasets: [
-          {
-            label: '%',
-            data: [audienceChoice[0][0], audienceChoice[1][0], audienceChoice[2][0], audienceChoice[3][0]],
-          },
-        ],
-      
-      }}
-      
-      height={400}
-      width={400}
-    />
-    
-    </Modal>
-    }
-    {/* <Typography style={{"position":"absolute", "top":"10px", "right":"10px"}}>Score</Typography> */}
+            }}
+            data={{
+              labels: [
+                audienceChoice[0][1],
+                audienceChoice[1][1],
+                audienceChoice[2][1],
+                audienceChoice[3][1],
+              ],
+              datasets: [
+                {
+                  label: "%",
+                  data: [
+                    audienceChoice[0][0],
+                    audienceChoice[1][0],
+                    audienceChoice[2][0],
+                    audienceChoice[3][0],
+                  ],
+                },
+              ],
+            }}
+            height={400}
+            width={400}
+          />
+        </Modal>
+      )}
     </Box>
-    
   );
 };
 
