@@ -5,7 +5,7 @@ from classes.lifeline import AskAudience
 from classes.user import User
 from classes.game import Game
 
-# We need CORS when we connect front and back
+# We need CORS when we connect frontend and backend
 from flask_cors import CORS
 
 # Define a Flask web application
@@ -16,6 +16,23 @@ CORS(app)
 
 @app.route("/add_new_game", methods=["POST"])
 def add_game():
+    """
+        Endpoint to create a new game for a user.
+
+        Expected JSON input:
+        {
+            "user_name": "string"
+        }
+
+        Returns:
+        - {"player_id": int, "game_id": int, "question": string} if successful.
+        - {"message": "Username must be between 1 and 40 characters"}, 400 if input is invalid.
+        - {"message": "Internal server error"}, 500 if there's a server error.
+        """
+
+    if not request.is_json:
+        return {"message": "Invalid content type. Expected JSON"}, 400
+
     # Accepts POST requests with JSON data containing user_name
     user_data = request.get_json()
 
@@ -39,12 +56,34 @@ def add_game():
             "question": question
         }
         return jsonify(response)
-    except Exception:
+    except Exception as e:
+        # Log the exception details for debugging
+        print(f"An error occurred: {str(e)}")
         return {"message": "Internal server error"}, 500
 
 
 @app.route("/check_answer", methods=["PUT"])
 def check_answer():
+    """
+    Endpoint to check whether the user-provided answer is correct for a specific game and question.
+
+    Expected JSON input:
+    {
+        "game_id": "string",
+        "answer": "string",
+        "question_id": "string"
+    }
+
+    Returns:
+    - {"result": True} if the answer is correct.
+    - {"result": False} if the answer is incorrect.
+    - {"message": "Missing required fields"}, 400 if required fields are missing.
+    - {"message": "Internal server error"}, 500 if there's a server error.
+    """
+
+    if not request.is_json:
+        return {"message": "Invalid content type. Expected JSON"}, 400
+
     answer = request.get_json()
 
     # Validate required fields
@@ -58,9 +97,31 @@ def check_answer():
 
     try:
         answer_was_correct = Game.check_answer(game_id, question_id, user_answer)
-        return answer_was_correct
-    except Exception:
+        return {"result": answer_was_correct}
+    except Exception as e:
+        # Log the exception details for debugging
+        print(f"An error occurred: {str(e)}")
         return {"message": "Internal server error"}, 500
+
+
+# @app.route("/check_answer", methods=["PUT"])
+# def check_answer():
+#     answer = request.get_json()
+#
+#     # Validate required fields
+#     required_fields = ["game_id", "answer", "question_id"]
+#     if not all(field in answer for field in required_fields):
+#         return {"message": "Missing required fields"}, 400
+#
+#     game_id = answer["game_id"]
+#     user_answer = answer["answer"]
+#     question_id = answer["question_id"]
+#
+#     try:
+#         answer_was_correct = Game.check_answer(game_id, question_id, user_answer)
+#         return answer_was_correct
+#     except Exception:
+#         return {"message": "Internal server error"}, 500
 
 
 # @app.route("/add_new_game", methods=["POST"])
