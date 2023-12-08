@@ -36,7 +36,7 @@ CREATE TABLE games (
 CREATE TABLE questions (
   id int NOT NULL AUTO_INCREMENT PRIMARY KEY,
   game_id int,
-  question varchar(255),
+  question varchar(400),
   correct_answer varchar(50),
   answer_1 varchar(200),
   answer_2 varchar(200),
