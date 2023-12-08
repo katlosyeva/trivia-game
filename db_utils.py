@@ -64,12 +64,6 @@ def get_or_add_player_id(username):
             player_id = cur.lastrowid
             print(f"For new username '{username}', new player_id: {player_id}\n")
 
-
-    # except ValueError as ve:
-    #     print(f"ValueError: {ve}")
-    #     raise  # Re-raise the exception after printing
-    #     return None
-
     except mysql.connector.Error as err:
         print(f"MySQL Error: {err}")
 
@@ -320,6 +314,8 @@ def display_question_to_player_fifty_fifty(question_id):
 
 def get_correct_answer(question_id):
     """takes question_id, makes request to db and returns the correct answer for this question"""
+    cur = None  # Initialize cur outside the try block
+    db_connection = None  # Initialize db_connection outside the try block
     try:
         # Establish a connection to the MySQL database
         db_name = "trivia_game"
@@ -334,13 +330,15 @@ def get_correct_answer(question_id):
                         WHERE id = %s
                         """
         cur.execute(query, (question_id,))
-        correct_answer = cur.fetchone()
+        fetched_correct_answer = cur.fetchone()
+
+        correct_answer = fetched_correct_answer[0]  # Extract the first (and only) element from the tuple
 
         # Check if no question is found
         if correct_answer is None:
             raise ValueError(f"No question found with ID {question_id}")
 
-        return correct_answer[0]
+        return correct_answer  # [0]
 
     except ValueError as ve:
         raise ve  # Reraise the specific ValueError
@@ -512,7 +510,5 @@ def main():
 
 
 if __name__ == '__main__':
-
     # print(display_question_to_player(1))
     main()
-

@@ -37,7 +37,7 @@ CREATE TABLE questions (
   id int NOT NULL AUTO_INCREMENT PRIMARY KEY,
   game_id int,
   question varchar(400),
-  correct_answer varchar(50),
+  correct_answer varchar(200),
   answer_1 varchar(200),
   answer_2 varchar(200),
   answer_3 varchar(200),
@@ -49,3 +49,7 @@ CREATE TABLE questions (
 SELECT * FROM players;
 SELECT * FROM games;
 SELECT * FROM questions;
+
+SELECT correct_answer
+FROM questions
+WHERE id = 1

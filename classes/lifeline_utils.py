@@ -1,7 +1,6 @@
 from collections import deque
 import random
-from collections import deque
-import random
+
 
 def random_partition(target):
     """function takes the percent(usually 100) and distributes into 4 random percents, returns array of them"""
