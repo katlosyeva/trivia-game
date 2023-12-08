@@ -85,24 +85,28 @@ def show_leaderboard():
 # Remember to run the app.py file
 # Remember to set your password in config file
 
-def display_hints(hints, question_id):
-    """Function to run all hints logic"""
-    if hints > 0:
-        need_hint = input("\nTo use your 50/50 hint type: 1,"
-                          " to ask the audience type: 2, or to answer with no hints, please type: 3 ")
-        if need_hint == "1":
-            fifty_fifty_info = fifty_fifty(question_id)
-            print("Please choose one answer: ")
-            print_colored_answers(fifty_fifty_info['answers'])
-            hints -= 1
-        elif need_hint == "2":
-            audience_responce = ask_audience(question_id)
-            for option in audience_responce:
-                print(f"{option[0]} % of the audience thinks the correct answer is {option[1]}")
-            hints -= 1
-
 
 def run():
+    global hints
+    hints = 3
+
+    def display_hints(num_of_hints, question_id):
+        """Function to run all hints logic"""
+        global hints
+        if num_of_hints > 0:
+            need_hint = input("\nTo use your 50/50 hint type: 1,"
+                              " to ask the audience type: 2, or to answer with no hints, please type: 3 ")
+            if need_hint == "1":
+                fifty_fifty_info = fifty_fifty(question_id)
+                print("Please choose one answer: ")
+                print_colored_answers(fifty_fifty_info['answers'])
+                hints -= 1
+            elif need_hint == "2":
+                audience_responce = ask_audience(question_id)
+                for option in audience_responce:
+                    print(f"{option[0]} % of the audience thinks the correct answer is {option[1]}")
+                hints -= 1
+
     print(" #####        #     #       ###       ####### ")
     print("#     #       #     #        #             #  ")
     print("#     #       #     #        #            #   ")
@@ -138,7 +142,7 @@ def run():
 
         answer = input(f"To answer, either copy & paste your chosen answer, or type it (case-insensitive): ").title()
         result = check_question(game_id, answer, question['question_id'])
-        print(result) #########
+        print(result)  #########
         correct_answer = result['correct_answer']
         is_player_answer_correct = result['result']
         score = result['score']
@@ -155,9 +159,10 @@ def run():
                 print_colored_answers(question['answers'])
                 display_hints(hints, question_id)
 
-                answer = input(f"To answer, either copy & paste your chosen answer, or type it (case-insensitive): ").title()
+                answer = input(
+                    f"To answer, either copy & paste your chosen answer, or type it (case-insensitive): ").title()
                 result = check_question(game_id, answer, question['question_id'])
-                print(result) #########
+                print(result)  #########
                 correct_answer = result['correct_answer']
                 is_player_answer_correct = result['result']
                 score = result['score']
