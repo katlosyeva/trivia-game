@@ -84,21 +84,29 @@ class CheckAnswerTestCase(unittest.TestCase):
         # Create a test client
         self.app = app.test_client()
 
-    def test_check_answer_valid_input(self):
-        # Mock the Game.check_answer method to return a known result
-        with patch('app.Game.check_answer') as mock_check_answer:
-            mock_check_answer.return_value = True
+    @patch('app.Game.check_answer')
+    def test_check_answer_valid_case(self, mock_check_answer):
+        # Mock the behavior of Game.check_answer
+        mock_check_answer.return_value = {"score": 100, "correct_answer": "The Bahamas Archipelago",
+                                          "result": "correct"}
 
-            # Make a request with valid input
-            response = self.app.put('/check_answer', json={
-                "game_id": "test_game",
-                "answer": "test_answer",
-                "question_id": "test_question"
-            })
+        answer_data = {
+            "game_id": 1,
+            "answer": "The Bahamas Archipelago",
+            "question_id": 46
+        }
+        response = self.app.put('/check_answer', json=answer_data)
+        data = response.json
 
-            # Check the response status code and content
-            self.assertEqual(response.status_code, 200)
-            self.assertEqual(response.json, {"result": True})
+        # Check the response status code and content
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('score', data)
+        self.assertIn('correct_answer', data)
+        self.assertIn('result', data)
+        self.assertEqual(data['result'], 'correct')
+
+        # Optionally, assert that Game.check_answer was called with the expected parameters
+        mock_check_answer.assert_called_once_with(1, 46, "The Bahamas Archipelago")
 
     def test_check_answer_missing_fields(self):
         # Make a request with missing fields
