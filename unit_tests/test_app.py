@@ -1,9 +1,6 @@
 import unittest
-import json
 from unittest.mock import MagicMock, patch
-from flask import Flask, jsonify
-from werkzeug.test import Client
-from app import app, User, Game
+from app import app
 
 
 class TestAddGameRoute(unittest.TestCase):
@@ -149,44 +146,151 @@ class TestNextQuestionRoute(unittest.TestCase):
     def setUp(self):
         self.app = app.test_client()
 
-    def test_next_question_route(self):
-        game_id = 1
+    @patch('app.Game.provide_question')
+    def test_next_question_game_ongoing(self, mock_provide_question):
+        # Mocking the Game.provide_question method to return a test question
+        mock_provide_question.return_value = "test_question"
+
+        game_id = "test_game_id"
         response = self.app.get(f'/next_question/{game_id}')
-        if response.status_code == 200:
-            self.assertIn('question', response.get_data(as_text=True))
-        else:
-            self.assertEqual(response.status_code, 404)
+
+        # Check the response status code and content
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.get_data(as_text=True), "test_question")
+
+        # Ensure that Game.provide_question was called with the correct arguments
+        mock_provide_question.assert_called_once_with(game_id)
+
+    @patch('app.Game.provide_question')
+    def test_next_question_game_over(self, mock_provide_question):
+        # Mocking the Game.provide_question method to return None (game over)
+        mock_provide_question.return_value = None
+
+        game_id = "test_game_id"
+        response = self.app.get(f'/next_question/{game_id}')
+
+        # Check the response status code and content
+        self.assertEqual(response.status_code, 404)
+        expected_response = {"error": "End of game"}
+        self.assertEqual(response.get_json(), expected_response)
+
+        # Ensure that Game.provide_question was called with the correct arguments
+        mock_provide_question.assert_called_once_with(game_id)
+
+    @patch('app.Game.provide_question', side_effect=Exception("Test exception"))
+    def test_next_question_internal_server_error(self, mock_provide_question):
+        game_id = "test_game_id"
+        response = self.app.get(f'/next_question/{game_id}')
+
+        # Check the response status code and content
+        self.assertEqual(response.status_code, 500)
+        expected_response = {"message": "Internal server error"}
+        self.assertEqual(response.get_json(), expected_response)
+
+        # Ensure that Game.provide_question was called with the correct arguments
+        mock_provide_question.assert_called_once_with(game_id)
 
 
-class TestLeaderboardRoute(unittest.TestCase):
+class TestUpdatedQuestionRoute(unittest.TestCase):
 
     def setUp(self):
         self.app = app.test_client()
 
-    def test_leaderboard_route(self):
-        response = self.app.get('/leaderboard/')
+    @patch('app.FiftyFifty.provide_lifeline')
+    def test_updated_question_success(self, mock_provide_lifeline):
+        # Mocking the successful behavior of FiftyFifty.provide_lifeline
+        mock_provide_lifeline.return_value = "test_updated_question"
+
+        question_id = "test_question_id"
+        response = self.app.get(f'/fifty_fifty/{question_id}')
+
+        # Check the response status code and content
         self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.get_data(as_text=True), "test_updated_question")
+
+        # Ensure that FiftyFifty.provide_lifeline was called with the correct arguments
+        mock_provide_lifeline.assert_called_once_with(question_id)
+
+    @patch('app.FiftyFifty.provide_lifeline', side_effect=Exception("Test exception"))
+    def test_updated_question_internal_server_error(self, mock_provide_lifeline):
+        question_id = "test_question_id"
+        response = self.app.get(f'/fifty_fifty/{question_id}')
+
+        # Check the response status code and content
+        self.assertEqual(response.status_code, 500)
+        expected_response = {"message": "Internal server error"}
+        self.assertEqual(response.get_json(), expected_response)
+
+        # Ensure that FiftyFifty.provide_lifeline was called with the correct arguments
+        mock_provide_lifeline.assert_called_once_with(question_id)
+
+
+class TestGetAudienceChoiceRoute(unittest.TestCase):
+
+    def setUp(self):
+        self.app = app.test_client()
+
+    @patch('app.AskAudience.provide_lifeline')
+    def test_get_audience_choice_success(self, mock_provide_lifeline):
+        # Mocking the successful behavior of AskAudience.provide_lifeline
+        mock_provide_lifeline.return_value = "test_audience_choice"
+
+        question_id = "test_question_id"
+        response = self.app.get(f'/ask_audience/{question_id}')
+
+        # Check the response status code and content
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.get_data(as_text=True), "test_audience_choice")
+
+        # Ensure that AskAudience.provide_lifeline was called with the correct arguments
+        mock_provide_lifeline.assert_called_once_with(question_id)
+
+    @patch('app.AskAudience.provide_lifeline', side_effect=Exception("Test exception"))
+    def test_get_audience_choice_internal_server_error(self, mock_provide_lifeline):
+        question_id = "test_question_id"
+        response = self.app.get(f'/ask_audience/{question_id}')
+
+        # Check the response status code and content
+        self.assertEqual(response.status_code, 500)
+        expected_response = {"message": "Internal server error"}
+        self.assertEqual(response.get_json(), expected_response)
+
+        # Ensure that AskAudience.provide_lifeline was called with the correct arguments
+        mock_provide_lifeline.assert_called_once_with(question_id)
+
+
+class TestShowLeaderboardRoute(unittest.TestCase):
+
+    def setUp(self):
+        self.app = app.test_client()
+
+    @patch('app.Game.show_leaderboard')
+    def test_show_leaderboard_success(self, mock_show_leaderboard):
+        # Mocking the successful behavior of Game.show_leaderboard
+        mock_show_leaderboard.return_value = {"user1": 100, "user2": 90, "user3": 80}
+
+        response = self.app.get('/leaderboard/')
+
+        # Check the response status code and content
+        self.assertEqual(response.status_code, 200)
+        expected_response = {"user1": 100, "user2": 90, "user3": 80}
+        self.assertEqual(response.get_json(), expected_response)
+
+        # Ensure that Game.show_leaderboard was called with the correct arguments
+        mock_show_leaderboard.assert_called_once()
+
+    @patch('app.Game.show_leaderboard', side_effect=Exception("Test exception"))
+    def test_show_leaderboard_internal_server_error(self, mock_show_leaderboard):
+        response = self.app.get('/leaderboard/')
+
+        # Check the response status code and content
+        self.assertEqual(response.status_code, 500)
+        expected_response = {"message": "Internal server error"}
+        self.assertEqual(response.get_json(), expected_response)
+
+        # Ensure that Game.show_leaderboard was called with the correct arguments
+        mock_show_leaderboard.assert_called_once()
 
 
 if __name__ == '__main__':
     unittest.main()
-
-
-
-# class TestCheckAnswerRoute(unittest.TestCase):
-#
-#     def setUp(self):
-#         self.app = app.test_client()
-#
-#     def test_check_answer_route(self):
-#         answer_data = {
-#             "game_id": 1,
-#             "answer": "The Bahamas Archipelago",
-#             "question_id": 46
-#         }
-#         response = self.app.put('/check_answer', json=answer_data)
-#         self.assertEqual(response.status_code, 200)
-#         self.assertIn('score', response.get_data(as_text=True))
-#         self.assertIn('correct_answer', response.get_data(as_text=True))
-#         self.assertIn('result', response.get_data(as_text=True))
-
