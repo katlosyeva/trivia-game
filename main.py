@@ -146,11 +146,12 @@ def run():
         correct_answer = result['correct_answer']
         is_player_answer_correct = result['result']
         score = result['score']
+        print(f"SCORE: {score}")
         print(f"Correct Answer: {correct_answer}, Result: {is_player_answer_correct}, Score: {score}\n")
         print()
 
         for n in range(13):
-            continue_agreement = input("To see the question press y ")
+            continue_agreement = input("To see the next question, press y ")
             if continue_agreement == "y":
                 question = next_question(game_id)
                 question_id = question["question_id"]
@@ -166,6 +167,7 @@ def run():
                 correct_answer = result['correct_answer']
                 is_player_answer_correct = result['result']
                 score = result['score']
+                print(f"SCORE: {score}")
                 print(f"Correct Answer: {correct_answer}, Result: {is_player_answer_correct}, Score: {score}\n")
                 print()
                 # print(result, "\n")
