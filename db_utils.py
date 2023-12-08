@@ -495,7 +495,6 @@ def main():
     get_or_add_player_id("Megan")
     add_new_game(1)
     add_new_questions(1, "What is the capital of France?", "Paris", ["Berlin", "Madrid", "Rome"])
-    add_new_questions(1, "HHHH", "HE", ["TU", "TT", "hhh"])
     get_or_add_player_id("")
     get_or_add_player_id("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
     add_new_game(-1)
