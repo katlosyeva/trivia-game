@@ -97,7 +97,8 @@ def check_answer():
 
     try:
         answer_was_correct = Game.check_answer(game_id, question_id, user_answer)
-        return {"result": answer_was_correct}
+        # return {"result": answer_was_correct}
+        return answer_was_correct
     except Exception as e:
         # Log the exception details for debugging
         print(f"An error occurred: {str(e)}")
