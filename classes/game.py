@@ -43,7 +43,7 @@ class Game:
         # request is sent to db to get the right answer for this question and question's value
         correct_answer = get_correct_answer(question_id)
         # the right answer is compared with the player's answer
-        if user_answer == html.unescape(correct_answer):
+        if user_answer == correct_answer:
             # if it is correct the score is increased and returned
             update_game_score(game_id)
             user_score = get_user_score(game_id)
