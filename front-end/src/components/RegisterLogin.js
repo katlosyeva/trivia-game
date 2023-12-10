@@ -1,41 +1,48 @@
 import React, { useState } from "react";
 import { TextField, Button, Box, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import backgroundImage from "../assets/background2.jpg";
 
 const RegisterLogin = () => {
   const [username, setUsername] = useState("");
   const navigate = useNavigate();
 
   const handleLogin = async () => {
+    const trimmedUsername = username.trim();
+
     try {
       const response = await fetch("http://127.0.0.1:5000/add_new_game", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ user_name: username }),
+        body: JSON.stringify({ user_name: trimmedUsername }),
       });
 
-      const data = await response.json();
-      const questionObj = data.question;
+      if (response.ok) {
+        const data = await response.json();
+        const questionObj = data.question;
 
-      localStorage.setItem("user_id", data.player_id);
-      localStorage.setItem("game_id", data.game_id);
-      localStorage.setItem("question_id", data.question.question_id);
+        localStorage.setItem("user_id", data.player_id);
+        localStorage.setItem("game_id", data.game_id);
+        localStorage.setItem("question_id", data.question.question_id);
 
-      navigate("/game", { state: { questionObj } });
+        navigate("/game", { state: { questionObj } });
+      } else if (response.status === 400) {
+        const errorData = await response.json();
+        alert(errorData.message);
+      } else {
+        alert("An error occurred. Please try again later.");
+      }
     } catch (error) {
       console.error("Error logging in:", error);
+      alert("An unexpected error occurred. Please try again later.");
     }
   };
 
   return (
     <Box
       sx={{
-        backgroundImage: `url(${backgroundImage})`,
-        backgroundPosition: "center",
-        backgroundSize: "200%",
+        backgroundColor: "#d9ecf3",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",

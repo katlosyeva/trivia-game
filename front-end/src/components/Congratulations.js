@@ -1,7 +1,6 @@
 import React from "react";
 import { Typography, Button, Box } from "@mui/material";
 import { Link, useLocation } from "react-router-dom";
-import backgroundImage from "../assets/background2.jpg";
 
 const Congratulations = () => {
   const location = useLocation();
@@ -10,9 +9,7 @@ const Congratulations = () => {
   return (
     <Box
       sx={{
-        backgroundImage: `url(${backgroundImage})`,
-        backgroundPosition: "center",
-        backgroundSize: "200%",
+        backgroundColor: "#d9ecf3",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
