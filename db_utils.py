@@ -221,8 +221,6 @@ def display_question_to_player(game_id):
             game_id = question_displayed[1]
             question_text = question_displayed[2]
             answers = [question_displayed[3], question_displayed[4], question_displayed[5], question_displayed[6]]
-            # answers.sort()  # sort answers in alphabetical order, which will then be shuffled in Frontend/main.py
-            # later
 
             # SQL query to mark the question as provided using parameterized query
             query2 = """
@@ -233,21 +231,11 @@ def display_question_to_player(game_id):
             cur.execute(query2, (question_id,))
             db_connection.commit()
 
-            # fetched_question = {
-            #     "question_id": question_id,
-            #     "game_id": game_id,
-            #     "question_text": question_text,
-            #     "answers": random.sample(answers, len(answers))
-            # }
-            # print(f"Fetched question:\n{fetched_question}")
-
             return {
                 "question_id": question_id,
                 "game_id": game_id,
                 "question_text": question_text,
                 "answers": random.sample(answers, len(answers))  # randomize the order of answers, so they will be
-                # displayed to player in random order
-                # "answers": answers
             }
         else:
             return {"message": "No more questions"}
@@ -330,9 +318,7 @@ def get_correct_answer(question_id):
                         WHERE id = %s
                         """
         cur.execute(query, (question_id,))
-        # fetched_correct_answer = cur.fetchone()
         correct_answer = cur.fetchone()
-        # correct_answer = fetched_correct_answer[0]  # Extract the first (and only) element from the tuple
 
         # Check if no question is found
         if correct_answer is None:
@@ -483,30 +469,3 @@ def get_all_answers(question_id):
         if db_connection:
             cur.close()
             db_connection.close()
-
-
-def main():
-    # pass
-    # Run quick tests on DB functions:
-    get_or_add_player_id("Megan")
-    add_new_game(1)
-    add_new_questions(1, "What is the capital of France?", "Paris", ["Berlin", "Madrid", "Rome"])
-    get_or_add_player_id("")
-    get_or_add_player_id("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
-    add_new_game(-1)
-    print(f"Question details for question to be displayed:\n{display_question_to_player(1)}")
-    print("\n")
-    print(f"Fifty/fifty answers: {display_question_to_player_fifty_fifty(1)}")
-    print("\n")
-    print(f"Correct answer: {get_correct_answer(1)}")
-    print("\n")
-    print(f"Updated game score: {update_game_score(1)}")
-    print("\n")
-    print(f"After score is updated, get_user_score returns score: {get_user_score(1)}")
-    print("\n")
-    print(f"Leaderboard Top 10:\n{get_leaderboard()}")
-
-
-if __name__ == '__main__':
-    # print(display_question_to_player(1))
-    main()

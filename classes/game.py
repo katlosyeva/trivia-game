@@ -1,8 +1,7 @@
 from api_utils import get_questions_from_api
-import html
 
 from db_utils import add_new_game, add_new_questions, display_question_to_player, get_correct_answer, update_game_score, \
-    get_user_score, display_question_to_player_fifty_fifty, get_leaderboard
+    get_user_score, get_leaderboard
 
 
 class Game:
@@ -20,7 +19,6 @@ class Game:
         self.set_questions(game_id)
 
         return game_id
-
 
     @staticmethod
     def set_questions(game_id):
@@ -60,20 +58,8 @@ class Game:
         result = display_question_to_player(game_id)
         return result
 
-    # @staticmethod
-    # def fifty_fifty(question_id):
-    #
-    #     result = display_question_to_player_fifty_fifty(question_id)
-    #     return result
-
     @staticmethod
     def show_leaderboard():
         """method shows returns ten top results of players and their usernames"""
         result = get_leaderboard()
         return result
-
-
-if __name__ == '__main__':
-    game = Game(1)
-    game.set_questions(1)
-    print(game.fifty_fifty(57))
