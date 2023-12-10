@@ -1,5 +1,12 @@
 import React, { useState } from "react";
-import { Box, Button, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Card,
+  CardActions,
+  CardContent,
+  Typography,
+} from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import Question from "./Question";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -28,7 +35,9 @@ const Game = () => {
   const [showCorrectAnswer, setShowCorrectAnswer] = useState(false);
   const [questionsCount, setQuestionsCount] = useState(1);
   const [question, setQuestion] = useState(questionObj.question_text);
-  const [remainingHints, setRemainingHints] = useState(3);
+  const [hintUsed, setHintUsed] = useState(false);
+  const [remaining50_50Hints, setRemaining50_50Hints] = useState(2);
+  const [remainingAskAudienceHints, setRemainingAskAudienceHints] = useState(2);
   const [audienceChoice, setAudienceChoice] = useState("");
   const [modalIsOpen, setModalIsOpen] = useState(false);
 
@@ -86,7 +95,7 @@ const Game = () => {
   };
 
   const handleHint = async () => {
-    if (remainingHints > 0) {
+    if (remaining50_50Hints > 0 && !hintUsed) {
       const question_id = localStorage.getItem("question_id");
       try {
         const response = await fetch(
@@ -98,7 +107,27 @@ const Game = () => {
           setAnswers(data.answers);
           setSelectedAnswer(null);
           setShowCorrectAnswer(false);
-          setRemainingHints((prevHints) => prevHints - 1);
+          setRemaining50_50Hints((prevHints) => prevHints - 1);
+          setHintUsed(true);
+        }
+      } catch (error) {
+        console.error("Error submitting answer:", error);
+      }
+    }
+  };
+
+  const handleAskAudience = async () => {
+    if (remainingAskAudienceHints > 0 && !hintUsed) {
+      const question_id = localStorage.getItem("question_id");
+      try {
+        const response = await fetch(
+          `http://127.0.0.1:5000/ask_audience/${question_id}`
+        );
+        const data = await response.json();
+        if (data) {
+          setAudienceChoice(data);
+          setRemainingAskAudienceHints((prevHints) => prevHints - 1);
+          setHintUsed(true);
         }
       } catch (error) {
         console.error("Error submitting answer:", error);
@@ -111,25 +140,8 @@ const Game = () => {
     if (questionsCount >= 15) {
       navigate("/congratulations", { state: { score } });
     } else {
+      setHintUsed(false);
       fetchQuestions();
-    }
-  };
-
-  const handleAskAudience = async () => {
-    if (remainingHints > 0) {
-      const question_id = localStorage.getItem("question_id");
-      try {
-        const response = await fetch(
-          `http://127.0.0.1:5000/ask_audience/${question_id}`
-        );
-        const data = await response.json();
-        if (data) {
-          setAudienceChoice(data);
-          setRemainingHints((prevHints) => prevHints - 1);
-        }
-      } catch (error) {
-        console.error("Error submitting answer:", error);
-      }
     }
   };
 
@@ -148,35 +160,25 @@ const Game = () => {
         backgroundColor: "#d9ecf3",
         display: "flex",
         alignItems: "center",
+        justifyContent: "center",
         flexDirection: "column",
         minHeight: "100vh",
       }}
     >
-      <Box
-        sx={{
-          display: "flex",
-          flex: "1",
-          justifyContent: "center",
-          alignItems: "center",
-          flexDirection: "column",
-          m: "0 auto",
-          gap: 3,
-        }}
-      >
-        <Typography variant="h4">Question {questionsCount}</Typography>
-        <Question
-          question={question}
-          answers={answers}
-          selectedAnswer={selectedAnswer}
-          onChange={handleAnswerChange}
-          disabled={showCorrectAnswer}
-        />
-        <Box
-          sx={{
-            display: "flex",
-            gap: 2,
-          }}
-        >
+      <Card sx={{ maxWidth: 700 }}>
+        <CardContent>
+          <Typography variant="h4" color="primary" gutterBottom>
+            Question {questionsCount}
+          </Typography>
+          <Question
+            question={question}
+            answers={answers}
+            selectedAnswer={selectedAnswer}
+            onChange={handleAnswerChange}
+            disabled={showCorrectAnswer}
+          />
+        </CardContent>
+        <CardActions>
           <Button
             variant="contained"
             color="primary"
@@ -193,33 +195,35 @@ const Game = () => {
           >
             Next
           </Button>
-        </Box>
-        <Box
-          sx={{
-            display: "flex",
-            gap: 2,
-          }}
+        </CardActions>
+      </Card>
+      <Box
+        sx={{
+          display: "flex",
+          gap: 2,
+          position: "absolute",
+          top: 20,
+          right: 20,
+        }}
+      >
+        <Button
+          color="primary"
+          onClick={openModal}
+          disabled={
+            showCorrectAnswer || remainingAskAudienceHints === 0 || hintUsed
+          }
         >
-          {" "}
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={openModal}
-            disabled={showCorrectAnswer || remainingHints === 0}
-          >
-            Ask audience ({remainingHints} left)
-          </Button>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleHint}
-            disabled={showCorrectAnswer || remainingHints === 0}
-          >
-            Try 50/50 ({remainingHints} left)
-          </Button>
-        </Box>
-        <Typography variant="h6">Score: {score}</Typography>
+          Ask audience ({remainingAskAudienceHints} left)
+        </Button>
+        <Button
+          color="primary"
+          onClick={handleHint}
+          disabled={showCorrectAnswer || remaining50_50Hints === 0 || hintUsed}
+        >
+          Try 50/50 ({remaining50_50Hints} left)
+        </Button>
       </Box>
+      {/* </Box> */}
       {showCorrectAnswer && (
         <Box
           sx={{
@@ -227,19 +231,25 @@ const Game = () => {
             m: "0 auto",
             gap: 3,
             position: "absolute",
-            bottom: 50,
+            bottom: 100,
           }}
         >
-          <Typography variant="h6" sx={{ color: "green" }}>
+          <Typography variant="h6" color="darkGreen">
             Correct Answer: {correctAnswer}
           </Typography>
           {selectedAnswer !== correctAnswer && (
-            <Typography variant="h6" sx={{ color: "red" }}>
+            <Typography variant="h6" color="error">
               Your Answer: {selectedAnswer}
             </Typography>
           )}
         </Box>
       )}
+      <Typography
+        variant="h5"
+        sx={{ position: "absolute", bottom: 30, right: 30 }}
+      >
+        Score: {score}
+      </Typography>
       {audienceChoice && (
         <Modal
           style={customStyles}

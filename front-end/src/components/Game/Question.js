@@ -10,7 +10,7 @@ const Question = ({
 }) => {
   return (
     <div>
-      <Typography variant="h5" sx={{ maxWidth: 500, mb: 2 }}>
+      <Typography variant="h5" gutterBottom>
         {question}
       </Typography>
 
@@ -24,7 +24,7 @@ const Question = ({
           height: 90,
           display: "flex",
           flexDirection: "column",
-          flexWrap: true,
+          flexWrap: "wrap",
         }}
       >
         {answers.map((answer, index) => (
