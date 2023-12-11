@@ -157,9 +157,8 @@ def run():
                 display_hints(hints, question_id)
 
                 answer = input(
-                    f"To answer, either copy & paste your chosen answer, or type it (case-insensitive): ").title()
+                    f"To answer, either copy & paste your chosen answer, or type it (case-insensitive): ")
                 result = check_question(game_id, answer, question['question_id'])
-                # print(result)  #########
                 correct_answer = result['correct_answer']
                 is_player_answer_correct = result['result']
                 score = result['score']
