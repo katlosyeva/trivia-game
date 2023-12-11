@@ -14,8 +14,8 @@ COLORS = {
 
 def print_colored_answers(answers):
     color_cycle = itertools.cycle(COLORS.keys())
-    # letters = ["A", "B", "C", "D"]
-    for ind, answer in enumerate(answers):
+
+    for answer in answers:
         color_name = next(color_cycle)
         color = COLORS.get(color_name)
         print(f"{color}{answer}{COLORS['end']}")
@@ -115,7 +115,6 @@ def run():
     print("#    #        #     #        #         #      ")
     print(" #### #        #####        ###       ####### ")
 
-    hints = 3
     player = input("\nYour name is ... ")
     print(f"\n{player.capitalize()}, welcome to the Quiz!\n")
     print("You will be presented with 15 questions to test your knowledge.\n")
@@ -133,7 +132,6 @@ def run():
     else:
         game_id = info["game_id"]
         question = info["question"]
-        # print(question)
         question_id = question["question_id"]
         print("\nQUESTION: ", question['question_text'])
         print("Please choose one answer: ")
@@ -142,13 +140,11 @@ def run():
 
         answer = input(f"To answer, either copy & paste your chosen answer, or type it (case-insensitive): ").title()
         result = check_question(game_id, answer, question['question_id'])
-        print(result)  #########
         correct_answer = result['correct_answer']
         is_player_answer_correct = result['result']
         score = result['score']
         print(f"SCORE: {score}")
         print(f"Correct Answer: {correct_answer}, Result: {is_player_answer_correct}, Score: {score}\n")
-        print()
 
         for n in range(13):
             continue_agreement = input("To see the next question, press y ")
@@ -163,17 +159,19 @@ def run():
                 answer = input(
                     f"To answer, either copy & paste your chosen answer, or type it (case-insensitive): ").title()
                 result = check_question(game_id, answer, question['question_id'])
-                print(result)  #########
+                # print(result)  #########
                 correct_answer = result['correct_answer']
                 is_player_answer_correct = result['result']
                 score = result['score']
                 print(f"SCORE: {score}")
                 print(f"Correct Answer: {correct_answer}, Result: {is_player_answer_correct}, Score: {score}\n")
-                print()
-                # print(result, "\n")
         print(" ")
         print("LEADERBOARD\n")
-        print(show_leaderboard())
+        leaderboard = show_leaderboard()
+        for line in leaderboard:
+            for element in line:
+                print(element, end=' ')
+            print()
 
 
 if __name__ == '__main__':

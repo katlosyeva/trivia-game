@@ -4,6 +4,7 @@ from .lifeline_utils import random_partition, move_answers
 
 class Lifeline:
     """Base class for lifeline functionality."""
+
     @staticmethod
     def provide_lifeline(question_id):
         """Provide a lifeline for the given question."""
@@ -12,6 +13,7 @@ class Lifeline:
 
 class FiftyFifty(Lifeline):
     """Type of LifeLine class."""
+
     @staticmethod
     def provide_lifeline(question_id):
         """Method that takes question_id and returns two options instead of four."""
@@ -21,6 +23,7 @@ class FiftyFifty(Lifeline):
 
 class AskAudience(Lifeline):
     """Type of LifeLine class."""
+
     @staticmethod
     def provide_lifeline(question_id):
         """Method that takes question_id and returns the array of what percent of audience votes for what option"""
@@ -33,5 +36,3 @@ class AskAudience(Lifeline):
         data = list(zip(percentages, answers_in_new_order))
 
         return data
-
-
