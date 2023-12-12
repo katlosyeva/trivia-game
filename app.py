@@ -16,19 +16,6 @@ CORS(app)
 
 @app.route("/add_new_game", methods=["POST"])
 def add_game():
-    """
-        Endpoint to create a new game for a user.
-
-        Expected JSON input:
-        {
-            "user_name": "string"
-        }
-
-        Returns:
-        - {"player_id": int, "game_id": int, "question": string} if successful.
-        - {"message": "Username must be between 1 and 40 characters"}, 400 if input is invalid.
-        - {"message": "Internal server error"}, 500 if there's a server error.
-        """
 
     if not request.is_json:
         return {"message": "Invalid content type. Expected JSON"}, 400
@@ -64,22 +51,6 @@ def add_game():
 
 @app.route("/check_answer", methods=["PUT"])
 def check_answer():
-    """
-    Endpoint to check whether the user-provided answer is correct for a specific game and question.
-
-    Expected JSON input:
-    {
-        "game_id": int,
-        "answer": "string",
-        "question_id": int
-    }
-
-    Returns:
-    - {"result": True} if the answer is correct.
-    - {"result": False} if the answer is incorrect.
-    - {"message": "Missing required fields"}, 400 if required fields are missing.
-    - {"message": "Internal server error"}, 500 if there's a server error.
-    """
 
     if not request.is_json:
         return {"message": "Invalid content type. Expected JSON"}, 400
