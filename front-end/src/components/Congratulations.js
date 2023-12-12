@@ -34,7 +34,7 @@ const Congratulations = () => {
         variant="contained"
         color="primary"
       >
-        Leaderboard
+        Leaderboard 🏆
       </Button>
     </Box>
   );

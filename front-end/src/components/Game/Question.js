@@ -9,7 +9,7 @@ const Question = ({
   disabled,
 }) => {
   return (
-    <div>
+    <>
       <Typography variant="h5" gutterBottom>
         {question}
       </Typography>
@@ -21,7 +21,6 @@ const Question = ({
         onChange={onChange}
         disabled={disabled}
         sx={{
-          height: 90,
           display: "flex",
           flexDirection: "column",
           flexWrap: "wrap",
@@ -37,7 +36,7 @@ const Question = ({
           />
         ))}
       </RadioGroup>
-    </div>
+    </>
   );
 };
 
