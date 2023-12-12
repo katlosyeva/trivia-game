@@ -132,21 +132,21 @@ class CheckAnswerTestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.json, {"message": "Invalid content type. Expected JSON"})
 
-    def test_check_answer_internal_server_error(self):
+    @patch('app.Game.check_answer')
+    def test_check_answer_internal_server_error(self, mock_check_answer):
         # Mock the Game.check_answer method to raise an exception
-        with patch('app.Game.check_answer') as mock_check_answer:
-            mock_check_answer.side_effect = Exception("Simulated internal server error")
+        mock_check_answer.side_effect = Exception("Simulated internal server error")
 
-            # Make a request with valid input
-            response = self.app.put('/check_answer', json={
-                "game_id": "test_game",
-                "answer": "test_answer",
-                "question_id": "test_question"
-            })
+        # Make a request with valid input
+        response = self.app.put('/check_answer', json={
+            "game_id": "test_game",
+            "answer": "test_answer",
+            "question_id": "test_question"
+        })
 
-            # Check the response status code and content
-            self.assertEqual(response.status_code, 500)
-            self.assertEqual(response.json, {"message": "Internal server error"})
+        # Check the response status code and content
+        self.assertEqual(response.status_code, 500)
+        self.assertEqual(response.json, {"message": "Internal server error"})
 
 
 class TestNextQuestionRoute(unittest.TestCase):
