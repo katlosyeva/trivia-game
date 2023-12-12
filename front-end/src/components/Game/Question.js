@@ -21,7 +21,7 @@ const Question = ({
         onChange={onChange}
         disabled={disabled}
         sx={{
-          height: 90,
+          // height: 90,
           display: "flex",
           flexDirection: "column",
           flexWrap: "wrap",
