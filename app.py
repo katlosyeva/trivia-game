@@ -16,7 +16,19 @@ CORS(app)
 
 @app.route("/add_new_game", methods=["POST"])
 def add_game():
+    """
+            Endpoint to create a new game for a user.
 
+            Expected JSON input:
+            {
+                "user_name": "string"
+            }
+
+            Returns:
+            - {"player_id": int, "game_id": int, "question": string} if successful.
+            - {"message": "Username must be between 1 and 40 characters"}, 400 if input is invalid.
+            - {"message": "Internal server error"}, 500 if there's a server error.
+            """
     if not request.is_json:
         return {"message": "Invalid content type. Expected JSON"}, 400
 
@@ -51,7 +63,22 @@ def add_game():
 
 @app.route("/check_answer", methods=["PUT"])
 def check_answer():
+    """
+        Endpoint to check whether the user-provided answer is correct for a specific game and question.
 
+        Expected JSON input:
+        {
+            "game_id": int,
+            "answer": "string",
+            "question_id": int
+        }
+
+        Returns:
+        - {"result": True} if the answer is correct.
+        - {"result": False} if the answer is incorrect.
+        - {"message": "Missing required fields"}, 400 if required fields are missing.
+        - {"message": "Internal server error"}, 500 if there's a server error.
+        """
     if not request.is_json:
         return {"message": "Invalid content type. Expected JSON"}, 400
 
@@ -78,6 +105,17 @@ def check_answer():
 
 @app.route("/next_question/<game_id>")
 def next_question(game_id):
+    """
+        Endpoint to retrieve the next question for a specific game.
+
+        Parameters:
+        - game_id (int): The unique identifier for the game.
+
+        Returns:
+        - JSON response with the next question if the game is ongoing.
+        - JSON response with an error message and a 404 status code if the game is over.
+        - {"message": "Internal server error"}, 500 if there's a server error.
+        """
     try:
         next_quest = Game.provide_question(game_id)
 
@@ -95,6 +133,16 @@ def next_question(game_id):
 
 @app.route("/fifty_fifty/<question_id>")
 def updated_question(question_id):
+    """
+        Endpoint to retrieve an updated question with the "Fifty-Fifty" lifeline applied.
+
+        Parameters:
+        - question_id (int): The unique identifier for the question.
+
+        Returns:
+        - JSON response with the updated question.
+        - {"message": "Internal server error"}, 500 if there's a server error.
+        """
     try:
         updated_quest = FiftyFifty.provide_lifeline(question_id)
         return updated_quest
@@ -106,6 +154,16 @@ def updated_question(question_id):
 
 @app.route("/ask_audience/<question_id>")
 def get_audience_choice(question_id):
+    """
+        Endpoint to retrieve the audience's choice for a specific question using the "Ask the Audience" lifeline.
+
+        Parameters:
+        - question_id (int): The unique identifier for the question.
+
+        Returns:
+        - JSON response with the audience's choice.
+        - {"message": "Internal server error"}, 500 if there's a server error.
+        """
     try:
         audience_choice = AskAudience.provide_lifeline(question_id)
         return audience_choice
@@ -117,6 +175,13 @@ def get_audience_choice(question_id):
 
 @app.route("/leaderboard/")
 def show_leaderboard():
+    """
+        Endpoint to retrieve and display the current leaderboard.
+
+        Returns:
+        - JSON response with the current leaderboard.
+        - {"message": "Internal server error"}, 500 if there's a server error.
+        """
     try:
         leaderboard = Game.show_leaderboard()
         return leaderboard
