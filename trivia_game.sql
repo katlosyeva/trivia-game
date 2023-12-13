@@ -45,11 +45,34 @@ CREATE TABLE questions (
   FOREIGN KEY (game_id) REFERENCES games (id)
 );
 
--- After running DB_utils.py file, re-run the below SELECT queries to check resulting changes to the DB:
+
+INSERT INTO players (username)
+VALUES
+	('Erika T'),
+    ('Hannah M'),
+    ('Kate L'),
+    ('Helen V'),
+    ('Iryna K'),
+    ('Inna P');
+
+
+INSERT INTO games (user_id, score)
+VALUES
+	(1, 8),
+    (2, 10),
+    (3, 12),
+    (4, 7),
+    (5, 13),
+    (6, 9);
+
+-- View tables:
 SELECT * FROM players;
 SELECT * FROM games;
 SELECT * FROM questions;
 
-SELECT correct_answer
-FROM questions
-WHERE id = 1
+-- Test leaderboard:
+SELECT players.username, games.score
+FROM players
+JOIN games ON players.id = games.user_id
+ORDER BY games.score DESC
+LIMIT 10
