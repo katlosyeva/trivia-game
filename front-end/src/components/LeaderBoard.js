@@ -43,7 +43,7 @@ const Leaderboard = () => {
         gap: 3,
       }}
     >
-      <Typography variant="h4">Leaderboard</Typography>
+      <Typography variant="h4">Leaderboard 🏆</Typography>
       <TableContainer component={Paper} sx={{ maxWidth: 500 }}>
         <Table>
           <TableHead>

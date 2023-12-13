@@ -16,18 +16,16 @@ const WelcomePage = () => {
         gap: 2,
       }}
     >
-      <Typography variant="h5">Welcome to</Typography>
       <Typography
         variant="h2"
         gutterBottom
         color="primary"
-        sx={{ fontWeight: "bold" }}
+        sx={{ fontFamily: "Ultra" }}
       >
-        ? Trivia Game ?
+        THE TRIVIA GAME
       </Typography>
-      <Typography variant="body1">To start the game, please login.</Typography>
-      <Button component={Link} to="/login" variant="contained" color="primary">
-        Login
+      <Button component={Link} to="/login" variant="outlined">
+        PLAY
       </Button>
     </Box>
   );
