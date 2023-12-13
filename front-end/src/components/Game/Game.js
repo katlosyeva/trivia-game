@@ -165,7 +165,7 @@ const Game = () => {
         minHeight: "100vh",
       }}
     >
-      <Card sx={{ maxWidth: 700 }}>
+      <Card sx={{ width: 700 }}>
         <CardContent>
           <Typography variant="h4" color="primary" gutterBottom>
             Question {questionsCount}
@@ -181,7 +181,6 @@ const Game = () => {
         <CardActions>
           <Button
             variant="contained"
-            color="primary"
             onClick={handleSubmit}
             disabled={!selectedAnswer || showCorrectAnswer}
           >
@@ -189,7 +188,6 @@ const Game = () => {
           </Button>
           <Button
             variant="contained"
-            color="primary"
             onClick={handleNext}
             disabled={!showCorrectAnswer}
           >
@@ -207,7 +205,7 @@ const Game = () => {
         }}
       >
         <Button
-          color="primary"
+          variant="outlined"
           onClick={openModal}
           disabled={
             showCorrectAnswer || remainingAskAudienceHints === 0 || hintUsed
@@ -216,14 +214,13 @@ const Game = () => {
           Ask audience ({remainingAskAudienceHints} left)
         </Button>
         <Button
-          color="primary"
+          variant="outlined"
           onClick={handleHint}
           disabled={showCorrectAnswer || remaining50_50Hints === 0 || hintUsed}
         >
           Try 50/50 ({remaining50_50Hints} left)
         </Button>
       </Box>
-      {/* </Box> */}
       {showCorrectAnswer && (
         <Box
           sx={{
@@ -231,7 +228,7 @@ const Game = () => {
             m: "0 auto",
             gap: 3,
             position: "absolute",
-            bottom: 100,
+            bottom: 90,
           }}
         >
           <Typography variant="h6" color="darkGreen">
