@@ -93,9 +93,10 @@ def run():
     def display_hints(fifty_fifty_hints, ask_audience_hints, question_id):
         """Function to run all hints logic"""
         need_hint = ""
-        if fifty_fifty_hints>0 and ask_audience_hints>0:
-            need_hint = input("To use your 50/50 hint type: 1, to ask the audience type: 2, or to answer with no hints, please type: 3 ")
-        elif fifty_fifty_hints>0 and ask_audience_hints == 0:
+        if fifty_fifty_hints > 0 and ask_audience_hints > 0:
+            need_hint = input(
+                "To use your 50/50 hint type: 1, to ask the audience type: 2, or to answer with no hints, please type: 3 ")
+        elif fifty_fifty_hints > 0 and ask_audience_hints == 0:
             need_hint = input("To use your 50/50 hint type: 1, or to answer with no hints, please type: 3 ")
         elif fifty_fifty_hints == 0 and ask_audience_hints > 0:
             need_hint = input("To ask the audience type: 2, or to answer with no hints, please type: 3 ")
@@ -140,8 +141,8 @@ def run():
         print("\nQUESTION: ", question['question_text'])
         print("Please choose one answer: ")
         print_colored_answers(question['answers'])
-        print(fifty_fifty_hints)
-        if fifty_fifty_hints>0 or ask_audience_hints>0:
+        print(f"Hints available: 50/50 - {fifty_fifty_hints}, 'Ask audience' - {ask_audience_hints}")
+        if fifty_fifty_hints > 0 or ask_audience_hints > 0:
             fifty_fifty_hints, ask_audience_hints = display_hints(fifty_fifty_hints, ask_audience_hints, question_id)
         answer = input(f"To answer, either copy & paste your chosen answer, or type it (case-insensitive): ")
         result = check_question(game_id, answer, question['question_id'])
@@ -158,8 +159,10 @@ def run():
                 print("\nQUESTION: ", question['question_text'])
                 print("Please choose one answer: ")
                 print_colored_answers(question['answers'])
+                print(f"Hints available: 50/50 - {fifty_fifty_hints}, 'Ask audience' - {ask_audience_hints}")
                 if fifty_fifty_hints > 0 or ask_audience_hints > 0:
-                    fifty_fifty_hints, ask_audience_hints = display_hints(fifty_fifty_hints, ask_audience_hints, question_id)
+                    fifty_fifty_hints, ask_audience_hints = display_hints(fifty_fifty_hints, ask_audience_hints,
+                                                                          question_id)
                 answer = input(
                     f"To answer, either copy & paste your chosen answer, or type it (case-insensitive): ")
                 result = check_question(game_id, answer, question['question_id'])

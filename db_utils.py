@@ -275,14 +275,14 @@ def display_question_to_player_fifty_fifty(question_id):
             game_id = question_displayed[1]
             question_text = question_displayed[2]
             answers = [question_displayed[3], question_displayed[4]]
-            random.sample(answers,
-                          len(answers))  # randomize the order of the two remaining answers to display to player
+            randomized_answers = random.sample(answers,
+                                               len(answers))  # randomize the order of the two remaining answers to display to player
 
             return {
                 "question_id": question_id,
                 "game_id": game_id,
                 "question_text": question_text,
-                "answers": answers
+                "answers": randomized_answers
             }
         else:
             # If question is not found, raise an exception
