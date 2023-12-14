@@ -81,9 +81,12 @@ def show_leaderboard():
     return result.json()
 
 
-# BEFORE RUNNING THIS FILE REMEMBER to create a database and all the tables with the code from database.sql
-# Remember to run the app.py file
-# Remember to set your password in config file
+"""
+BEFORE RUNNING THIS FILE DON'T FORGET TO:
+1. Set your MySQL user and password in the config.py file
+2. Run the trivia_game.sql file in MySQL Workbench to initialise the database on your machine 
+3. Remember to run the app.py file to activate the programme's endpoints
+"""
 
 
 def run():
