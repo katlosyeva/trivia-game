@@ -52,16 +52,21 @@ const RegisterLogin = () => {
         gap: 3,
       }}
     >
-      <Typography variant="h4" gutterBottom>
-        Please login to start your game
+      <Typography
+        variant="h4"
+        gutterBottom
+        sx={{ fontFamily: "Ultra" }}
+        color="primary"
+      >
+        Enter your name
       </Typography>
       <TextField
         label="Username"
         value={username}
         onChange={(e) => setUsername(e.target.value)}
       />
-      <Button variant="contained" color="primary" onClick={handleLogin}>
-        Login
+      <Button variant="outlined" onClick={handleLogin}>
+        START QUIZ
       </Button>
     </Box>
   );

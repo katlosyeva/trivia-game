@@ -210,12 +210,14 @@ const Game = () => {
           disabled={
             showCorrectAnswer || remainingAskAudienceHints === 0 || hintUsed
           }
+          sx={{ fontWeight: "bold" }}
         >
           Ask audience ({remainingAskAudienceHints} left)
         </Button>
         <Button
           variant="outlined"
           onClick={handleHint}
+          sx={{ fontWeight: "bold" }}
           disabled={showCorrectAnswer || remaining50_50Hints === 0 || hintUsed}
         >
           Try 50/50 ({remaining50_50Hints} left)
