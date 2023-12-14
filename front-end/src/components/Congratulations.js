@@ -19,21 +19,21 @@ const Congratulations = () => {
         gap: 3,
       }}
     >
-      <Typography variant="h4" gutterBottom>
+      <Typography
+        variant="h4"
+        gutterBottom
+        color="primary"
+        sx={{ fontFamily: "Ultra" }}
+      >
         Congratulations!
       </Typography>
       <Typography variant="h6" paragraph>
         You scored {score} points.
       </Typography>
-      <Button variant="contained" color="primary" component={Link} to="/">
+      <Button variant="outlined" component={Link} to="/">
         Play Again
       </Button>
-      <Button
-        component={Link}
-        to="/leaderboard"
-        variant="contained"
-        color="primary"
-      >
+      <Button component={Link} to="/leaderboard" variant="outlined">
         Leaderboard 🏆
       </Button>
     </Box>

@@ -43,7 +43,9 @@ const Leaderboard = () => {
         gap: 3,
       }}
     >
-      <Typography variant="h4">Leaderboard 🏆</Typography>
+      <Typography variant="h4" color="primary" sx={{ fontFamily: "Ultra" }}>
+        Leaderboard 🏆
+      </Typography>
       <TableContainer component={Paper} sx={{ maxWidth: 500 }}>
         <Table>
           <TableHead>
@@ -62,7 +64,7 @@ const Leaderboard = () => {
           </TableBody>
         </Table>
       </TableContainer>
-      <Button variant="contained" color="primary" component={Link} to="/">
+      <Button variant="outlined" component={Link} to="/">
         Play New Game
       </Button>
     </Box>
