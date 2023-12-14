@@ -230,7 +230,7 @@ const Game = () => {
             m: "0 auto",
             gap: 3,
             position: "absolute",
-            bottom: 90,
+            bottom: 80,
           }}
         >
           <Typography variant="h6" color="darkGreen">
