@@ -127,7 +127,7 @@ def run():
     print(f"\n{player.capitalize()}, welcome to the Quiz!\n")
     print("You will be presented with 15 questions to test your knowledge.\n")
     print(
-        "You have three 50/50 hints available, as well as three chances to ask the audience what they think the "
+        f"You have {fifty_fifty_hints} 50/50 hints available, as well as {ask_audience_hints} chances to ask the audience what they think the "
         "answer is :)\n")
     print("Feel free to use your hints at any moment during the quiz.")
     print("Good luck and enjoy the challenge!")
