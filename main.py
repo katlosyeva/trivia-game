@@ -104,13 +104,13 @@ def run():
             if user_answer in [1, 3]:
                 need_hint = user_answer
             else:
-                return
+                return fifty_fifty_hints, ask_audience_hints
         elif fifty_fifty_hints == 0 and ask_audience_hints > 0:
-            user_answer2 = input("To ask the audience type: 2, or to answer with no hints, please type: 3 ")
-            if user_answer2 in [2, 3]:
-                need_hint = user_answer2
+            user_answer = input("To ask the audience type: 2, or to answer with no hints, please type: 3 ")
+            if user_answer in [2, 3]:
+                need_hint = user_answer
             else:
-                return
+                return fifty_fifty_hints, ask_audience_hints
 
         if need_hint == "1":
             fifty_fifty_info = fifty_fifty(question_id)
@@ -118,8 +118,8 @@ def run():
             print_colored_answers(fifty_fifty_info['answers'])
             fifty_fifty_hints -= 1
         elif need_hint == "2":
-            audience_responce = ask_audience(question_id)
-            for option in audience_responce:
+            audience_response = ask_audience(question_id)
+            for option in audience_response:
                 print(f"{option[0]} % of the audience thinks the correct answer is {option[1]}")
             ask_audience_hints -= 1
         return fifty_fifty_hints, ask_audience_hints
@@ -171,7 +171,7 @@ def run():
                 print("\nQUESTION: ", question['question_text'])
                 print("Please choose one answer: ")
                 print_colored_answers(question['answers'])
-                print(f"Hints available: 50/50 - {fifty_fifty_hints}, 'Ask audience' - {ask_audience_hints}")
+                print(f"Hints available: 50/50 - {fifty_fifty_hints}, Ask audience - {ask_audience_hints}")
                 if fifty_fifty_hints > 0 or ask_audience_hints > 0:
                     fifty_fifty_hints, ask_audience_hints = display_hints(fifty_fifty_hints, ask_audience_hints,
                                                                           question_id)
