@@ -100,9 +100,18 @@ def run():
             need_hint = input(
                 "To use your 50/50 hint type: 1, to ask the audience type: 2, or to answer with no hints, please type: 3 ")
         elif fifty_fifty_hints > 0 and ask_audience_hints == 0:
-            need_hint = input("To use your 50/50 hint type: 1, or to answer with no hints, please type: 3 ")
+            user_answer = input("To use your 50/50 hint type: 1, or to answer with no hints, please type: 3 ")
+            if user_answer in [1, 3]:
+                need_hint = user_answer
+            else:
+                return
         elif fifty_fifty_hints == 0 and ask_audience_hints > 0:
-            need_hint = input("To ask the audience type: 2, or to answer with no hints, please type: 3 ")
+            user_answer2 = input("To ask the audience type: 2, or to answer with no hints, please type: 3 ")
+            if user_answer2 in [2, 3]:
+                need_hint = user_answer2
+            else:
+                return
+
         if need_hint == "1":
             fifty_fifty_info = fifty_fifty(question_id)
             print("Please choose one answer: ")
