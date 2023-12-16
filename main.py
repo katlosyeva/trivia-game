@@ -81,6 +81,32 @@ def show_leaderboard():
     return result.json()
 
 
+def handle_user_choice_end_of_game(choice):
+    if choice == "1":
+        print("\nLEADERBOARD TOP 10:\n")
+        leaderboard = show_leaderboard()
+        for line in leaderboard:
+            for element in line:
+                print(element, end=' ')
+            print()
+
+        # Ask if the user wants to play again or exit after viewing the leaderboard
+        sub_options = input("\nNow, please choose one of the following options:\n1. Play Again\n2. Exit\n\nEnter "
+                            "the number of your choice: ")
+        if sub_options == "1":
+            run()  # Restart the game
+        elif sub_options == "2":
+            print("Thank you for playing. Goodbye!")
+        else:
+            print("Invalid choice. Exiting...")
+
+    elif choice == "2":
+        run()  # Restart the game
+
+    else:
+        print("\nThank you for playing. Goodbye!")
+
+
 """
 BEFORE RUNNING THIS FILE DON'T FORGET TO:
 1. Set your MySQL user and password in the config.py file
@@ -192,33 +218,12 @@ def run():
         # At the end of the game, show final score:
         print(f"\nCongratulations! Your total score is: {score}\n\n")
 
+        # Then present player with options to see Leaderboard, Play Again, or Exit:
         options = input(
             "Now, please choose one of the following options:\n1. View Leaderboard\n2. Play Again\n3. Exit\n\nEnter "
             "the number of your choice: ")
 
-        if options == "1":
-            print("\nLEADERBOARD TOP 10:\n")
-            leaderboard = show_leaderboard()
-            for line in leaderboard:
-                for element in line:
-                    print(element, end=' ')
-                print()
-
-            # Ask if the user wants to play again or exit after viewing the leaderboard
-            sub_options = input("\nNow, please choose one of the following options:\n1. Play Again\n2. Exit\n\nEnter "
-                                "the number of your choice: ")
-            if sub_options == "1":
-                run()  # Restart the game
-            elif sub_options == "2":
-                print("Thank you for playing. Goodbye!")
-            else:
-                print("Invalid choice. Exiting...")
-
-        elif options == "2":
-            run()  # Restart the game
-
-        else:
-            print("\nThank you for playing. Goodbye!")
+        handle_user_choice_end_of_game(options)
 
 
 if __name__ == '__main__':
