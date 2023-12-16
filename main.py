@@ -184,13 +184,22 @@ def run():
                 is_player_answer_correct = result['result']
                 score = result['score']
                 print(f"Correct Answer: {correct_answer}, Result: {is_player_answer_correct}, Score: {score}\n")
-        print(" ")
-        print("LEADERBOARD\n")
-        leaderboard = show_leaderboard()
-        for line in leaderboard:
-            for element in line:
-                print(element, end=' ')
-            print()
+
+        # At the end of the game, show final score:
+        print(f"Congratulations! Your total score is: {score}\n")
+
+        # At the end of the game
+        show_leaderboard_choice = input("Would you like to see the Leaderboard? (y/n): ").lower()
+        if show_leaderboard_choice == "y":
+            print(" ")
+            print("LEADERBOARD TOP 10:\n")
+            leaderboard = show_leaderboard()
+            for line in leaderboard:
+                for element in line:
+                    print(element, end=' ')
+                print()
+        else:
+            print("Thank you for playing. Goodbye!")
 
 
 if __name__ == '__main__':
