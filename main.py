@@ -98,16 +98,17 @@ def run():
         need_hint = ""
         if fifty_fifty_hints > 0 and ask_audience_hints > 0:
             need_hint = input(
-                "To use your 50/50 hint type: 1, to ask the audience type: 2, or to answer with no hints, please type: 3 ")
+                "To use your 50/50 hint type: 1, to ask the audience type: 2, or to answer with no hints, "
+                "please type: 3 ")
         elif fifty_fifty_hints > 0 and ask_audience_hints == 0:
             user_answer = input("To use your 50/50 hint type: 1, or to answer with no hints, please type: 3 ")
-            if user_answer in [1, 3]:
+            if user_answer in ['1', '3']:
                 need_hint = user_answer
             else:
                 return fifty_fifty_hints, ask_audience_hints
         elif fifty_fifty_hints == 0 and ask_audience_hints > 0:
             user_answer = input("To ask the audience type: 2, or to answer with no hints, please type: 3 ")
-            if user_answer in [2, 3]:
+            if user_answer in ['2', '3']:
                 need_hint = user_answer
             else:
                 return fifty_fifty_hints, ask_audience_hints
@@ -136,7 +137,8 @@ def run():
     print(f"\n{player.capitalize()}, welcome to the Quiz!\n")
     print("You will be presented with 15 questions to test your knowledge.\n")
     print(
-        f"You have {fifty_fifty_hints} 50/50 hints available, as well as {ask_audience_hints} chances to ask the audience what they think the "
+        f"You have {fifty_fifty_hints} 50/50 hints available, as well as {ask_audience_hints} chances to ask the "
+        f"audience what they think the"
         "answer is :)\n")
     print("Feel free to use your hints at any moment during the quiz.")
     print("Good luck and enjoy the challenge!")
@@ -153,7 +155,7 @@ def run():
         print("\nQUESTION: ", question['question_text'])
         print("Please choose one answer: ")
         print_colored_answers(question['answers'])
-        print(f"Hints available: 50/50 - {fifty_fifty_hints}, 'Ask audience' - {ask_audience_hints}")
+        print(f"Hints left: 50/50: {fifty_fifty_hints}, Ask audience: {ask_audience_hints}")
         if fifty_fifty_hints > 0 or ask_audience_hints > 0:
             fifty_fifty_hints, ask_audience_hints = display_hints(fifty_fifty_hints, ask_audience_hints, question_id)
         answer = input(f"To answer, either copy & paste your chosen answer, or type it (case-insensitive): ")
@@ -171,7 +173,7 @@ def run():
                 print("\nQUESTION: ", question['question_text'])
                 print("Please choose one answer: ")
                 print_colored_answers(question['answers'])
-                print(f"Hints available: 50/50 - {fifty_fifty_hints}, Ask audience - {ask_audience_hints}")
+                print(f"Hints left: 50/50: {fifty_fifty_hints}, Ask audience: {ask_audience_hints}")
                 if fifty_fifty_hints > 0 or ask_audience_hints > 0:
                     fifty_fifty_hints, ask_audience_hints = display_hints(fifty_fifty_hints, ask_audience_hints,
                                                                           question_id)
