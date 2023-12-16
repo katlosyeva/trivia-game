@@ -166,7 +166,11 @@ def run():
         print(f"Correct Answer: {correct_answer}, Result: {is_player_answer_correct}, Score: {score}\n")
 
         for n in range(14):
-            continue_agreement = input("To see the next question, press y ")
+            continue_agreement = input("To go the next question, press y: ").lower()
+            while continue_agreement != "y":
+                print("Invalid input. Please enter 'y' to continue to the next question.")
+                continue_agreement = input("To see the next question, press y ")
+
             if continue_agreement == "y":
                 question = next_question(game_id)
                 question_id = question["question_id"]
@@ -186,20 +190,35 @@ def run():
                 print(f"Correct Answer: {correct_answer}, Result: {is_player_answer_correct}, Score: {score}\n")
 
         # At the end of the game, show final score:
-        print(f"Congratulations! Your total score is: {score}\n")
+        print(f"\nCongratulations! Your total score is: {score}\n\n")
 
-        # At the end of the game
-        show_leaderboard_choice = input("Would you like to see the Leaderboard? (y/n): ").lower()
-        if show_leaderboard_choice == "y":
-            print(" ")
-            print("LEADERBOARD TOP 10:\n")
+        options = input(
+            "Now, please choose one of the following options:\n1. View Leaderboard\n2. Play Again\n3. Exit\n\nEnter "
+            "the number of your choice: ")
+
+        if options == "1":
+            print("\nLEADERBOARD TOP 10:\n")
             leaderboard = show_leaderboard()
             for line in leaderboard:
                 for element in line:
                     print(element, end=' ')
                 print()
+
+            # Ask if the user wants to play again or exit after viewing the leaderboard
+            sub_options = input("\nNow, please choose one of the following options:\n1. Play Again\n2. Exit\n\nEnter "
+                                "the number of your choice: ")
+            if sub_options == "1":
+                run()  # Restart the game
+            elif sub_options == "2":
+                print("Thank you for playing. Goodbye!")
+            else:
+                print("Invalid choice. Exiting...")
+
+        elif options == "2":
+            run()  # Restart the game
+
         else:
-            print("Thank you for playing. Goodbye!")
+            print("\nThank you for playing. Goodbye!")
 
 
 if __name__ == '__main__':
