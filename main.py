@@ -165,7 +165,7 @@ def run():
         score = result['score']
         print(f"Correct Answer: {correct_answer}, Result: {is_player_answer_correct}, Score: {score}\n")
 
-        for n in range(13):
+        for n in range(14):
             continue_agreement = input("To see the next question, press y ")
             if continue_agreement == "y":
                 question = next_question(game_id)
