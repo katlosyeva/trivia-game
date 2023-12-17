@@ -30,7 +30,7 @@ TO RUN THE BACKEND OF THE PROGRAMME:
 9. TO RUN THE FRONTEND OF OUR PROGRAMME ON A WEBPAGE:
 
 - Ensure you have Node.js installed on your machine. You can download it from https://nodejs.org/.
-- Open a new terminal window and navigate to the project's directory. Navigate to the project's directory on your local machine again, and then to the front-end folder, using the following command:
+- Open a new terminal window and navigate to the project's directory on your local machine again, and then navigate to the front-end folder, using the following command:
   `cd front-end`
 - Install Node Package Manager (NPM) dependencies using the following command:
   `npm install`
