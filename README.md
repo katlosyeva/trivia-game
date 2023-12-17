@@ -42,4 +42,10 @@ Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 
 - Running `npm test` launches the test runner in the interactive watch mode.\
 See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+
+
+10. VIDEO DEMO OF THE GAME:
+    - We have created a video with a shortened version of the game (5 questions instead of 15), for you to see:
+
+    https://drive.google.com/file/d/1DKkOSjQcEPIKJ_nX3z8JYdGel0AMTfZO/view?usp=sharing
  
