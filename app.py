@@ -4,7 +4,7 @@ from classes.lifeline import FiftyFifty
 from classes.lifeline import AskAudience
 from classes.user import User
 from classes.game import Game
-
+from flask_swagger_ui import get_swaggerui_blueprint
 # We need CORS when we connect frontend and backend
 from flask_cors import CORS
 
@@ -13,6 +13,19 @@ app = Flask(__name__)
 
 CORS(app)
 
+SWAGGER_URL = '/api/docs'
+API_URL = '/static/swagger.json'
+
+# Call factory function to create our blueprint
+swaggerui_blueprint = get_swaggerui_blueprint(
+    SWAGGER_URL,  # Swagger UI static files will be mapped to '{SWAGGER_URL}/dist/'
+    API_URL,
+    config={
+        'app_name': "Trivia"
+    },
+)
+
+app.register_blueprint(swaggerui_blueprint)
 
 @app.route("/add_new_game", methods=["POST"])
 def add_game():
