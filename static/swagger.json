@@ -1,11 +1,10 @@
 {
-
+  "swagger": "2.0",
   "info": {
-    "title": "Swagger Trivia Game - OpenAPI 3.0",
+    "title": "Swagger Trivia Game - Swagger 2.0",
     "description": "Trivia Game based on Who Wants to be millionaire rules",
-    "version": "2.0"
+    "version": "1.0"
   },
-  "openapi": "3.0.3",
   "tags": [
     {
       "name": "game",
@@ -25,59 +24,40 @@
         "summary": "Create new game",
         "description": "Create new game and get the first question",
         "operationId": "add_game",
-        "requestBody": {
-          "description": "Create a new game by a new or existing username",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Player"
-              }
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Create a new game by a new or existing username",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Player"
             }
-          },
-          "required": true
-        },
+          }
+        ],
         "responses": {
           "200": {
             "description": "Successful operation",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "player_id": {
-                      "type": "integer",
-                      "example": 1
-                    },
-                    "game_id": {
-                      "type": "integer",
-                      "example": 1
-                    },
-                    "question": {
-                      "$ref": "#/components/schemas/Question"
-                    }
-                  }
-                }
-              }
+            "schema": {
+              "$ref": "#/definitions/GameResponse"
             }
           },
           "400": {
             "description": "Invalid user_name supplied",
-            "content": {
-              "application/json": {
-                "example": {
-                  "message": "User name must be between 1 and 40 characters"
-                }
-              }
-            }
-          },
+            "schema": {
+    "type": "object",
+    "properties": {
+      "message": {
+        "type": "string",
+        "example": "User name must be between 1 and 40 characters"
+      }
+    }
+  }
+},
           "500": {
             "description": "Server error",
-            "content": {
-              "application/json": {
-                "example": {
-                  "message": "Internal server error"
-                }
-              }
+            "schema": {
+              "$ref": "#/definitions/ServerError"
             }
           }
         }
@@ -95,43 +75,29 @@
           {
             "name": "game_id",
             "in": "path",
-            "description": "Gets the question for given game id",
+            "description": "Gets the question for the given game id",
             "required": true,
-            "explode": true,
-            "schema": {
-              "type": "integer"
-            }
+            "type": "integer",
+            "format": "int32"
           }
         ],
         "responses": {
           "200": {
             "description": "Successful operation",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Question"
-                }
-              }
+            "schema": {
+              "$ref": "#/definitions/Question"
             }
           },
           "400": {
             "description": "No more questions",
-            "content": {
-              "application/json": {
-                "example": {
-                  "error": "No more questions"
-                }
-              }
+            "schema": {
+              "$ref": "#/definitions/NoMoreQuestionsError"
             }
           },
           "500": {
             "description": "Server error",
-            "content": {
-              "application/json": {
-                "example": {
-                  "message": "Internal server error"
-                }
-              }
+            "schema": {
+              "$ref": "#/definitions/ServerError"
             }
           }
         }
@@ -139,9 +105,7 @@
     },
     "/fifty_fifty/{question_id}": {
       "get": {
-        "tags": [
-          "question"
-        ],
+        "tags": ["question"],
         "summary": "Gets two options for the question",
         "description": "Gets two options for the question instead of four",
         "operationId": "updated_question",
@@ -149,57 +113,23 @@
           {
             "name": "question_id",
             "in": "path",
-            "description": "Returns two options for given question",
+            "description": "Returns two options for the given question",
             "required": true,
-            "explode": true,
-            "schema": {
-              "type": "integer"
-            }
+            "type": "integer",
+            "format": "int32"
           }
         ],
         "responses": {
           "200": {
             "description": "Successful operation",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "question_id": {
-                      "type": "integer",
-                      "example": 1
-                    },
-                    "game_id": {
-                      "type": "integer",
-                      "example": 1
-                    },
-                    "question_text": {
-                      "type": "string",
-                      "example": 1
-                    },
-                    "answers": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      },
-                      "example": [
-                        "Dog",
-                        "Cat"
-                      ]
-                    }
-                  }
-                }
-              }
+            "schema": {
+              "$ref": "#/definitions/FiftyFiftyResponse"
             }
           },
           "500": {
             "description": "Server error",
-            "content": {
-              "application/json": {
-                "example": {
-                  "message": "Internal server error"
-                }
-              }
+            "schema": {
+              "$ref": "#/definitions/ServerError"
             }
           }
         }
@@ -207,9 +137,7 @@
     },
     "/ask_audience/{question_id}": {
       "get": {
-        "tags": [
-          "question"
-        ],
+        "tags": ["question"],
         "summary": "Gets audience choice proportion",
         "description": "Gets audience choice proportion",
         "operationId": "get_audience_choice",
@@ -219,63 +147,21 @@
             "in": "path",
             "description": "Returns audience choice proportion",
             "required": true,
-            "explode": true,
-            "schema": {
-              "type": "integer"
-            }
+            "type": "integer",
+            "format": "int32"
           }
         ],
         "responses": {
           "200": {
             "description": "Successful operation",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "array",
-                    "items": {
-                      "oneOf": [
-                        {
-                          "type": "string"
-                        },
-                        {
-                          "type": "integer"
-                        }
-                      ],
-                      "example": "45, Dog"
-                    }
-                  },
-                  "example": [
-                    [
-                      50,
-                      "Dog"
-                    ],
-                    [
-                      30,
-                      "Cat"
-                    ],
-                    [
-                      15,
-                      "Parrot"
-                    ],
-                    [
-                      5,
-                      "Rat"
-                    ]
-                  ]
-                }
-              }
+            "schema": {
+              "$ref": "#/definitions/AudienceChoiceResponse"
             }
           },
           "500": {
             "description": "Server error",
-            "content": {
-              "application/json": {
-                "example": {
-                  "message": "Internal server error"
-                }
-              }
+            "schema": {
+              "$ref": "#/definitions/ServerError"
             }
           }
         }
@@ -283,58 +169,21 @@
     },
     "/leaderboard/": {
       "get": {
-        "tags": [
-          "game"
-        ],
+        "tags": ["game"],
         "summary": "Shows leaderboard",
         "description": "Shows leaderboard",
         "operationId": "show_leaderboard",
         "responses": {
           "200": {
             "description": "Successful operation",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "array",
-                    "items": {
-                      "oneOf": [
-                        {
-                          "type": "string"
-                        },
-                        {
-                          "type": "integer"
-                        }
-                      ]
-                    }
-                  },
-                  "example": [
-                    [
-                      "Kate",
-                      12
-                    ],
-                    [
-                      "Emily",
-                      9
-                    ],
-                    [
-                      "Lina",
-                      3
-                    ]
-                  ]
-                }
-              }
+            "schema": {
+              "$ref": "#/definitions/LeaderboardResponse"
             }
           },
           "500": {
             "description": "Server error",
-            "content": {
-              "application/json": {
-                "example": {
-                  "message": "Internal server error"
-                }
-              }
+            "schema": {
+              "$ref": "#/definitions/ServerError"
             }
           }
         }
@@ -342,136 +191,197 @@
     },
     "/check_answer": {
       "put": {
-        "tags": [
-          "question"
-        ],
+        "tags": ["question"],
         "summary": "Checks if the answer was correct",
         "description": "Checks if the answer was correct",
         "operationId": "check_answer",
-        "requestBody": {
-          "description": "Sends the player's answer",
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "question_id": {
-                    "type": "integer",
-                    "example": 1
-                  },
-                  "game_id": {
-                    "type": "integer",
-                    "example": 1
-                  },
-                  "answer": {
-                    "type": "string",
-                    "example": "Cat"
-                  }
-                }
-              }
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Give answer",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/AnswerRequest"
             }
-          },
-          "required": true
-        },
+          }
+        ],
+
+        "produces": ["application/json"],
         "responses": {
           "200": {
             "description": "Successful operation",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "correct_answer": {
-                      "type": "string",
-                      "example": "Dog"
-                    },
-                    "result": {
-                      "oneOf": [
-                        {
-                          "type": "string",
-                          "enum": [
-                            "right"
-                          ]
-                        },
-                        {
-                          "type": "string",
-                          "enum": [
-                            "wrong"
-                          ]
-                        }
-                      ]
-                    },
-                    "score": {
-                      "type": "integer",
-                      "example": 1
-                    }
-                  }
-                }
-              }
+            "schema": {
+              "$ref": "#/definitions/AnswerResponse"
             }
           },
           "400": {
             "description": "Not all data supplied",
-            "content": {
-              "application/json": {
-                "example": {
-                  "message": "Missing required fields"
-                }
-              }
+            "schema": {
+              "$ref": "#/definitions/BadRequestError"
             }
           },
           "500": {
             "description": "Server error",
-            "content": {
-              "application/json": {
-                "example": {
-                  "message": "Internal server error"
-                }
-              }
+            "schema": {
+              "$ref": "#/definitions/ServerError"
             }
           }
         }
       }
     }
   },
-  "components": {
-    "schemas": {
-      "Player": {
-        "type": "object",
-        "properties": {
-          "user_name": {
-            "type": "string",
-            "example": "Kate"
-          }
-        }
+  "definitions": {
+    "LeaderboardResponse": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "items": [
+          { "type": "string" },
+          { "type": "integer" }
+        ]
       },
-      "Question": {
-        "type": "object",
-        "properties": {
-          "question_id": {
-            "type": "integer",
-            "example": 1
+      "example": [
+        ["Kate", 12],
+        ["Emily", 9],
+        ["Lina", 3]
+      ]
+    },
+    "AnswerRequest": {
+      "type": "object",
+      "properties": {
+        "question_id": {
+          "type": "integer",
+          "example": 1
+        },
+        "game_id": {
+          "type": "integer",
+          "example": 1
+        },
+        "answer": {
+          "type": "string",
+          "example": "Cat"
+        }
+      }
+    },
+    "AnswerResponse": {
+      "type": "object",
+      "properties": {
+        "correct_answer": {
+          "type": "string",
+          "example": "Dog"
+        },
+        "result": {
+          "type": "string",
+          "enum": ["right", "wrong"]
+        },
+        "score": {
+          "type": "integer",
+          "example": 1
+        }
+      }
+    },
+    "ServerError": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string",
+          "example": "Internal server error"
+        }
+      }
+    },
+    "BadRequestError": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string",
+          "example": "Missing required fields"
+        }
+      }
+    },
+    "GameResponse": {
+      "type": "object",
+      "properties": {
+        "player_id": {
+          "type": "integer",
+          "example": 1
+        },
+        "game_id": {
+          "type": "integer",
+          "example": 1
+        },
+        "question": {
+          "$ref": "#/definitions/Question"
+        }
+      }
+    },
+    "NoMoreQuestionsError": {
+      "type": "object",
+      "properties": {
+        "error": {
+          "type": "string",
+          "example": "No more questions"
+        }
+      }
+    },
+    "FiftyFiftyResponse": {
+      "type": "object",
+      "properties": {
+        "options": {
+          "type": "array",
+          "items": {
+            "type": "string"
           },
-          "game_id": {
-            "type": "integer",
-            "example": 1
+          "example": ["Dog", "Cat"]
+        }
+      }
+    },
+    "AudienceChoiceResponse": {
+      "type": "object",
+      "properties": {
+        "choice_proportion": {
+          "type": "array",
+          "example": [
+  [50, "Dog"], [30, "Cat"], [15, "Parrot"], [5, "Rat"]
+          ]
+        }
+      }
+    },
+    "Player": {
+      "type": "object",
+      "properties": {
+        "user_name": {
+          "type": "string",
+          "example": "Kate"
+        }
+      }
+    },
+    "Question": {
+      "type": "object",
+      "properties": {
+        "question_id": {
+          "type": "integer",
+          "example": 1
+        },
+        "game_id": {
+          "type": "integer",
+          "example": 1
+        },
+        "question_text": {
+          "type": "string",
+          "example": "What is the most common pet?"
+        },
+        "answers": {
+          "type": "array",
+          "items": {
+            "type": "string"
           },
-          "question_text": {
-            "type": "string",
-            "example": "What is the most common pet?"
-          },
-          "answers": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "example": [
-              "Dog",
-              "Cat",
-              "Parrot",
-              "Rat"
-            ]
-          }
+          "example": [
+            "Dog",
+            "Cat",
+            "Parrot",
+            "Rat"
+          ]
         }
       }
     }
