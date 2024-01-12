@@ -131,7 +131,7 @@ def next_question(game_id):
         """
     try:
         next_quest = Game.provide_question(game_id)
-
+        print("Next quest", next_quest)
         if next_quest is None:
             # Game is over, return a proper JSON response with a 404 status code
             return jsonify({"error": "End of game"}), 404

@@ -139,6 +139,8 @@ def add_new_game(user_id):
 def add_new_questions(game_id, question_text, correct_answer, incorrect_answers):
     """DB function to add questions data to questions table in DB,
      takes game_id, question_text, correct_answer, incorrect_answers"""
+    print("!!!!!!!!!!!!!!!!", game_id)
+    clean_db_questions(game_id - 1)
     try:
         # Establish a connection to the MySQL database
         db_name = "trivia_game"
@@ -469,3 +471,32 @@ def get_all_answers(question_id):
         if db_connection:
             cur.close()
             db_connection.close()
+
+
+def clean_db_questions(game_id):
+    """DB function to clean db"""
+    try:
+        # Establish a connection to the MySQL database
+        db_name = "trivia_game"
+        db_connection = _connect_to_db(db_name)
+        cur = db_connection.cursor()
+
+        print(f"Connected to database {db_name}")
+
+        # SQL query to fetch the question details using parameterized query
+        query = """
+            DELETE FROM questions WHERE game_id = %s"""
+        cur.execute(query, (game_id,))
+        db_connection.commit()
+
+
+    except Exception:
+        raise DbConnectionError("Failed to delete questions in DB")
+
+    finally:
+        if db_connection:
+            cur.close()
+            db_connection.close()
+
+
+clean_db_questions(6)

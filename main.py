@@ -191,7 +191,7 @@ def run():
         score = result['score']
         print(f"Correct Answer: {correct_answer}, Result: {is_player_answer_correct}, Score: {score}\n")
 
-        for n in range(14):
+        for n in range(4):
             continue_agreement = input("To go the next question, press y: ").lower()
             while continue_agreement != "y":
                 print("Invalid input. Please enter 'y' to continue to the next question.")
