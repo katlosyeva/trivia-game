@@ -64,7 +64,15 @@ VALUES
     (4, 7),
     (5, 13),
     (6, 9);
-
+INSERT INTO questions (
+                    game_id,
+                    question,
+                    correct_answer,
+                    answer_1,
+                    answer_2,
+                    answer_3,
+                    already_displayed
+                ) VALUES (1,'In which city did American rap producer DJ Khaled originate from?', 'Miami', 'New York', 'Detroit', 'Atlanta', '0')
 -- View tables:
 SELECT * FROM players;
 SELECT * FROM games;
