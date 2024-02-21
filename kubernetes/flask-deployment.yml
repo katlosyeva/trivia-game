@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: trivia-project-back
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: trivia-project-back
+  template:
+    metadata:
+      labels:
+        app: trivia-project-back
+    spec:
+      containers:
+        - name: trivia-backend
+          image: katlosyeva/trivia-back:latest
+          ports:
+            - containerPort: 5000
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: trivia-service-back
+spec:
+  selector:
+    app: trivia-project-back
+  ports:
+    - name: backend-listener
+      protocol: TCP
+      port: 5002
+      targetPort: 5000
+  type: LoadBalancer
+  
+
+  

@@ -1,0 +1,5 @@
+Flask
+Flask-Swagger-UI
+Flask-CORS
+mysql-connector-python
+requests

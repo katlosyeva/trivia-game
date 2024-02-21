@@ -1,0 +1,25 @@
+version: '3'
+
+services:
+  frontend:
+    build: ./frontend
+    restart: always
+    ports:
+      - '3000:3000'
+
+  mysql:
+    build: ./mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: trivia_game
+    ports:
+      - '3306:3306'
+
+  backend:
+    build: ./backend
+    restart: always
+    ports:
+      - '5000:5000'
+    depends_on:
+      - mysql
