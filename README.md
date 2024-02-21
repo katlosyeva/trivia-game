@@ -1,50 +1,134 @@
-# SW3-GRP5-PROJECT
+# Trivia-game
 
-Final Group Project for Software-3-Group-5
+## Overview
 
-Welcome to our repository. We have created a Trivia Quiz game!
+This project is a full-stack application built with React for the front end, Flask for the back end, and a SQL database. It's designed to run both as standalone services and as a unified application using Docker. Additionally, Kubernetes configurations are provided for deploying the project in a Kubernetes cluster.
 
-Instructions on how to run our trivia game programme:
+## Running Standalone Services
 
-1. In your terminal, navigate to a directory/folder on your machine where you would like to clone this repo to. Execute the command: `git clone git@github.com:hvuvuzella/SW3-GRP5-PROJECT.git`
+### Frontend:
 
-2. Then navigate to the project by executing `cd SW3-GRP5-PROJECT`
+- Navigate to the frontend directory.
+- Install dependencies: `npm install`.
+- Start the frontend: `npm start`.
 
-3. Open the project in PyCharm CE(`open -a "PyCharm CE" .`), as well as VSCode(`code .`). You may need to change the terminal commands depending on the operating system you use.
+### Backend:
 
-In the project directory, you will see all of our folders and files. All of the Frontend files are in the front-end folder, and all of the unit test files are in the unit_tests folder. For the Backend files, we have kept them all in the project's main directory for ease of use and visibility when running the files.
+- Navigate to the backend directory.
+- Install dependencies: `pip install -r requirements.txt`.
+- Run the Flask app: `python app.py`.
+- In the backend folder, change your SQL credentials in the `config.py` file.
 
-TO RUN THE BACKEND OF THE PROGRAMME:
+### Database:
 
-4. You will see the trivia_game.sql file in the main directory. Initialise the database (DB) by running this script in MySQL Workbench.
+- Set up a SQL database server and execute SQL scripts to create the necessary tables and schema.
 
-5. In PyCharm CE, go to the config.py file, and edit it by replacing the USER and PASSWORD values with your personal MySQL login user and password. This will open the connection between the BE and the DB.
+## Running with Docker
 
-6. Then, run the DB_utils.py file to establish the BE connection to the DB. There are some quick example test runs of the DB functions within this file which prints outcomes in the console for you to see what to expect in terms of return values. After running this file, you can go back to the trivia_game.sql file in MySQL Workbench and run the SELECT \* queries at the bottom of the file to see changes to the DB to help you understand how the DB functions work.
+- Ensure Docker is installed on your machine.
+- In the backend folder, change `HOST` to "mysql".
+- Run the following command in the root directory. This will build and start Docker containers for the frontend, backend, and database:
 
-7. Then, to establish the BE Flask app endpoints, go ahead and run app.py file in Pycharm CE.
+  ```bash
+  docker-compose up
 
-8. TO RUN FE SIMULATION IN PYTHON:
-- run main.py and play the quiz game from within in the python console. We also have created a FE for the game to played on the web browser. To play the game in the browser, go to step 9:
+## Running with Kubernetes
 
-9. TO RUN THE FRONTEND OF OUR PROGRAMME ON A WEBPAGE:
+Kubernetes configurations are provided in the kubernetes directory.
 
-- Ensure you have Node.js installed on your machine. You can download it from https://nodejs.org/.
-- Open a new terminal window and navigate to the project's directory on your local machine again, and then navigate to the front-end folder, using the following command:
-  `cd front-end`
-- Install Node Package Manager (NPM) dependencies using the following command:
-  `npm install`
-  This will download and install the necessary packages required for the project.
-- Start the frontend application using the following command:
-  `npm start`
-  This command initiates the development server, compiles the React application, and opens it in your default web browser. The application will automatically reload if you make changes to the source code. You may also see any lint errors in the console. This runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- Apply the configurations to your Kubernetes cluster:
 
-- Running `npm test` launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+  ```bash
+  kubectl apply -f kubernetes/
+
+## Once the services are running, access the application in your web browser:
+
+Frontend: http://localhost:3000 (For k8s - http://localhost:31515)
+Backend: http://localhost:5000
+
+## Swagger Documentation
+
+- Swagger documentation for the API can be accessed at: http://localhost:5000/api/docs/
+- Developers can use this Swagger documentation to understand and interact with the backend API independently and create their own custom frontend.
+
+## Cleanup
+
+- Stop and remove Docker containers:
+
+  ```bash
+  docker-compose down
+
+- Delete Kubernetes resources:
+
+  ```bash
+  kubectl delete -f kubernetes/
+
+## VIDEO DEMO OF THE GAME:
+- A shortened version of the game (5 questions instead of 15), for you to see:
+
+https://drive.google.com/file/d/1DKkOSjQcEPIKJ_nX3z8JYdGel0AMTfZO/view?usp=sharing
 
 
-10. VIDEO DEMO OF THE GAME:
-    - We have created a video with a shortened version of the game (5 questions instead of 15), for you to see:
 
-    https://drive.google.com/file/d/1DKkOSjQcEPIKJ_nX3z8JYdGel0AMTfZO/view?usp=sharing
+
+
+
+
+Overview
+
+This project is a full-stack application built with React for the front end, Flask for the back end, and a SQL database. It's designed to run both as standalone services and as a unified application using Docker. Additionally, Kubernetes configurations are provided for deploying the project in a Kubernetes cluster.
+
+Running Standalone Services
+
+Frontend:
+- Navigate to the frontend directory.
+- Install dependencies: npm install.
+- Start the frontend: npm start.
+
+Backend:
+- Navigate to the backend directory.
+- Install dependencies: pip install -r requirements.txt.
+- Run the Flask app: python app.py.
+
+Database:
+- In the backend folder change you SQL credentials in config.py file 
+- Set up a SQL database server and execute SQL scripts to create the necessary tables and schema.
+
+Running with Docker
+- Ensure Docker is installed on your machine.
+- In the backend folder change HOST to "mysql"
+- Run the following command in the root directory:
+
+docker compose-up
+
+This will build and start Docker containers for the frontend, backend, and database.
+
+Running with Kubernetes
+
+Kubernetes configurations are provided in the kubernetes directory.
+Apply the configurations to your Kubernetes cluster:
+
+kubectl apply -f kubernetes/
+Accessing the Application
+Once the services are running, access the application in your web browser:
+
+Frontend: http://localhost:3000 (For k8s - http://localhost:31515)
+Backend: http://localhost:5000
+
+Swagger Documentation
+
+- Swagger documentation for the API can be accessed at: http://localhost:5000/api/docs/
+- Developers can use this Swagger documentation to understand and interact with the backend API independently and create their own custom frontend.
+
+Cleanup
+
+Stop and remove Docker containers:
+docker-compose down
+
+Delete Kubernetes resources:
+kubectl delete -f kubernetes/
+
+VIDEO DEMO OF THE GAME:
+- A shortened version of the game (5 questions instead of 15), for you to see:
+
+https://drive.google.com/file/d/1DKkOSjQcEPIKJ_nX3z8JYdGel0AMTfZO/view?usp=sharing
